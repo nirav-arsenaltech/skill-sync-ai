@@ -1,0 +1,26 @@
+// resources/js/Pages/Profile/Edit.jsx
+import Layout from '../Dashboard/Components/Layout';
+import UpdateProfileInformation from './Partials/UpdateProfileInformationForm';
+import UpdatePasswordForm from './Partials/UpdatePasswordForm';
+import { Head, usePage } from '@inertiajs/react';
+
+export default function Edit() {
+    const { mustVerifyEmail, status } = usePage().props;
+
+    return (
+        <Layout>
+            <Head title="Profile" />
+
+            <div className="max-w-3xl mx-auto mt-10 space-y-10">
+                <UpdateProfileInformation
+                    mustVerifyEmail={mustVerifyEmail}
+                    status={status}
+                />
+
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
+                    <UpdatePasswordForm />
+                </div>
+            </div>
+        </Layout>
+    );
+}
