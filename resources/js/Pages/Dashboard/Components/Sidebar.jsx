@@ -9,14 +9,14 @@ import {
 
 export default function Sidebar() {
     const { url } = usePage();
-    const currentPath = url.split('?')[0];
+    const currentPath = url.split('?')[0].replace(/\/scan\/?$/, '');
 
     const menuItems = [
         { name: 'Dashboard', href: '/dashboard', icon: <HomeIcon className="h-5 w-5 mr-3" /> },
         { name: 'Jobs', href: '/jobs', icon: <BriefcaseIcon className="h-5 w-5 mr-3" /> },
         { name: 'Resumes', href: '/resumes', icon: <DocumentTextIcon className="h-5 w-5 mr-3" /> },
         { name: 'Analytics', href: '/analytics', icon: <ChartBarIcon className="h-5 w-5 mr-3" /> },
-        { name: 'Settings', href: '/settings', icon: <Cog6ToothIcon className="h-5 w-5 mr-3" /> },
+        // { name: 'Settings', href: '/settings', icon: <Cog6ToothIcon className="h-5 w-5 mr-3" /> },
     ];
 
     return (
@@ -30,7 +30,7 @@ export default function Sidebar() {
 
             <nav className="flex-1 px-4 py-6 space-y-2">
                 {menuItems.map((item, index) => {
-                    const isActive = currentPath === item.href;
+                    const isActive = currentPath.startsWith(item.href);
                     return (
                         <Link
                             key={index}

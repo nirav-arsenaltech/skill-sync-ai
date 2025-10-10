@@ -153,7 +153,7 @@ export default function Index({ resumes, filters }) {
                                     onClick={cancelDelete}
                                     className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
                                 >
-                                    Cancel
+                                    No
                                 </button>
                                 <button
                                     onClick={confirmDelete}
