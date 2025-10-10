@@ -37,3 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::post('/analytics/scan', [AnalyticsController::class, 'scan'])->name('analytics.scan');
+});

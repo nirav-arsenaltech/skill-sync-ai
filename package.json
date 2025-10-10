@@ -25,6 +25,7 @@
     "dependencies": {
         "@heroicons/react": "^2.2.0",
         "@inertiajs/server": "^0.1.0",
+        "framer-motion": "^12.23.22",
         "react-hot-toast": "^2.6.0"
     }
 }
