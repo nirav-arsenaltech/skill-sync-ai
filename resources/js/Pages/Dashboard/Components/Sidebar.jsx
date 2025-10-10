@@ -1,4 +1,3 @@
-// resources/js/Pages/Dashboard/Components/Sidebar.jsx
 import { Link, usePage } from '@inertiajs/react';
 import {
     HomeIcon,
@@ -10,6 +9,7 @@ import {
 
 export default function Sidebar() {
     const { url } = usePage();
+    const currentPath = url.split('?')[0];
 
     const menuItems = [
         { name: 'Dashboard', href: '/dashboard', icon: <HomeIcon className="h-5 w-5 mr-3" /> },
@@ -30,7 +30,7 @@ export default function Sidebar() {
 
             <nav className="flex-1 px-4 py-6 space-y-2">
                 {menuItems.map((item, index) => {
-                    const isActive = url === item.href;
+                    const isActive = currentPath === item.href;
                     return (
                         <Link
                             key={index}
@@ -47,10 +47,6 @@ export default function Sidebar() {
                     );
                 })}
             </nav>
-
-            <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Logged in as <span className="font-medium text-gray-900 dark:text-white"> </span></p>
-            </div>
         </aside>
     );
 }
