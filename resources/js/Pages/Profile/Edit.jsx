@@ -10,15 +10,18 @@ export default function Edit() {
     return (
         <Layout>
             <Head title="Profile" />
+            <div className='p-6'>
 
-            <div className="max-w-3xl mx-auto mt-10 space-y-10">
-                <UpdateProfileInformation
-                    mustVerifyEmail={mustVerifyEmail}
-                    status={status}
-                />
+                <div class="flex justify-between items-center mb-6"><h2 class="text-3xl font-bold text-gray-800 dark:text-white">Profile</h2></div>
+                <div className="max-w-3xl mx-auto mt-10 space-y-10">
+                    <UpdateProfileInformation
+                        mustVerifyEmail={mustVerifyEmail}
+                        status={status}
+                    />
 
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
-                    <UpdatePasswordForm />
+                    <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
+                        <UpdatePasswordForm />
+                    </div>
                 </div>
             </div>
         </Layout>

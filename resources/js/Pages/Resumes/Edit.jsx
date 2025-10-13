@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
+import { Head } from '@inertiajs/react';
 
 export default function Edit({ resume }) {
     const { data, setData, put, processing, errors } = useForm({
@@ -29,6 +30,7 @@ export default function Edit({ resume }) {
     return (
         <Layout>
             {/* <Toaster position="top-right" /> */}
+            <Head title="Edit Resume" />
             <div className="p-6">
                 <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Edit Resume</h2>
 

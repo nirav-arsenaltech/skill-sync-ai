@@ -2,6 +2,7 @@ import Layout from '../Dashboard/Components/Layout';
 import { useForm } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
+import { Head } from '@inertiajs/react';
 
 export default function Edit({ job }) {
     const { data, setData, put, processing, errors } = useForm({
@@ -39,6 +40,7 @@ export default function Edit({ job }) {
 
     return (
         <Layout>
+            <Head title="Edit Job"/>
             <div className="p-6">
                 <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">
                     Edit Job
