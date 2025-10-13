@@ -1,47 +1,58 @@
 # 🚀 SkillSync.ai
 
-AI-powered resume-job matcher built with Laravel 12, React, and Inertia.js — empowering job seekers and hiring teams to instantly assess resume relevance against job descriptions.
-
+**SkillSync.ai** is an AI-powered resume and job description matcher built with **Laravel 12**, **React**, and **Inertia.js** — empowering job seekers and hiring teams to instantly assess resume relevance, identify skill gaps, and improve hiring efficiency.
 
 ---
 
-## 🔗 Live Project (Optional)
-> _http://skillsync.ai/_
+## 🔗 Live Demo
+
+🌐 [http://skillsync.ai](http://skillsync.ai)
 
 ---
 
 ## 🧠 Features
 
-- ✅ AI-Powered Resume & Job Matching (OpenAI/LLM)
-- ✅ Skill Gap Analysis with JSON breakdown
-- ✅ Job Description Upload
-- ✅ Resume Upload (PDF, DOCX, DOC via LibreOffice)
-- ✅ Resume Scoring: Match %, Keyword %, Semantic Score
-- ✅ Laravel 12 (PHP 8.2) backend with MySQL
-- ✅ React (w/ Inertia.js) frontend
-- ✅ Tailwind CSS design system
-- ✅ Auth (Breeze) + User Dashboard
-- ✅ Error logging & fallback handling for unsupported formats
+- 🤖 AI-powered resume-job matching using **Gemini 2.5 Flash**
+- 📄 Upload job descriptions & resumes (PDF, DOCX, DOC, TXT, JSON, XML)
+- 📊 Get scores: Match %, Keyword %, Semantic Score, Keyword Gap
+- 📥 Download AI Scan Report (PDF)
+- 🔍 Automatic **skill extraction**, comparison & gap analysis
+- 💬 Full AI-generated summary for each resume
+- 🔒 Authenticated dashboard (Laravel Breeze)
+- 💾 Resume storage & AI scan history
+- 🧼 Robust file validation & encoding cleanup
 
 ---
 
 ## 🏗️ Tech Stack
 
-| Layer       | Technology                   |
-|------------|-------------------------------|
-| Backend     | Laravel 12 (PHP 8.2)          |
-| Frontend    | React.js + Inertia.js         |
-| Auth        | Laravel Breeze                |
-| Database    | MySQL                         |
-| CSS         | Tailwind CSS                  |
-| AI Engine   | Gemini-2.5-flash              |
-| File Parsing| PhpWord, Spatie PdfToText, LibreOffice CLI |
-| Deployment  | Vite, Laravel Mix, Composer, NPM |
+| Layer        | Technology                      |
+|--------------|----------------------------------|
+| Backend      | Laravel 12 (PHP 8.2)             |
+| Frontend     | React.js + Inertia.js            |
+| Authentication | Laravel Breeze               |
+| Database     | MySQL                            |
+| Styling      | Tailwind CSS                     |
+| AI Engine    | Gemini-2.5-flash (Google AI)     |
+| File Parsing | PhpWord, Spatie PdfToText, LibreOffice CLI |
+| Build Tools  | Vite, Laravel Mix, Composer, NPM |
 
 ---
 
+## 📂 Resume File Support
 
-### 🔧 Installation
+| Format | Support       | Parser                     |
+|--------|---------------|----------------------------|
+| `.pdf` | ✅ Supported   | Spatie PdfToText           |
+| `.docx`| ✅ Supported   | PhpOffice PhpWord          |
+| `.doc` | ✅ With LibreOffice | LibreOffice CLI         |
+| `.txt` | ✅ Supported   | Native PHP                 |
+
+> ⚠️ `.doc` conversion requires LibreOffice installed (`soffice` CLI). If unavailable, it's skipped with a warning.
+
+---
+
+## ⚙️ Installation
 
 ```bash
 # Clone the repository
@@ -52,44 +63,89 @@ cd skill-sync-ai
 composer install
 npm install
 
-# Copy environment
+# Copy environment file
 cp .env.example .env
 
 # Generate app key
 php artisan key:generate
 
-# Set database credentials in .env
+# Configure your .env
 # DB_DATABASE=skill_sync
 # DB_USERNAME=root
-# DB_PASSWORD=
+# DB_PASSWORD=yourpassword
 
-# Run migrations
+# Run database migrations
 php artisan migrate
 
-# Link storage
+# Create symbolic link for storage
 php artisan storage:link
 
-# Start dev server
+# Start the local servers
 php artisan serve
 npm run dev
 ```
----
-📎 Key AI Logic
+## 🌐 .env Configuration
+
 ```
-AppNeuronMyAgent.php handles AI prompt formatting and response parsing
+Set up your environment variables:
 
-AI result includes:
+APP_NAME=SkillSync.ai
+APP_URL=http://localhost
 
-overall_match_percentage
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=skill_sync
+DB_USERNAME=root
+DB_PASSWORD=
 
-semantic_score
+FILESYSTEM_DISK=public
 
-keyword_score
-
-keyword_gap
-
-Skill-by-skill match breakdown
-
-AI results stored in matches table
----
+# AI Integration
+AI_DRIVER=gemini
+GOOGLE_AI_KEY=your_gemini_api_key
 ```
+
+---
+## ✅ Testing (Optional)
+
+You can run Laravel tests using:
+
+`php artisan test`
+
+---
+
+## 👨‍💻 Author
+
+- Developed by [Nirav](https://github.com/nirav-arsenaltech)
+
+---
+
+## ⭐ Support & Contribute
+
+We welcome contributions and ideas to improve **SkillSync.ai**! 🚀
+
+### 🤝 How to Contribute
+
+- Fork the repo
+- Create your feature branch (`git checkout -b feature/your-feature`)
+- Commit your changes (`git commit -m 'Add some feature'`)
+- Push to the branch (`git push origin feature/your-feature`)
+- Open a Pull Request
+
+### 🛠️ Found a Bug?
+
+Please open an [Issue](https://github.com/nirav-arsenaltech/skill-sync-ai/issues) with steps to reproduce and, if possible, screenshots or error logs.
+
+### ❤️ Support the Project
+
+If you find this project helpful, consider giving it a ⭐ on GitHub.  
+You can also [share it](https://github.com/nirav-arsenaltech/skill-sync-ai) with friends or on social platforms to help others benefit from it.
+
+---
+
+
+## 📄 License
+
+- This project is open-sourced under the [MIT License](LICENSE).
+- Feel free to use, modify, and distribute with proper attribution.
