@@ -4,6 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Layout from '../Dashboard/Components/Layout';
 import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import { Head } from '@inertiajs/react';
 
 export default function Index({ resumes, filters }) {
     const [search, setSearch] = useState(filters.search || '');
@@ -43,6 +44,7 @@ export default function Index({ resumes, filters }) {
     return (
         <Layout>
             <Toaster position="top-right" />
+            <Head title="Resumes" />
             <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Resumes</h2>

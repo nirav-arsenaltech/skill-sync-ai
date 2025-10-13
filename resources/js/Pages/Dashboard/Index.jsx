@@ -3,10 +3,12 @@ import Card from './Components/Card';
 import Table from './Components/Table';
 import { Link } from '@inertiajs/react';
 import { EyeIcon } from '@heroicons/react/24/outline';
+import { Head } from '@inertiajs/react';
 
 export default function Dashboard({ cards, recentJobs, recentResumes }) {
     return (
         <Layout>
+            <Head title="Dashboard" />
             <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Dashboard</h2>

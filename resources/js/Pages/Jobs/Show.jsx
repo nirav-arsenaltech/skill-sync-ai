@@ -1,10 +1,12 @@
 // resources/js/Pages/Jobs/Show.jsx
 import Layout from '../Dashboard/Components/Layout';
 import { Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 
 export default function Show({ job }) {
     return (
         <Layout>
+            <Head title="View Job"/>
             <div className="p-6">
                 <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">
                     Job Details
