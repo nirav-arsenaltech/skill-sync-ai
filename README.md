@@ -1,61 +1,151 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🚀 SkillSync.ai
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**SkillSync.ai** is an AI-powered resume and job description matcher built with **Laravel 12**, **React**, and **Inertia.js** — empowering job seekers and hiring teams to instantly assess resume relevance, identify skill gaps, and improve hiring efficiency.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🔗 Live Demo
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+🌐 [http://skillsync.ai](http://skillsync.ai)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🧠 Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- 🤖 AI-powered resume-job matching using **Gemini 2.5 Flash**
+- 📄 Upload job descriptions & resumes (PDF, DOCX, DOC, TXT, JSON, XML)
+- 📊 Get scores: Match %, Keyword %, Semantic Score, Keyword Gap
+- 📥 Download AI Scan Report (PDF)
+- 🔍 Automatic **skill extraction**, comparison & gap analysis
+- 💬 Full AI-generated summary for each resume
+- 🔒 Authenticated dashboard (Laravel Breeze)
+- 💾 Resume storage & AI scan history
+- 🧼 Robust file validation & encoding cleanup
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🏗️ Tech Stack
 
-## Laravel Sponsors
+| Layer        | Technology                      |
+|--------------|----------------------------------|
+| Backend      | Laravel 12 (PHP 8.2)             |
+| Frontend     | React.js + Inertia.js            |
+| Authentication | Laravel Breeze               |
+| Database     | MySQL                            |
+| Styling      | Tailwind CSS                     |
+| AI Engine    | Gemini-2.5-flash (Google AI)     |
+| File Parsing | PhpWord, Spatie PdfToText, LibreOffice CLI |
+| Build Tools  | Vite, Laravel Mix, Composer, NPM |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 📂 Resume File Support
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Format | Support       | Parser                     |
+|--------|---------------|----------------------------|
+| `.pdf` | ✅ Supported   | Spatie PdfToText           |
+| `.docx`| ✅ Supported   | PhpOffice PhpWord          |
+| `.doc` | ✅ With LibreOffice | LibreOffice CLI         |
+| `.txt` | ✅ Supported   | Native PHP                 |
 
-## Contributing
+> ⚠️ `.doc` conversion requires LibreOffice installed (`soffice` CLI). If unavailable, it's skipped with a warning.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## ⚙️ Installation
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+# Clone the repository
+git clone https://github.com/nirav-arsenaltech/skill-sync-ai.git
+cd skill-sync-ai
 
-## Security Vulnerabilities
+# Install dependencies
+composer install
+npm install
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Copy environment file
+cp .env.example .env
 
-## License
+# Generate app key
+php artisan key:generate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Configure your .env
+# DB_DATABASE=skill_sync
+# DB_USERNAME=root
+# DB_PASSWORD=yourpassword
+
+# Run database migrations
+php artisan migrate
+
+# Create symbolic link for storage
+php artisan storage:link
+
+# Start the local servers
+php artisan serve
+npm run dev
+```
+## 🌐 .env Configuration
+
+```
+Set up your environment variables:
+
+APP_NAME=SkillSync.ai
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=skill_sync
+DB_USERNAME=root
+DB_PASSWORD=
+
+FILESYSTEM_DISK=public
+
+# AI Integration
+AI_DRIVER=gemini
+GOOGLE_AI_KEY=your_gemini_api_key
+```
+
+---
+## ✅ Testing (Optional)
+
+You can run Laravel tests using:
+
+`php artisan test`
+
+---
+
+## 👨‍💻 Author
+
+- Developed by [Nirav](https://github.com/nirav-arsenaltech)
+
+---
+
+## ⭐ Support & Contribute
+
+We welcome contributions and ideas to improve **SkillSync.ai**! 🚀
+
+### 🤝 How to Contribute
+
+- Fork the repo
+- Create your feature branch (`git checkout -b feature/your-feature`)
+- Commit your changes (`git commit -m 'Add some feature'`)
+- Push to the branch (`git push origin feature/your-feature`)
+- Open a Pull Request
+
+### 🛠️ Found a Bug?
+
+Please open an [Issue](https://github.com/nirav-arsenaltech/skill-sync-ai/issues) with steps to reproduce and, if possible, screenshots or error logs.
+
+### ❤️ Support the Project
+
+If you find this project helpful, consider giving it a ⭐ on GitHub.  
+You can also [share it](https://github.com/nirav-arsenaltech/skill-sync-ai) with friends or on social platforms to help others benefit from it.
+
+---
+
+
+## 📄 License
+
+- This project is open-sourced under the [MIT License](LICENSE).
+- Feel free to use, modify, and distribute with proper attribution.
