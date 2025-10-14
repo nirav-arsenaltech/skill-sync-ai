@@ -33,7 +33,7 @@ export default function Create() {
             <div className="p-6">
                 <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Upload Resume</h2>
 
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md w-full max-w-lg">
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md w-full">
                     <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
                         <div>
                             <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">
