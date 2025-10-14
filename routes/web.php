@@ -40,4 +40,5 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
     Route::post('/analytics/scan', [AnalyticsController::class, 'scan'])->name('analytics.scan');
+    Route::delete('/analytics/{match}', [AnalyticsController::class, 'destroy'])->name('analytics.destroy');
 });

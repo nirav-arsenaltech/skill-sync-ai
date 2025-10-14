@@ -52,15 +52,19 @@ class AppNeuronMyAgent extends Agent
             return "Resume Name: {$resume['name']}\nContent:\n{$resume['content']}";
         })->implode("\n\n");
 
-        // Strong system prompt
+        // Enhanced system prompt with new capabilities
         $systemPrompt = new SystemPrompt(
             background: [
                 "You are a highly experienced HR AI assistant.",
-                "Analyze resumes against a job description and provide a consistent JSON output.",
-                "Always use the exact structure below, only the values change.",
-                "Numeric fields must always be present (0-100).",
-                "Do not include any explanations outside the JSON.",
-                "Output must be valid JSON and parseable."
+                "Your task is to analyze resumes against a job description in detail.",
+                "You must compute: match percentages, semantic relevance, keyword alignment, skill gaps, strengths, weaknesses, and role fit.",
+                "Consider not only exact skill and tool names but also implied experience.",
+                "Group related skills (e.g., Figma, Sketch, Photoshop) under broader categories like 'Design Tools'.",
+                "Treat synonymous or closely related skills as partial matches where applicable.",
+                "If a candidate has strong experience but in a different domain or role (e.g., Frontend Developer vs UI/UX Designer), identify this clearly in a role_fit_summary.",
+                "Return a valid JSON array (no markdown, no explanation, no text outside JSON).",
+                "Use numeric values 0–100 for all scoring metrics.",
+                "All keys and string values must be double-quoted. Always return valid, parseable JSON."
             ]
         );
 
@@ -76,26 +80,44 @@ class AppNeuronMyAgent extends Agent
         {$resumeTexts}
 
         Instructions for AI:
-        - For each resume, output a JSON object in **exactly this format**:
-        {
-        "resume_name": "<Resume Name>",
-        "summary": "<Brief candidate summary>",
-        "key_skills": ["skill1", "skill2", ...],
-        "missing_skills": ["skill1", ...],
-        "strengths": "<text>",
-        "weaknesses": "<text>",
-        "match_percentage": <number 0-100>,
-        "semantic_score": <number 0-100>,
-        "keyword_score": <number 0-100>,
-        "keyword_gap": <number 0-100>,
-        "ai_text": "<Full detailed AI analysis as text>"
-        }
+        - For each resume, analyze thoroughly against the job description.
+        - Compute the following metrics:
+            1. "overall_match_percentage" (0-100): Weighted average of semantic and keyword relevance.
+            2. "semantic_score" (0-100): How well the candidate’s intent, role, and experience align.
+            3. "keyword_score" (0-100): Number of direct keyword/tool matches between JD and resume.
+            4. "keyword_gap" (0-100): Percentage of JD keywords not found in resume.
+        - Extract skills from both JD and resume. Count frequency (resume_count, job_count), compute gap and match status.
+        - Recognize synonyms and implied experience where appropriate.
+        - Return a structured array with the following fields for each resume:
 
-        - Output an **array of objects**, one per resume.
-        - Always maintain the same keys and structure.
-        - Numeric fields must not be null; use 0 if value not found.
-        - Use double quotes for all JSON keys and string values.
-        - Do not include extra text, explanations, or formatting outside JSON.
+        [
+            {
+            "resume_name": "<Resume Name>",
+                "summary": "<Brief 1-2 sentence summary of the candidate's profile>",
+                "overall_match_percentage": <0-100>,
+                "scores": {
+                    "semantic_score": <0-100>,
+                    "keyword_score": <0-100>,
+                    "keyword_gap": <0-100>
+                },
+                "skills_analysis": [
+                    {
+                        "skill": "<Skill Name>",
+                        "resume_count": <number>,
+                        "job_count": <number>,
+                        "gap": <number>,
+                        "matched": <true/false>
+                    }
+                ],
+                "strengths": "<Short paragraph summarizing candidate's strengths>",
+                "weaknesses": "<Short paragraph summarizing candidate's weaknesses>",
+                "role_fit_summary": "<Sentence explaining if this candidate fits the target role well or would be better suited to a different role>",
+                "ai_text": "<Detailed full analysis in natural language>"
+            }
+        ]
+
+        - All fields are required. Use 0 if numeric value is missing.
+        - Output must be valid JSON. No markdown formatting.
         PROMPT;
 
         $userMessage = new UserMessage($fullPrompt);
@@ -105,7 +127,7 @@ class AppNeuronMyAgent extends Agent
             $aiContent = $response->getContent();
 
             // Validate JSON
-            json_decode($aiContent, true);
+            json_decode($aiContent, true, 512, JSON_THROW_ON_ERROR);
 
             return $aiContent;
         } catch (\Exception $e) {

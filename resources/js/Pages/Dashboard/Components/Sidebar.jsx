@@ -22,6 +22,7 @@ export default function Sidebar() {
     return (
         <aside className="w-72 bg-white dark:bg-gray-800 shadow-lg h-screen sticky top-0 flex flex-col z-20">
             <div className="h-16 px-6 py-6 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+                {/* <img src='/images/skillsync-title.png' alt="SkillSync.ai" className="h-10 object-contain" /> */}
                 <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-400 dark:from-blue-400 dark:to-purple-500">
                     SkillSync.ai
                 </h1>
