@@ -35,25 +35,41 @@ class AnalyticsController extends Controller
                 'ai_result',
                 'created_at',
             ])
-            ->map(function ($match) {
+            ->map(function ($match) use ($jobs) {
                 $resume = $match->resume;
 
-                // Decode JSON if stored as JSON, fallback to string
+                $aiData = [];
                 if ($match->ai_result && is_string($match->ai_result)) {
                     $decoded = json_decode($match->ai_result, true);
-                    $match->ai_result = $decoded ?: ['ai_text' => $match->ai_result];
+                    $aiData = $decoded ?: ['ai_text' => $match->ai_result];
                 }
 
-                // Add resume name for table display
-                $match->resume_name = $resume->name ?? 'N/A';
+                $aiData['overall_match_percentage'] = $match->match_percentage ?? 0;
+                $aiData['scores'] = [
+                    'semantic_score' => $match->semantic_score ?? 0,
+                    'keyword_score' => $match->keyword_score ?? 0,
+                    'keyword_gap' => $match->keyword_gap ?? 0,
+                ];
+               
 
-                return $match;
+                return [
+                    'id' => $match->id,
+                    'resume_id' => $match->resume_id,
+                    'job_description_id' => $match->job_description_id,
+                    'created_at' => $match->created_at,
+                    'resume_name' => $resume->name ?? 'N/A',
+                    'ai_result' => $aiData,
+                ];
             });
 
         return Inertia::render('Analytics/Index', [
             'jobs' => $jobs,
             'resumes' => $resumes,
             'matchedHistory' => $matchedHistory,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
         ]);
     }
 
@@ -87,25 +103,61 @@ class AnalyticsController extends Controller
             $filePath = storage_path('app/public/' . $resume->file_path);
             $content = '';
 
-            if (file_exists($filePath)) {
-                $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                try {
+            try {
+                if (file_exists($filePath)) {
+                    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
                     if (in_array($ext, ['txt', 'json', 'xml'])) {
                         $content = file_get_contents($filePath);
                     } elseif ($ext === 'pdf') {
                         $content = \Spatie\PdfToText\Pdf::getText($filePath);
-                    } elseif (in_array($ext, ['doc', 'docx'])) {
-                        $phpWord = \PhpOffice\PhpWord\IOFactory::load($filePath);
+                    } elseif ($ext === 'docx') {
+                        $phpWord = \PhpOffice\PhpWord\IOFactory::load($filePath, 'Word2007');
                         foreach ($phpWord->getSections() as $section) {
                             foreach ($section->getElements() as $e) {
-                                if (method_exists($e, 'getText'))
+                                if (method_exists($e, 'getText')) {
                                     $content .= $e->getText() . "\n";
+                                }
                             }
                         }
+                    } elseif ($ext === 'doc') {
+                        $outputDir = storage_path('app/tmp');
+                        if (!file_exists($outputDir)) {
+                            mkdir($outputDir, 0755, true);
+                        }
+
+                        $outputPath = $outputDir . '/' . pathinfo($filePath, PATHINFO_FILENAME) . '.txt';
+                        $sofficePath = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'
+                            ? '"C:\\Program Files\\LibreOffice\\program\\soffice.exe"'
+                            : '/usr/bin/soffice';
+
+                        if (!file_exists(trim($sofficePath, '"'))) {
+                            continue;
+                        }
+
+                        $cmd = $sofficePath . ' --headless --convert-to txt:Text --outdir ' . escapeshellarg($outputDir) . ' ' . escapeshellarg($filePath);
+                        exec($cmd, $output, $returnCode);
+
+                        if ($returnCode === 0 && file_exists($outputPath)) {
+                            $content = file_get_contents($outputPath);
+                            unlink($outputPath);
+                        } else {
+                            Log::error("LibreOffice failed to convert .doc file", [
+                                'resume_id' => $resume->id,
+                                'cmd' => $cmd,
+                                'output' => $output,
+                                'return_code' => $returnCode,
+                            ]);
+                            continue;
+                        }
                     }
-                } catch (\Exception $e) {
-                    Log::error("Error reading resume file ID {$resume->id}: " . $e->getMessage());
+
+                    $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1, ISO-8859-15, Windows-1252', true));
+                    $content = preg_replace('/[^\PC\s]/u', '', $content);
+
                 }
+            } catch (\Exception $e) {
+                Log::error("Error reading resume file ID {$resume->id}: " . $e->getMessage());
+                continue;
             }
 
             $resumesData[] = [
@@ -115,22 +167,19 @@ class AnalyticsController extends Controller
             ];
         }
 
-
-        // Send to AI
+        // --- AI Analysis ---
         try {
             $agent = new AppNeuronMyAgent();
             $aiResult = $agent->analyzeJobAndResumes($jobTitle, $jobDescription, $resumesData);
         } catch (\Exception $e) {
-            Log::error("Error in AI analysis: " . $e->getMessage());
+            Log::error("Error during AI analysis: " . $e->getMessage());
             return back()->with('error', 'AI scan failed. Check logs for details.');
         }
 
+        // --- Parse and Save ---
         try {
-            // Strip code fences if any
-            $cleanedAiResult = trim($aiResult);
-            $cleanedAiResult = preg_replace('/^```(json)?\s*/i', '', $cleanedAiResult);
+            $cleanedAiResult = preg_replace('/^```(json)?\s*/i', '', trim($aiResult));
             $cleanedAiResult = preg_replace('/\s*```$/', '', $cleanedAiResult);
-
             $parsedResults = json_decode($cleanedAiResult, true);
 
             if (!is_array($parsedResults)) {
@@ -138,38 +187,85 @@ class AnalyticsController extends Controller
             }
 
             foreach ($resumesData as $index => $resume) {
-                $resumeResult = $parsedResults[$index] ?? null;
-                if (!$resumeResult) {
+                $resumeResult = $parsedResults[$index] ?? [];
+                if (!$resumeResult)
                     continue;
+                // Ensure numeric values
+                $matchPercentage = $resumeResult['overall_match_percentage'] ?? 0;
+                $semanticScore = $resumeResult['scores']['semantic_score'] ?? 0;
+                $keywordScore = $resumeResult['scores']['keyword_score'] ?? 0;
+                $keywordGap = $resumeResult['scores']['keyword_gap'] ?? 0;
+
+                Log::info("Resume {$resume['name']} scores", [
+                    'match_percentage' => $matchPercentage,
+                    'semantic_score' => $semanticScore,
+                    'keyword_score' => $keywordScore,
+                    'keyword_gap' => $keywordGap,
+                ]);
+
+                // Compute skills analysis if missing
+                if (empty($resumeResult['skills_analysis'])) {
+                    $jdKeywords = collect(preg_split('/\s+/', $jobDescription));
+                    $resumeKeywords = collect(preg_split('/\s+/', $resume['content']));
+                    $skillsAnalysis = [];
+                    foreach ($jdKeywords as $keyword) {
+                        $resumeCount = $resumeKeywords->filter(fn($k) => strtolower($k) === strtolower($keyword))->count();
+                        $jobCount = 1;
+                        $skillsAnalysis[] = [
+                            'skill' => $keyword,
+                            'resume_count' => $resumeCount,
+                            'job_count' => $jobCount,
+                            'gap' => $jobCount - $resumeCount,
+                            'matched' => $resumeCount >= $jobCount,
+                        ];
+                    }
+                    $resumeResult['skills_analysis'] = $skillsAnalysis;
+                }
+
+                // Safely encode AI result
+                $aiJson = json_encode($resumeResult, JSON_UNESCAPED_UNICODE);
+                if ($aiJson === false) {
+                    Log::error('json_encode failed', [
+                        'resume_id' => $resume['id'],
+                        'error' => json_last_error_msg(),
+                        'data' => $resumeResult
+                    ]);
+                    throw new \Exception('json_encode failed: ' . json_last_error_msg());
                 }
 
                 Matches::create([
                     'user_id' => $userId,
                     'resume_id' => $resume['id'],
                     'job_description_id' => $job->id,
-                    'match_percentage' => $resumeResult['match_percentage'] ?? 0,
-                    'semantic_score' => $resumeResult['semantic_score'] ?? 0,
-                    'keyword_score' => $resumeResult['keyword_score'] ?? 0,
-                    'keyword_gap' => $resumeResult['keyword_gap'] ?? 0,
-                    'ai_result' => json_encode([
-                        'resume_name' => $resume['name'],
-                        'ai_text' => $resumeResult['ai_text'] ?? '',
-                        'key_skills' => $resumeResult['key_skills'] ?? [],
-                        'missing_skills' => $resumeResult['missing_skills'] ?? [],
-                        'strengths' => $resumeResult['strengths'] ?? '',
-                        'weaknesses' => $resumeResult['weaknesses'] ?? '',
-                    ]),
+                    'match_percentage' => $matchPercentage,
+                    'semantic_score' => $semanticScore,
+                    'keyword_score' => $keywordScore,
+                    'keyword_gap' => $keywordGap,
+                    'ai_result' => $aiJson,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-
             }
-
         } catch (\Exception $e) {
-            Log::error('Error saving AI results: ' . $e->getMessage(), ['ai_result' => $aiResult]);
+            Log::error('Error saving AI results', [
+                'exception' => $e->getMessage(),
+                'ai_result' => $aiResult
+            ]);
             return back()->with('error', 'Failed to save AI scan results. Check logs.');
         }
 
         return redirect()->route('analytics.index')->with('flash', ['success' => 'Scan completed successfully!']);
     }
+
+    public function destroy($id)
+    {
+        $match = Matches::find($id);
+        if (!$match) {
+            return back()->with('error', 'Match not found.');
+        }
+        $match->delete();
+
+        return redirect()->route('analytics.index')->with('flash', ['success' => 'Match Deleted successfully!']);;
+    }
+
 }

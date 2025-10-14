@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import autoTable from 'jspdf-autotable';
 import { usePage, router } from '@inertiajs/react';
 import toast, { Toaster } from 'react-hot-toast';
 import Layout from '../Dashboard/Components/Layout';
-import { ChartBarIcon, EyeIcon, PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
-
+import { ChartBarIcon, EyeIcon, CheckIcon, PencilIcon, TrashIcon, XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { Head } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 
 export default function Analytics({ jobs, resumes, matchedHistory: initialHistory }) {
     const { props } = usePage();
@@ -14,16 +18,97 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
     const [aiResult, setAiResult] = useState(null);
     const [matchedHistory, setMatchedHistory] = useState(initialHistory || []);
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [matchToDelete, setMatchToDelete] = useState(null);
+    const [downloading, setDownloading] = useState(null);
 
     useEffect(() => {
         if (flash.success) toast.success(flash.success);
         if (flash.error) toast.error(flash.error);
     }, [flash]);
 
+    const handleDownload = async (matchId) => {
+        setDownloading(matchId);
+
+        try {
+            const match = matchedHistory.find(m => m.id === matchId);
+            if (!match) throw new Error('Match not found');
+            const aiData =
+                typeof match.ai_result === 'string'
+                    ? (() => { try { return JSON.parse(match.ai_result); } catch { return { ai_text: match.ai_result }; } })()
+                    : match.ai_result || { ai_text: 'No report available' };
+
+            const reportElement = document.getElementById(`report-content-${matchId}`);
+            if (!reportElement) throw new Error('Report not found');
+
+            const cloned = reportElement.cloneNode(true);
+            cloned.style.display = 'block';
+            cloned.classList.remove('hidden');
+            cloned.style.background = 'white';
+            cloned.style.padding = '20px';
+            const swElements = cloned.querySelectorAll('.strength-weakness');
+            swElements.forEach(el => el.style.breakInside = 'avoid');
+            document.body.appendChild(cloned);
+            // Use html2canvas + jsPDF
+            const canvas = await html2canvas(cloned, { scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL('image/png');
+
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            let remainingHeight = pdfHeight;
+            let position = 0;
+
+            while (remainingHeight > 0) {
+                const heightToUse = Math.min(remainingHeight, pageHeight);
+                pdf.addImage(imgData, 'PNG', 0, -position, pdfWidth, pdfHeight);
+                remainingHeight -= pageHeight;
+                position += pageHeight;
+                if (remainingHeight > 0) pdf.addPage();
+            }
+
+            pdf.save(`match-report-${matchId}.pdf`);
+            document.body.removeChild(cloned);
+            toast.success('PDF downloaded successfully!');
+
+        } catch (err) {
+            console.error('[PDF] Error during download:', err);
+            toast.error('Failed to download PDF.');
+        } finally {
+            setDownloading(null);
+        }
+    };
+
     const handleResumeSelect = (id) => {
         setSelectedResumes(prev =>
             prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]
         );
+    };
+
+    const confirmDelete = (matchId) => {
+        setMatchToDelete(matchId);
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = () => {
+        if (!matchToDelete) return;
+
+        router.delete(route('analytics.destroy', matchToDelete), {
+            preserveState: true,
+            onSuccess: (page) => {
+                toast.success(page.props.flash?.success || 'Record successfully Deleted');
+                setMatchedHistory(prev => prev.filter(m => m.id !== matchToDelete));
+                setIsModalOpen(false);
+                setMatchToDelete(null);
+            },
+            onError: () => {
+                toast.error('Failed to delete match.');
+                setIsModalOpen(false);
+                setMatchToDelete(null);
+            }
+        });
     };
 
     const handleScan = () => {
@@ -42,11 +127,10 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
             replace: true,
             onSuccess: (page) => {
                 setLoading(false);
-                if (page.props.flash?.success) toast.success(page.props.flash.success);
-
+                // if (page.props.flash?.success) toast.success(page.props.flash.success);
+                toast.success(page.props.flash?.success || 'Scanned successfully');
                 // Update AI result (if returned)
                 if (page.props.ai_result) setAiResult(page.props.ai_result);
-
                 // Update scan history table
                 if (page.props.matchedHistory) setMatchedHistory(page.props.matchedHistory);
 
@@ -61,6 +145,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
     return (
         <Layout>
             <Toaster position="top-right" />
+            <Head title="Analytics" />
             {loading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
                     <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24"></div>
@@ -95,10 +180,10 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                     {/* Resume Selection */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Select Resumes (You can choose multiple)
+                            Select Resumes
                         </label>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-72 overflow-y-auto border rounded-lg p-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-72 overflow-y-auto border dark:border-gray-500 rounded-lg p-3">
                             {resumes.length > 0 ? (
                                 resumes.map((resume) => (
                                     <div
@@ -107,7 +192,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                         className={`cursor-pointer border rounded-lg p-3 flex justify-between items-center transition 
                                             ${selectedResumes.includes(resume.id)
                                                 ? 'bg-blue-100 border-blue-500 dark:bg-blue-900'
-                                                : 'bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600'
+                                                : 'bg-gray-50 dark:bg-gray-700 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-600'
                                             }`}
                                     >
                                         <div>
@@ -145,26 +230,63 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                     </div>
 
 
+                    {isModalOpen && (
+                        <div className="fixed inset-0 flex items-center justify-center z-50">
+                            <div
+                                className="fixed inset-0 bg-black opacity-50"
+                                onClick={() => setIsModalOpen(false)}
+                            ></div>
+                            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 z-50 w-96 relative">
+                                <button
+                                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 dark:hover:text-white"
+                                    onClick={() => setIsModalOpen(false)}
+                                >
+                                    <XMarkIcon className="h-6 w-6" />
+                                </button>
+
+                                <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
+                                    Confirm Delete
+                                </h3>
+                                <p className="mb-6 text-gray-600 dark:text-gray-300">
+                                    Are you sure you want to delete this match? This action cannot be undone.
+                                </p>
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        onClick={() => setIsModalOpen(false)}
+                                        className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition"
+                                    >
+                                        No
+                                    </button>
+                                    <button
+                                        onClick={handleDelete}
+                                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                                    >
+                                        Yes, Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                 </div>
                 {matchedHistory.length > 0 && (
                     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6 mt-4">
-                        <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-4">
+                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
                                 Scan History
                             </h3>
 
                             <table className="w-full text-left border-collapse">
-                                <thead>
+                                <thead className="bg-gray-50 dark:bg-gray-700">
                                     <tr className="border-b border-gray-300 dark:border-gray-600">
-                                        <th className="p-2">Resume</th>
-                                        <th className="p-2">Job</th>
-                                        <th className="p-2">Match %</th>
-                                        <th className="p-2">Semantic Score</th>
-                                        <th className="p-2">Keyword Score</th>
-                                        <th className="p-2">Keyword Gap</th>
-                                        <th className="p-2">Date</th>
-                                        <th className="p-2">View</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Resume</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Job</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Match %</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Semantic Score</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Keyword Score</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Keyword Gap</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -172,11 +294,8 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                         const aiData =
                                             typeof match.ai_result === 'string'
                                                 ? (() => {
-                                                    try {
-                                                        return JSON.parse(match.ai_result);
-                                                    } catch {
-                                                        return { ai_text: match.ai_result };
-                                                    }
+                                                    try { return JSON.parse(match.ai_result); }
+                                                    catch { return { ai_text: match.ai_result }; }
                                                 })()
                                                 : match.ai_result || { ai_text: 'No report available' };
 
@@ -186,22 +305,25 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                 <tr className="border-b border-gray-200 dark:border-gray-700">
                                                     <td className="p-2">{match.resume_name || aiData.resume_name || 'N/A'}</td>
                                                     <td className="p-2">
-                                                        {jobs.find((job) => job.id === match.job_description_id)?.title || 'N/A'}
+                                                        <Link
+                                                            href={`/jobs/${match.job_description_id}`}
+                                                            className="text-blue-500 hover:underline"
+                                                        >
+                                                            {jobs.find((job) => job.id === match.job_description_id)?.title || 'N/A'}
+                                                        </Link>
                                                     </td>
-                                                    <td className="p-2">{match.match_percentage ?? '-'}</td>
-                                                    <td className="p-2">{match.semantic_score ?? '-'}</td>
-                                                    <td className="p-2">{match.keyword_score ?? '-'}</td>
-                                                    <td className="p-2">{match.keyword_gap ?? '-'}</td>
-                                                    <td className="p-2">{(() => {
-                                                        const d = new Date(match.created_at);
-                                                        const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-                                                        const day = String(d.getDate()).padStart(2, '0');
-                                                        const year = d.getFullYear();
-                                                        return `${month}/${day}/${year}`;
-                                                    })()}</td>
+                                                    <td className="p-2">{aiData.overall_match_percentage ?? '-'}</td>
+                                                    <td className="p-2">{aiData.scores?.semantic_score ?? '-'}</td>
+                                                    <td className="p-2">{aiData.scores?.keyword_score ?? '-'}</td>
+                                                    <td className="p-2">{aiData.scores?.keyword_gap ?? '-'}</td>
                                                     <td className="p-2">
+                                                        {new Date(match.created_at).toLocaleDateString()}
+                                                    </td>
+                                                    <td className="p-2 flex space-x-2">
+
                                                         <button
-                                                            className="text-blue-600 hover:underline"
+                                                            className="text-blue-600 hover:text-blue-800"
+                                                            title="view"
                                                             onClick={() => {
                                                                 const report = document.getElementById(`report-${match.id}`);
                                                                 report.classList.toggle('hidden');
@@ -209,15 +331,114 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                         >
                                                             <EyeIcon className="h-5 w-5" />
                                                         </button>
+                                                        <button
+                                                            onClick={() => confirmDelete(match.id)}
+                                                            className="text-red-600 hover:text-red-800"
+                                                            title="Delete"
+                                                        >
+                                                            <TrashIcon className="h-5 w-5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDownload(match.id)}
+                                                            disabled={downloading === match.id}
+                                                            className={`text-green-600 hover:text-green-800 flex items-center ${downloading === match.id ? 'opacity-50 cursor-not-allowed' : ''
+                                                                }`}
+                                                            title="Download PDF"
+                                                        >
+                                                            {downloading === match.id ? 'Processing...' : <ArrowDownTrayIcon className="h-5 w-5" />}
+                                                        </button>
                                                     </td>
                                                 </tr>
 
                                                 {/* Toggle Row */}
                                                 <tr id={`report-${match.id}`} className="hidden bg-gray-50 dark:bg-gray-700">
                                                     <td colSpan={8} className="p-3 border-t border-gray-200 dark:border-gray-600">
-                                                        <pre className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-200">
-                                                            {aiData.ai_text || 'No report available'}
-                                                        </pre>
+                                                        <div className="space-y-4">
+                                                            {/* Overall Match Bar */}
+                                                            <div>
+                                                                <h4 className="font-semibold text-gray-800 dark:text-white mb-2">
+                                                                    Overall Match: {aiData.overall_match_percentage ?? 0}%
+                                                                </h4>
+                                                                <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-4">
+                                                                    <div
+                                                                        className="bg-indigo-500 h-4 rounded-full transition-all duration-500"
+                                                                        style={{ width: `${aiData.overall_match_percentage ?? 0}%` }}
+                                                                    ></div>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Scores Bars */}
+                                                            <div className="flex space-x-4">
+                                                                {['semantic_score', 'keyword_score', 'keyword_gap'].map((key) => (
+                                                                    <div key={key} className="flex-1">
+                                                                        <h5 className="text-gray-700 dark:text-gray-300 text-sm font-medium capitalize">
+                                                                            {key.replace('_', ' ')}
+                                                                        </h5>
+                                                                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
+                                                                            <div
+                                                                                className="bg-rose-500 h-3 rounded-full transition-all duration-500"
+                                                                                style={{ width: `${aiData.scores?.[key] ?? 0}%` }}
+                                                                            ></div>
+                                                                        </div>
+                                                                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                                                            {aiData.scores?.[key] ?? 0}%
+                                                                        </p>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+
+                                                            {/* Skills Gap Table */}
+                                                            <div className="overflow-x-auto">
+                                                                <table className="min-w-full text-left border border-gray-300 dark:border-gray-600 rounded">
+                                                                    <thead className="bg-gray-100 dark:bg-gray-700">
+                                                                        <tr>
+                                                                            <th className="p-2">Skill</th>
+                                                                            <th className="p-2">Resume</th>
+                                                                            <th className="p-2">Job Description</th>
+                                                                            <th className="p-2">Gap</th>
+                                                                            <th className="p-2">Matched</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {aiData.skills_analysis?.map((skill) => (
+                                                                            <tr key={skill.skill} className="border-t border-gray-200 dark:border-gray-600">
+                                                                                <td className="p-2">{skill.skill}</td>
+                                                                                <td className="p-2">{skill.resume_count}</td>
+                                                                                <td className="p-2">{skill.job_count}</td>
+                                                                                <td className="p-2">{skill.gap}</td>
+                                                                                <td className="p-2">
+                                                                                    {skill.matched ? <CheckIcon className="h-5 w-5 text-green-500" /> : '-'}
+                                                                                </td>
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                            {/* Strengths & Weaknesses */}
+                                                            <div className="flex space-x-4 mt-4">
+                                                                <div className="flex-1">
+                                                                    <h5 className="font-medium text-gray-700 dark:text-gray-300">Strengths</h5>
+                                                                    <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
+                                                                        {aiData.strengths ?? 'N/A'}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="flex-1">
+                                                                    <h5 className="font-medium text-gray-700 dark:text-gray-300">Weaknesses</h5>
+                                                                    <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
+                                                                        {aiData.weaknesses ?? 'N/A'}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Detailed AI Text */}
+                                                            <div className="mt-4">
+                                                                <h5 className="text-gray-700 dark:text-gray-300 font-medium mb-1">Detailed Analysis</h5>
+                                                                <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
+                                                                    {aiData.ai_text || 'No report available'}
+                                                                </p>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             </React.Fragment>
@@ -225,6 +446,115 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                     })}
                                 </tbody>
                             </table>
+                            {matchedHistory.map((match) => {
+                                const aiData =
+                                    typeof match.ai_result === 'string'
+                                        ? (() => {
+                                            try { return JSON.parse(match.ai_result); }
+                                            catch { return { ai_text: match.ai_result }; }
+                                        })()
+                                        : match.ai_result || { ai_text: 'No report available' };
+
+                                return (
+                                    <div
+                                        key={`report-${match.id}`}
+                                        id={`report-content-${match.id}`}
+                                        className="hidden w-full p-6 bg-white dark:bg-gray-800"
+                                        style={{ background: 'white', padding: '20px', fontSize: '14px', lineHeight: '1.5' }}
+                                    >
+                                        {/* Logo */}
+                                        <div className="flex items-center justify-center mb-6">
+                                            {/* <img src='/images/skillsync-title.png' alt="SkillSync.ai" className="h-12 object-contain" /> */}
+                                            <img src="/images/skillsync-logo.png" alt="SkillSync.ai" className="h-10 object-contain" />
+                                        </div>
+
+                                        <div className="space-y-6" style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                                            {/* Overall Match */}
+                                            <div>
+                                                <h4 className="font-semibold text-gray-800 dark:text-white mb-2" style={{ fontSize: '16px' }}>
+                                                    Overall Match: {aiData.overall_match_percentage ?? 0}%
+                                                </h4>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-5">
+                                                    <div
+                                                        className="bg-indigo-500 h-5 rounded-full transition-all duration-500"
+                                                        style={{ width: `${aiData.overall_match_percentage ?? 0}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Scores Bars */}
+                                            <div className="grid grid-cols-3 gap-4">
+                                                {['semantic_score', 'keyword_score', 'keyword_gap'].map((key) => (
+                                                    <div key={key}>
+                                                        <h5 className="text-gray-700 dark:text-gray-300 text-base font-medium capitalize mb-1">
+                                                            {key.replace('_', ' ')}
+                                                        </h5>
+                                                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-4">
+                                                            <div
+                                                                className="bg-rose-500 h-4 rounded-full transition-all duration-500"
+                                                                style={{ width: `${aiData.scores?.[key] ?? 0}%` }}
+                                                            />
+                                                        </div>
+                                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                                            {aiData.scores?.[key] ?? 0}%
+                                                        </p>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            {/* Skills Table */}
+                                            <div className="overflow-x-auto">
+                                                <table className="min-w-full text-left border border-gray-300 dark:border-gray-600 rounded" style={{ fontSize: '14px' }}>
+                                                    <thead className="bg-gray-100 dark:bg-gray-700">
+                                                        <tr>
+                                                            <th className="p-2">Skill</th>
+                                                            <th className="p-2">Resume</th>
+                                                            <th className="p-2">Job Description</th>
+                                                            <th className="p-2">Gap</th>
+                                                            <th className="p-2">Matched</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {aiData.skills_analysis?.map((skill) => (
+                                                            <tr key={skill.skill} className="border-t border-gray-200 dark:border-gray-600">
+                                                                <td className="p-2">{skill.skill}</td>
+                                                                <td className="p-2">{skill.resume_count}</td>
+                                                                <td className="p-2">{skill.job_count}</td>
+                                                                <td className="p-2">{skill.gap}</td>
+                                                                <td className="p-2">{skill.matched ? <CheckIcon className="h-5 w-5 text-green-500" /> : '-'}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            {/* Strengths & Weaknesses */}
+                                            <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 break-inside-avoid">
+                                                <div className="flex-1">
+                                                    <h5 className="font-medium text-gray-700 dark:text-gray-300" style={{ fontSize: '15px' }}>Strengths</h5>
+                                                    <p className="text-gray-700 dark:text-gray-200 whitespace-pre-wrap" style={{ fontSize: '14px' }}>
+                                                        {aiData.strengths ?? 'N/A'}
+                                                    </p>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h5 className="font-medium text-gray-700 dark:text-gray-300" style={{ fontSize: '15px' }}>Weaknesses</h5>
+                                                    <p className="text-gray-700 dark:text-gray-200 whitespace-pre-wrap" style={{ fontSize: '14px' }}>
+                                                        {aiData.weaknesses ?? 'N/A'}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Detailed AI Text */}
+                                            <div>
+                                                <h5 className="text-gray-700 dark:text-gray-300 font-medium mb-1" style={{ fontSize: '15px' }}>Detailed Analysis</h5>
+                                                <p className="text-gray-700 dark:text-gray-200 whitespace-pre-wrap" style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                                                    {aiData.ai_text || 'No report available'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 )}
