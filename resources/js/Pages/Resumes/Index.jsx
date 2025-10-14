@@ -200,7 +200,7 @@ export default function Index({ resumes, filters }) {
                                     <Link
                                         key={index}
                                         href={link.url || '#'}
-                                        className={`px-3 py-1 border rounded-md transition whitespace-nowrap ${link.active
+                                        className={`px-3 py-1 border rounded-md transition whitespace-nowrap dark:border-gray-500 ${link.active
                                                 ? 'bg-gray-800 text-white'
                                                 : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600'
                                             } ${!link.url ? 'pointer-events-none opacity-50' : ''}`}
