@@ -14,7 +14,7 @@
 
 - 🤖 AI-powered resume-job matching using **Gemini 2.5 Flash**
 - 📄 Upload job descriptions & resumes (PDF, DOCX, DOC, TXT, JSON, XML)
-- 📊 Get scores: Match %, Keyword %, Semantic Score, Keyword Gap
+- 📊 Get scores: Match %, Keyword %, Semantic Score, Keyword Gap, ATS Score
 - 📥 Download AI Scan Report (PDF)
 - 🔍 Automatic **skill extraction**, comparison & gap analysis
 - 💬 Full AI-generated summary for each resume
