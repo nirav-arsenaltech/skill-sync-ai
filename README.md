@@ -14,7 +14,7 @@
 
 - 🤖 AI-powered resume-job matching using **Gemini 2.5 Flash**
 - 📄 Upload job descriptions & resumes (PDF, DOCX, DOC, TXT, JSON, XML)
-- 📊 Get scores: Match %, Keyword %, Semantic Score, Keyword Gap
+- 📊 Get scores: Match %, Keyword %, Semantic Score, Keyword Gap, ATS Score
 - 📥 Download AI Scan Report (PDF)
 - 🔍 Automatic **skill extraction**, comparison & gap analysis
 - 💬 Full AI-generated summary for each resume
@@ -41,12 +41,14 @@
 
 ## 📂 Resume File Support
 
-| Format | Support       | Parser                     |
-|--------|---------------|----------------------------|
-| `.pdf` | ✅ Supported   | Spatie PdfToText           |
-| `.docx`| ✅ Supported   | PhpOffice PhpWord          |
-| `.doc` | ✅ With LibreOffice | LibreOffice CLI         |
-| `.txt` | ✅ Supported   | Native PHP                 |
+| Format  | Support              | Parser                        |
+|---------|----------------------|-------------------------------|
+| `.pdf`  | ✅ Supported          | Spatie PdfToText              |
+| `.docx` | ✅ Supported          | PhpOffice PhpWord             |
+| `.doc`  | ✅ With LibreOffice   | LibreOffice CLI               |
+| `.txt`  | ✅ Supported          | Native PHP                    |
+| `.json` | ✅ Supported          | Native PHP (json_decode)      |
+| `.xml`  | ✅ Supported          | Native PHP (simplexml_load_file) |
 
 > ⚠️ `.doc` conversion requires LibreOffice installed (`soffice` CLI). If unavailable, it's skipped with a warning.
 
@@ -104,6 +106,7 @@ FILESYSTEM_DISK=public
 # AI Integration
 AI_DRIVER=gemini
 GOOGLE_AI_KEY=your_gemini_api_key
+GEMINI_MODEL=your_gemini_model #ex: gemini-2.5-flash
 ```
 
 ---
