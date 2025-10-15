@@ -9,6 +9,7 @@ import { ChartBarIcon, EyeIcon, CheckIcon, PencilIcon, TrashIcon, XMarkIcon, Arr
 import { Head } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
+import Select from 'react-select';
 
 export default function Analytics({ jobs, resumes, matchedHistory: initialHistory }) {
     const { props } = usePage();
@@ -28,6 +29,14 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
         if (flash.success) toast.success(flash.success);
         if (flash.error) toast.error(flash.error);
     }, [flash]);
+    const jobOptions = jobs.map(job => ({
+        value: job.id,
+        label: job.title,
+    }));
+
+    const handleChange = (selectedOption) => {
+        setSelectedJob(selectedOption);
+    };
 
     const handleDownload = async (matchId) => {
         setDownloading(matchId);
@@ -124,7 +133,8 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
         }
 
         setLoading(true);
-        router.post('/analytics/scan', { job_id: selectedJob, resume_ids: selectedResumes }, {
+        const jobId = typeof selectedJob == 'object' ? selectedJob.value : selectedJob;
+        router.post('/analytics/scan', { job_id: jobId, resume_ids: selectedResumes }, {
             preserveState: true,
             replace: true,
             onSuccess: (page) => {
@@ -161,22 +171,19 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
 
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6">
                     {/* Job Selection */}
-                    <div>
+                    <div className="w-full">
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             Select Job
                         </label>
-                        <select
+                        <Select
                             value={selectedJob}
-                            onChange={(e) => setSelectedJob(e.target.value)}
-                            className="w-full border rounded-lg px-4 py-2 dark:bg-gray-700 dark:text-white"
-                        >
-                            <option value="">-- Select a Job --</option>
-                            {jobs.map((job) => (
-                                <option key={job.id} value={job.id}>
-                                    {job.title}
-                                </option>
-                            ))}
-                        </select>
+                            onChange={handleChange}
+                            options={jobOptions}
+                            placeholder="Search and Select a Job"
+                            classNamePrefix="react-select"
+                            isClearable
+                            isSearchable
+                        />
                     </div>
 
                     {/* Resume Selection */}
@@ -507,7 +514,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                         key={`report-${match.id}`}
                                         id={`report-content-${match.id}`}
                                         className="hidden w-full p-6 bg-white"
-                                        style={{ background: 'white', padding: '20px', fontSize: '20px',  lineHeight: 'normal' }}
+                                        style={{ background: 'white', padding: '20px', fontSize: '20px', lineHeight: 'normal' }}
                                     >
                                         {/* Logo */}
                                         <div className="flex items-center justify-center mb-6">
@@ -515,24 +522,24 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                             <img src="/images/skillsync-logo.png" alt="SkillSync.ai" className="h-12 object-contain" />
                                         </div>
 
-                                        <div className="space-y-6" style={{ fontSize: '20px',  lineHeight: 'normal' }}>
+                                        <div className="space-y-6" style={{ fontSize: '20px', lineHeight: 'normal' }}>
                                             {/* Overall Match & ATS Score*/}
                                             <div className="flex space-x-4 mb-6">
                                                 {/* Overall Match */}
                                                 <div className="flex-1">
-                                                <h4 className="font-semibold text-gray-800 mb-3" style={{ fontSize: '20px', lineHeight: 'normal' }}>
-                                                    Overall Match: {aiData.overall_match_percentage ?? 0}%
-                                                </h4>
-                                                <div className="w-full bg-gray-200 rounded-full h-5">
-                                                    <div
-                                                        className="bg-indigo-500 h-5 rounded-full transition-all duration-500"
-                                                        style={{ width: `${aiData.overall_match_percentage ?? 0}%` }}
-                                                    />
-                                                </div>
+                                                    <h4 className="font-semibold text-gray-800 mb-3" style={{ fontSize: '20px', lineHeight: 'normal' }}>
+                                                        Overall Match: {aiData.overall_match_percentage ?? 0}%
+                                                    </h4>
+                                                    <div className="w-full bg-gray-200 rounded-full h-5">
+                                                        <div
+                                                            className="bg-indigo-500 h-5 rounded-full transition-all duration-500"
+                                                            style={{ width: `${aiData.overall_match_percentage ?? 0}%` }}
+                                                        />
+                                                    </div>
                                                 </div>
                                                 {/* ATS Score */}
                                                 <div className="flex-1">
-                                                    <h4 className="font-semibold text-gray-800 mb-3" style={{fontSize: '20px', lineHeight: 'normal' }}>
+                                                    <h4 className="font-semibold text-gray-800 mb-3" style={{ fontSize: '20px', lineHeight: 'normal' }}>
                                                         ATS Score: {aiData.ats_best_practice?.ats_score ?? 0}%
                                                     </h4>
                                                     <div className="w-full bg-gray-200 rounded-full h-5">
@@ -548,7 +555,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                             <div className="grid grid-cols-3 gap-4">
                                                 {['semantic_score', 'keyword_score', 'keyword_gap'].map((key) => (
                                                     <div key={key}>
-                                                        <h5 className="text-gray-700 text-base font-medium capitalize mb-3" style={{fontSize: '20px', lineHeight: 'normal' }}>
+                                                        <h5 className="text-gray-700 text-base font-medium capitalize mb-3" style={{ fontSize: '20px', lineHeight: 'normal' }}>
                                                             {key.replace('_', ' ')}
                                                         </h5>
                                                         <div className="w-full bg-gray-200 rounded-full h-4">
@@ -557,7 +564,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                                 style={{ width: `${aiData.scores?.[key] ?? 0}%` }}
                                                             />
                                                         </div>
-                                                        <p className="text-sm text-gray-600 mt-1"  style={{fontSize: '16px', lineHeight: 'normal' }}>
+                                                        <p className="text-sm text-gray-600 mt-1" style={{ fontSize: '16px', lineHeight: 'normal' }}>
                                                             {aiData.scores?.[key] ?? 0}%
                                                         </p>
                                                     </div>

@@ -2,10 +2,10 @@ import Layout from '../Dashboard/Components/Layout';
 import React, { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
 import { Head } from '@inertiajs/react';
-import { ChartBarIcon,  CheckIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, CheckIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 export default function MatchHistory({ match, aiData, jobTitle, resumeName }) {
-const [showAllSkills, setShowAllSkills] = useState(false);
+    const [showAllSkills, setShowAllSkills] = useState(false);
 
     return (
         <Layout>
@@ -23,7 +23,7 @@ const [showAllSkills, setShowAllSkills] = useState(false);
                     </Link>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-700">
-                    <div  className="p-4 border-t border-gray-200 dark:border-gray-600">
+                    <div className="p-4 border-t border-gray-200 dark:border-gray-600">
 
                         <div className="space-y-4">
                             {/* Overall Match Bar */}
