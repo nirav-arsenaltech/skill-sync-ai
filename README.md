@@ -4,9 +4,9 @@
 
 ---
 
-## 🔗 Live Demo
+## 🔗  Demo
 
-🌐 [http://skillsync.ai](http://skillsync.ai)
+🌐 http://skillsync.local/
 
 ---
 
