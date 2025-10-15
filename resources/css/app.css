@@ -11,6 +11,9 @@
 .react-select__control--is-focused {
     @apply border-blue-500;
 }
+.react-select__control:hover {
+    @apply dark:border-gray-500;
+}
 
 :is(.dark .react-select__input-container input) {
     color: white !important;
