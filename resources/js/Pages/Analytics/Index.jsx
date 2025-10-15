@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import autoTable from 'jspdf-autotable';
@@ -11,9 +11,10 @@ import { Link } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import Select from 'react-select';
 
-export default function Analytics({ jobs, resumes, matchedHistory: initialHistory }) {
+export default function Analytics({ jobs, resumes, matchedHistory: initialHistory, pagination }) {
     const { props } = usePage();
     const flash = props.flash || {};
+    const matchedHistoryRef = useRef(null); 
 
     const [selectedJob, setSelectedJob] = useState('');
     const [selectedResumes, setSelectedResumes] = useState([]);
@@ -24,6 +25,26 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
     const [matchToDelete, setMatchToDelete] = useState(null);
     const [downloading, setDownloading] = useState(null);
     const [showAllSkills, setShowAllSkills] = useState(false);
+    const [perPage, setPerPage] = useState(pagination.per_page || 10);
+    const [currentPage, setCurrentPage] = useState(pagination.current_page || 1);
+
+    const scrollToMatchedHistory = () => {
+        const matchedHistoryElement = document.querySelector('.matched-history-table');  // Target the table directly by class
+        if (matchedHistoryElement) {
+            window.scrollTo({
+                top: matchedHistoryElement.offsetTop - 100,
+                behavior: 'smooth',
+            });
+        }
+    };
+
+    const handlePerPageChange = (e) => {
+        const newPerPage = e.target.value;
+        setPerPage(newPerPage);
+        setCurrentPage(1);
+        router.get(location.pathname, { per_page: newPerPage, page: 1 });
+        setTimeout(scrollToMatchedHistory, 300);
+    };
 
     useEffect(() => {
         if (flash.success) toast.success(flash.success);
@@ -280,7 +301,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                 </div>
                 {matchedHistory.length > 0 && (
                     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6 mt-4">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 matched-history-table">
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
                                 Scan History
                             </h3>
@@ -361,140 +382,6 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                         </button>
                                                     </td>
                                                 </tr>
-
-                                                {/* Toggle Row */}
-                                                {/* <tr id={`report-${match.id}`} className="hidden bg-gray-50 dark:bg-gray-700">
-                                                    <td colSpan={9} className="p-4 border-t border-gray-200 dark:border-gray-600">
-                                                        <div className="space-y-4">
-                                                            <div className="flex space-x-4 mb-6">
-                                                                <div className="flex-1">
-                                                                    <h4 className="font-semibold text-gray-800 dark:text-white text-sm mb-1">
-                                                                        Overall Match: {aiData.overall_match_percentage ?? 0}%
-                                                                    </h4>
-                                                                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-4">
-                                                                        <div
-                                                                            className="bg-indigo-500 h-4 rounded-full transition-all duration-500"
-                                                                            style={{ width: `${aiData.overall_match_percentage ?? 0}%` }}
-                                                                        ></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="flex-1">
-                                                                    <h4 className="font-semibold text-gray-800 dark:text-white text-sm mb-1">
-                                                                        ATS Score: {aiData.ats_best_practice?.ats_score ?? 0}%
-                                                                    </h4>
-                                                                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-4">
-                                                                        <div
-                                                                            className="bg-green-500 h-4 rounded-full transition-all duration-500"
-                                                                            style={{ width: `${aiData.ats_best_practice?.ats_score ?? 0}%` }}
-                                                                        ></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="flex space-x-4">
-                                                                {['semantic_score', 'keyword_score', 'keyword_gap'].map((key) => (
-                                                                    <div key={key} className="flex-1">
-                                                                        <h5 className="text-gray-700 dark:text-gray-300 text-sm font-medium capitalize mb-1">
-                                                                            {key.replace('_', ' ')}
-                                                                        </h5>
-                                                                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
-                                                                            <div
-                                                                                className="bg-rose-500 h-3 rounded-full transition-all duration-500"
-                                                                                style={{ width: `${aiData.scores?.[key] ?? 0}%` }}
-                                                                            ></div>
-                                                                        </div>
-                                                                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                                                                            {aiData.scores?.[key] ?? 0}%
-                                                                        </p>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                            <div className="mb-6">
-                                                                <h4 className="text-gray-800 dark:text-white font-semibold mb-2">ATS Best Practices</h4>
-
-                                                                <table className="w-full text-left border-collapse">
-                                                                    <tbody>
-                                                                        {aiData.ats_best_practice &&
-                                                                            Object.entries(aiData.ats_best_practice)
-                                                                                .filter(([key]) => key !== 'ats_score')
-                                                                                .map(([key, value]) => (
-                                                                                    <tr key={key} className="border-b border-gray-200 dark:border-gray-600">
-                                                                                        <td className="px-2 py-2 font-medium text-gray-700 dark:text-gray-300 capitalize">
-                                                                                            {key.replace(/_/g, ' ')}
-                                                                                        </td>
-                                                                                        <td className="px-2 py-2 text-gray-600 dark:text-gray-200">{value}</td>
-                                                                                    </tr>
-                                                                                ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                            <div className="overflow-x-auto mt-4">
-                                                                <table className="min-w-full text-left border border-gray-300 dark:border-gray-600 rounded">
-                                                                    <thead className="bg-gray-100 dark:bg-gray-600">
-                                                                        <tr>
-                                                                            <th className="p-2">Skills</th>
-                                                                            <th className="p-2">Resume</th>
-                                                                            <th className="p-2">Job Description</th>
-                                                                            <th className="p-2">Gap</th>
-                                                                            <th className="p-2">Matched</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {aiData.skills_analysis &&
-                                                                            aiData.skills_analysis.slice(0, showAllSkills ? aiData.skills_analysis.length : 6).map((skill) => (
-                                                                            <tr key={skill.skill} className="border-t border-gray-200 dark:border-gray-600">
-                                                                                <td className="p-2">{skill.skill}</td>
-                                                                                <td className="p-2">{skill.resume_count}</td>
-                                                                                <td className="p-2">{skill.job_count}</td>
-                                                                                <td className="p-2">{skill.gap}</td>
-                                                                                <td className="p-2">
-                                                                                    {skill.matched ? (
-                                                                                        <CheckIcon className="h-5 w-5 text-green-500" />
-                                                                                    ) : (
-                                                                                        "-"
-                                                                                    )}
-                                                                                </td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                                {aiData.skills_analysis?.length > 6 && (
-                                                                    <div className="flex justify-center mt-4">
-                                                                        <button
-                                                                            onClick={() => setShowAllSkills(!showAllSkills)}
-                                                                            className="px-4 py-2 text-sm font-semibold text-blue-600 dark:text-blue-400 border border-blue-500 dark:border-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
-                                                                        >
-                                                                            {showAllSkills ? "Hide more skills" : "Show more skills"}
-                                                                        </button>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-
-                                                            <div className="flex space-x-4 mt-4">
-                                                                <div className="flex-1">
-                                                                    <h5 className="text-gray-800 dark:text-white font-semibold mb-2">Strengths</h5>
-                                                                    <p className="text-m text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
-                                                                        {aiData.strengths ?? 'N/A'}
-                                                                    </p>
-                                                                </div>
-                                                                <div className="flex-1">
-                                                                    <h5 className="text-gray-800 dark:text-white font-semibold mb-2">Weaknesses</h5>
-                                                                    <p className="text-m text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
-                                                                        {aiData.weaknesses ?? 'N/A'}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="mt-4">
-                                                                <h5 className="text-gray-800 dark:text-white font-semibold mb-2">Detailed Analysis</h5>
-                                                                <p className="text-m text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
-                                                                    {aiData.ai_text || 'No report available'}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr> */}
                                             </React.Fragment>
                                         );
                                     })}
@@ -643,6 +530,42 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                     </div>
                                 );
                             })}
+                        </div>
+                        {/* Pagination + Per Page Selector */}
+                        <div className="container mt-6">
+                            <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0">
+                                {/* Per Page Selector */}
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-gray-700 dark:text-gray-300">Show:</span>
+                                    <select
+                                        value={perPage}
+                                        onChange={handlePerPageChange}
+                                        className="border rounded px-5 py-1 dark:bg-gray-800 dark:text-white text-sm"
+                                    >
+                                        {[10, 25, 50, 100].map((n) => (
+                                            <option key={n} value={n}>{n}</option>
+                                        ))}
+                                    </select>
+                                    <span className="text-gray-500 dark:text-gray-400">of {pagination.total} entries</span>
+                                </div>
+
+                                {/* Pagination Links */}
+                                <div className="flex space-x-1 overflow-x-auto">
+                                    {pagination.links
+                                        .filter(link => link.url || link.label === '« Previous' || link.label === 'Next »')
+                                        .map((link, index) => (
+                                            <Link
+                                                key={index}
+                                                href={link.url || '#'}
+                                                className={`px-3 py-1 border rounded-md transition whitespace-nowrap dark:border-gray-500 ${link.active
+                                                    ? 'bg-gray-800 text-white'
+                                                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600'
+                                                    } ${!link.url ? 'pointer-events-none opacity-50' : ''}`}
+                                                dangerouslySetInnerHTML={{ __html: link.label }}
+                                            />
+                                        ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}
