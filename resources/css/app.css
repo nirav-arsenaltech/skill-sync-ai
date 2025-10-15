@@ -1,3 +1,92 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Control (Select Box) */
+.react-select__control {
+    @apply w-full px-2 py-1 border rounded-lg text-black dark:bg-gray-700 dark:border-gray-600 dark:text-white;
+}
+
+/* Control when focused */
+.react-select__control--is-focused {
+    @apply border-blue-500;
+}
+
+:is(.dark .react-select__input-container input) {
+    color: white !important;
+}
+/* Dropdown Menu */
+.react-select__menu {
+    @apply bg-white dark:bg-gray-800 text-black dark:text-white;
+}
+
+/* Option */
+.react-select__option {
+    @apply py-2 px-4 cursor-pointer bg-transparent dark:bg-transparent;
+}
+
+/* Option when selected */
+.react-select__option--is-selected {
+    @apply bg-blue-500 text-white; 
+}
+
+/* Option when selected in Dark Mode */
+.react-select__option--is-selected {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+/* Option when focused */
+.react-select__option--is-focused {
+    @apply bg-gray-200 dark:bg-gray-600;
+}
+
+/* Placeholder */
+.react-select__placeholder {
+    @apply text-gray-400 dark:text-gray-500;
+}
+
+/* Single Value (Selected Text) */
+.react-select__single-value {
+    @apply text-black dark:text-white;
+}
+
+/* Dropdown Indicator */
+.react-select__dropdown-indicator {
+    @apply text-gray-400 dark:text-gray-500;
+}
+
+/* Indicator Separator */
+.react-select__indicator-separator {
+    @apply bg-gray-600 dark:bg-gray-500;
+}
+
+/* Option Hover (when not selected) */
+.react-select__option:hover {
+    @apply bg-gray-100 dark:bg-gray-700;
+}
+
+/* Input Search */
+.react-select__input {
+    @apply text-black dark:text-white;
+}
+
+/* Input Search when focused */
+.react-select__input--is-focused {
+    @apply text-black dark:text-white;
+}
+
+/* Control Text when No Selection */
+.react-select__single-value {
+    @apply text-black dark:text-white;
+}
+
+/* Remove the blue outline and focus ring */
+.react-select__input-container input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.react-select__input-container input {
+    cursor: text;
+}
