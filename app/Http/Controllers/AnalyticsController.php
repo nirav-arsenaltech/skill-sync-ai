@@ -27,32 +27,32 @@ class AnalyticsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)
             ->withQueryString();
-            $matchedHistoryData = $matchedHistory->map(function ($match) use ($jobs) {
-                $resume = $match->resume;
+        $matchedHistoryData = $matchedHistory->map(function ($match) use ($jobs) {
+            $resume = $match->resume;
 
-                $aiData = [];
-                if ($match->ai_result && is_string($match->ai_result)) {
-                    $decoded = json_decode($match->ai_result, true);
-                    $aiData = $decoded ?: ['ai_text' => $match->ai_result];
-                }
+            $aiData = [];
+            if ($match->ai_result && is_string($match->ai_result)) {
+                $decoded = json_decode($match->ai_result, true);
+                $aiData = $decoded ?: ['ai_text' => $match->ai_result];
+            }
 
-                $aiData['overall_match_percentage'] = $match->match_percentage ?? 0;
-                $aiData['scores'] = [
-                    'semantic_score' => $match->semantic_score ?? 0,
-                    'keyword_score' => $match->keyword_score ?? 0,
-                    'keyword_gap' => $match->keyword_gap ?? 0,
-                ];
+            $aiData['overall_match_percentage'] = $match->match_percentage ?? 0;
+            $aiData['scores'] = [
+                'semantic_score' => $match->semantic_score ?? 0,
+                'keyword_score' => $match->keyword_score ?? 0,
+                'keyword_gap' => $match->keyword_gap ?? 0,
+            ];
 
 
-                return [
-                    'id' => $match->id,
-                    'resume_id' => $match->resume_id,
-                    'job_description_id' => $match->job_description_id,
-                    'created_at' => $match->created_at,
-                    'resume_name' => $resume->name ?? 'N/A',
-                    'ai_result' => $aiData,
-                ];
-            });
+            return [
+                'id' => $match->id,
+                'resume_id' => $match->resume_id,
+                'job_description_id' => $match->job_description_id,
+                'created_at' => $match->created_at,
+                'resume_name' => $resume->name ?? 'N/A',
+                'ai_result' => $aiData,
+            ];
+        });
 
         return Inertia::render('Analytics/Index', [
             'jobs' => $jobs,
