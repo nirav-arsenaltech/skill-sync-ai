@@ -44,12 +44,16 @@ class AppNeuronMyAgent extends Agent
      * @param array<int, array{name:string, content:string}> $resumes
      * @return string
      */
-    public function analyzeJobAndResumes(string $jobTitle, string $jobDescription, array $resumes): string
+    public function analyzeJobAndResumes(string $jobTitle, string $jobDescription, array $resumes, array $resumeFileTypes): string
     {
 
         // Prepare resume texts
-        $resumeTexts = collect($resumes)->map(function ($resume) {
-            return "Resume Name: {$resume['name']}\nContent:\n{$resume['content']}";
+        $resumeTexts = collect($resumes)->map(function ($resume) use ($resumeFileTypes) {
+            $fileType = $resumeFileTypes[$resume['id']] ?? 'UNKNOWN';
+            return "Resume Name: {$resume['name']}
+                    Resume File Type: {$fileType}
+                    Content:
+                    {$resume['content']}";
         })->implode("\n\n");
 
         // Enhanced system prompt with new capabilities
@@ -57,11 +61,8 @@ class AppNeuronMyAgent extends Agent
             background: [
                 "You are a highly experienced HR AI assistant.",
                 "Your task is to analyze resumes against a job description in detail.",
-                "You must compute: match percentages, semantic relevance, keyword alignment, skill gaps, strengths, weaknesses, and role fit.",
-                "Consider not only exact skill and tool names but also implied experience.",
-                "Group related skills (e.g., Figma, Sketch, Photoshop) under broader categories like 'Design Tools'.",
-                "Treat synonymous or closely related skills as partial matches where applicable.",
-                "If a candidate has strong experience but in a different domain or role (e.g., Frontend Developer vs UI/UX Designer), identify this clearly in a role_fit_summary.",
+                "You must compute: match percentages, semantic relevance, keyword alignment, skill gaps, strengths, weaknesses, and ATS best practices.",
+                "Group related skills under broader categories and treat synonymous skills as partial matches where appropriate.",
                 "Return a valid JSON array (no markdown, no explanation, no text outside JSON).",
                 "Use numeric values 0–100 for all scoring metrics.",
                 "All keys and string values must be double-quoted. Always return valid, parseable JSON."
@@ -88,6 +89,24 @@ class AppNeuronMyAgent extends Agent
             4. "keyword_gap" (0-100): Percentage of JD keywords not found in resume.
         - Extract skills from both JD and resume. Count frequency (resume_count, job_count), compute gap and match status.
         - Recognize synonyms and implied experience where appropriate.
+        - Evaluate ATS best practices for each resume including:
+            - Resume File Type
+            - Email Address
+            - Phone Number
+            - LinkedIn Profile
+            - Job Title Match
+            - Education Match
+            - Experience Match
+            - ats_score (0-100)
+
+        - For Resume File Type, Email, Phone, LinkedIn, Job Title, Education, Experience: 
+        - Always use the actual file type provided for each resume in "Resume File Type".
+        - Example: "Your resume is a PDF, which can easily be scanned by ATS systems."
+        return **short, actionable textual guidance** like:
+            - "Your resume is a PDF, which is easily scanned by ATS systems."
+            - "Your email john@doe.com is on your resume, good job!"
+            - "The job title UX Designer was not found in your resume. Consider including it."
+        - Only ats_score should be numeric (0-100)
         - Return a structured array with the following fields for each resume:
 
         [
@@ -109,9 +128,18 @@ class AppNeuronMyAgent extends Agent
                         "matched": <true/false>
                     }
                 ],
+                "ats_best_practice": {
+                    "resume_file_type": "<text guidance>",
+                    "email_address": "<text guidance>",
+                    "phone_number": "<text guidance>",
+                    "linkedin_profile": "<text guidance>",
+                    "job_title_match": "<text guidance>",
+                    "education_match": "<text guidance>",
+                    "experience_match": "<text guidance>",
+                    "ats_score": <0-100>
+                },
                 "strengths": "<Short paragraph summarizing candidate's strengths>",
                 "weaknesses": "<Short paragraph summarizing candidate's weaknesses>",
-                "role_fit_summary": "<Sentence explaining if this candidate fits the target role well or would be better suited to a different role>",
                 "ai_text": "<Detailed full analysis in natural language>"
             }
         ]

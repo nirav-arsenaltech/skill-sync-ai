@@ -73,6 +73,35 @@ class AnalyticsController extends Controller
         ]);
     }
 
+    public function showMatchHistory($id)
+    {
+        $match = Matches::with('job', 'resume')->findOrFail($id);
+
+        $aiData = match (true) {
+            is_string($match->ai_result) => json_decode($match->ai_result, true) ?: ['ai_text' => $match->ai_result],
+            is_array($match->ai_result) => $match->ai_result,
+            is_object($match->ai_result) => (array) $match->ai_result,
+            default => [],
+        };
+
+        $aiData['overall_match_percentage'] = $match->match_percentage ?? 0;
+        $aiData['scores'] = [
+            'semantic_score' => $match->semantic_score ?? 0,
+            'keyword_score' => $match->keyword_score ?? 0,
+            'keyword_gap' => $match->keyword_gap ?? 0,
+        ];
+
+        $aiData['ats_best_practice'] = $aiData['ats_best_practice'] ?? [];
+        $aiData['skills_analysis'] = $aiData['skills_analysis'] ?? [];
+
+        return Inertia::render('Analytics/MatchHistory', [
+            'match' => $match,
+            'aiData' => $aiData,
+            'jobTitle' => $match->job->title ?? 'N/A',
+            'resumeName' => $match->resume->name ?? 'N/A',
+        ]);
+    }
+
 
 
     public function scan(Request $request)
@@ -95,6 +124,7 @@ class AnalyticsController extends Controller
 
         // Collect resume data
         $resumesData = [];
+        $resumeFileTypes = [];
         foreach ($validated['resume_ids'] as $resumeId) {
             $resume = Resume::where('id', $resumeId)->where('user_id', $userId)->first();
             if (!$resume)
@@ -102,6 +132,7 @@ class AnalyticsController extends Controller
 
             $filePath = storage_path('app/public/' . $resume->file_path);
             $content = '';
+            $ext = 'UNKNOWN';
 
             try {
                 if (file_exists($filePath)) {
@@ -136,24 +167,17 @@ class AnalyticsController extends Controller
 
                         $cmd = $sofficePath . ' --headless --convert-to txt:Text --outdir ' . escapeshellarg($outputDir) . ' ' . escapeshellarg($filePath);
                         exec($cmd, $output, $returnCode);
-
                         if ($returnCode === 0 && file_exists($outputPath)) {
                             $content = file_get_contents($outputPath);
                             unlink($outputPath);
                         } else {
-                            Log::error("LibreOffice failed to convert .doc file", [
-                                'resume_id' => $resume->id,
-                                'cmd' => $cmd,
-                                'output' => $output,
-                                'return_code' => $returnCode,
-                            ]);
+                            Log::error("LibreOffice failed to convert .doc file", ['resume_id' => $resume->id, 'cmd' => $cmd, 'output' => $output, 'return_code' => $returnCode]);
                             continue;
                         }
                     }
 
                     $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1, ISO-8859-15, Windows-1252', true));
                     $content = preg_replace('/[^\PC\s]/u', '', $content);
-
                 }
             } catch (\Exception $e) {
                 Log::error("Error reading resume file ID {$resume->id}: " . $e->getMessage());
@@ -165,12 +189,13 @@ class AnalyticsController extends Controller
                 'name' => $resume->name,
                 'content' => $content,
             ];
+            $resumeFileTypes[$resume->id] = strtoupper($ext);
         }
 
         // --- AI Analysis ---
         try {
             $agent = new AppNeuronMyAgent();
-            $aiResult = $agent->analyzeJobAndResumes($jobTitle, $jobDescription, $resumesData);
+            $aiResult = $agent->analyzeJobAndResumes($jobTitle, $jobDescription, $resumesData, $resumeFileTypes);
         } catch (\Exception $e) {
             Log::error("Error during AI analysis: " . $e->getMessage());
             return back()->with('error', 'AI scan failed. Check logs for details.');
@@ -196,12 +221,19 @@ class AnalyticsController extends Controller
                 $keywordScore = $resumeResult['scores']['keyword_score'] ?? 0;
                 $keywordGap = $resumeResult['scores']['keyword_gap'] ?? 0;
 
-                Log::info("Resume {$resume['name']} scores", [
-                    'match_percentage' => $matchPercentage,
-                    'semantic_score' => $semanticScore,
-                    'keyword_score' => $keywordScore,
-                    'keyword_gap' => $keywordGap,
-                ]);
+                // Format ATS Best Practices if missing
+                if (empty($resumeResult['ats_best_practice'])) {
+                    $resumeResult['ats_best_practice'] = [
+                        'resume_file_type' => "Your resume is a {$resumeFileTypes[$resume['id']]}, which can be scanned by ATS systems.",
+                        'email_address' => "Check that your email address is on your resume.",
+                        'phone_number' => "Check that your phone number is on your resume.",
+                        'linkedin_profile' => "Include LinkedIn profile for better ATS scoring.",
+                        'job_title_match' => "Include your target job title.",
+                        'education_match' => "Make sure your education matches JD requirements.",
+                        'experience_match' => "Include your relevant experience clearly.",
+                        'ats_score' => 0 // default, AI will update if possible
+                    ];
+                }
 
                 // Compute skills analysis if missing
                 if (empty($resumeResult['skills_analysis'])) {

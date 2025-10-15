@@ -8,6 +8,7 @@ import Layout from '../Dashboard/Components/Layout';
 import { ChartBarIcon, EyeIcon, CheckIcon, PencilIcon, TrashIcon, XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { Head } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
+import { Inertia } from '@inertiajs/inertia';
 
 export default function Analytics({ jobs, resumes, matchedHistory: initialHistory }) {
     const { props } = usePage();
@@ -283,8 +284,9 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                         <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Resume</th>
                                         <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Job</th>
                                         <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Match %</th>
-                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Semantic Score%</th>
-                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Keyword Score%</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">ATS Score %</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Semantic Score %</th>
+                                        <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Keyword Score %</th>
                                         <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Keyword Gap</th>
                                         <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
                                         <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Action</th>
@@ -314,6 +316,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                         </Link>
                                                     </td>
                                                     <td className="p-2">{aiData.overall_match_percentage ?? '-'}</td>
+                                                    <td className="p-2">{aiData.ats_best_practice?.ats_score ?? 0}</td>
                                                     <td className="p-2">{aiData.scores?.semantic_score ?? '-'}</td>
                                                     <td className="p-2">{aiData.scores?.keyword_score ?? '-'}</td>
                                                     <td className="p-2">{aiData.scores?.keyword_gap ?? '-'}</td>
@@ -325,10 +328,11 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                         <button
                                                             className="text-blue-600 hover:text-blue-800"
                                                             title="view"
-                                                            onClick={() => {
-                                                                const report = document.getElementById(`report-${match.id}`);
-                                                                report.classList.toggle('hidden');
-                                                            }}
+                                                            onClick={() => Inertia.get(`/analytics/match-history/${match.id}`)}
+                                                            // onClick={() => {
+                                                            //     const report = document.getElementById(`report-${match.id}`);
+                                                            //     report.classList.toggle('hidden');
+                                                            // }}
                                                         >
                                                             <EyeIcon className="h-5 w-5" />
                                                         </button>
@@ -352,27 +356,39 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                 </tr>
 
                                                 {/* Toggle Row */}
-                                                <tr id={`report-${match.id}`} className="hidden bg-gray-50 dark:bg-gray-700">
-                                                    <td colSpan={8} className="p-3 border-t border-gray-200 dark:border-gray-600">
+                                                {/* <tr id={`report-${match.id}`} className="hidden bg-gray-50 dark:bg-gray-700">
+                                                    <td colSpan={9} className="p-4 border-t border-gray-200 dark:border-gray-600">
                                                         <div className="space-y-4">
-                                                            {/* Overall Match Bar */}
-                                                            <div>
-                                                                <h4 className="font-semibold text-gray-800 dark:text-white mb-2">
-                                                                    Overall Match: {aiData.overall_match_percentage ?? 0}%
-                                                                </h4>
-                                                                <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-4">
-                                                                    <div
-                                                                        className="bg-indigo-500 h-4 rounded-full transition-all duration-500"
-                                                                        style={{ width: `${aiData.overall_match_percentage ?? 0}%` }}
-                                                                    ></div>
+                                                            <div className="flex space-x-4 mb-6">
+                                                                <div className="flex-1">
+                                                                    <h4 className="font-semibold text-gray-800 dark:text-white text-sm mb-1">
+                                                                        Overall Match: {aiData.overall_match_percentage ?? 0}%
+                                                                    </h4>
+                                                                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-4">
+                                                                        <div
+                                                                            className="bg-indigo-500 h-4 rounded-full transition-all duration-500"
+                                                                            style={{ width: `${aiData.overall_match_percentage ?? 0}%` }}
+                                                                        ></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="flex-1">
+                                                                    <h4 className="font-semibold text-gray-800 dark:text-white text-sm mb-1">
+                                                                        ATS Score: {aiData.ats_best_practice?.ats_score ?? 0}%
+                                                                    </h4>
+                                                                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-4">
+                                                                        <div
+                                                                            className="bg-green-500 h-4 rounded-full transition-all duration-500"
+                                                                            style={{ width: `${aiData.ats_best_practice?.ats_score ?? 0}%` }}
+                                                                        ></div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
 
-                                                            {/* Scores Bars */}
                                                             <div className="flex space-x-4">
                                                                 {['semantic_score', 'keyword_score', 'keyword_gap'].map((key) => (
                                                                     <div key={key} className="flex-1">
-                                                                        <h5 className="text-gray-700 dark:text-gray-300 text-sm font-medium capitalize">
+                                                                        <h5 className="text-gray-700 dark:text-gray-300 text-sm font-medium capitalize mb-1">
                                                                             {key.replace('_', ' ')}
                                                                         </h5>
                                                                         <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
@@ -387,13 +403,30 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                                     </div>
                                                                 ))}
                                                             </div>
+                                                            <div className="mb-6">
+                                                                <h4 className="text-gray-800 dark:text-white font-semibold mb-2">ATS Best Practices</h4>
 
-                                                            {/* Skills Gap Table */}
+                                                                <table className="w-full text-left border-collapse">
+                                                                    <tbody>
+                                                                        {aiData.ats_best_practice &&
+                                                                            Object.entries(aiData.ats_best_practice)
+                                                                                .filter(([key]) => key !== 'ats_score')
+                                                                                .map(([key, value]) => (
+                                                                                    <tr key={key} className="border-b border-gray-200 dark:border-gray-600">
+                                                                                        <td className="px-2 py-2 font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                                                                            {key.replace(/_/g, ' ')}
+                                                                                        </td>
+                                                                                        <td className="px-2 py-2 text-gray-600 dark:text-gray-200">{value}</td>
+                                                                                    </tr>
+                                                                                ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
                                                             <div className="overflow-x-auto mt-4">
                                                                 <table className="min-w-full text-left border border-gray-300 dark:border-gray-600 rounded">
                                                                     <thead className="bg-gray-100 dark:bg-gray-600">
                                                                         <tr>
-                                                                            <th className="p-2">Skill</th>
+                                                                            <th className="p-2">Skills</th>
                                                                             <th className="p-2">Resume</th>
                                                                             <th className="p-2">Job Description</th>
                                                                             <th className="p-2">Gap</th>
@@ -419,7 +452,6 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                                         ))}
                                                                     </tbody>
                                                                 </table>
-                                                                {/* Show More / Hide Button */}
                                                                 {aiData.skills_analysis?.length > 6 && (
                                                                     <div className="flex justify-center mt-4">
                                                                         <button
@@ -432,32 +464,30 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                                 )}
                                                             </div>
 
-                                                            {/* Strengths & Weaknesses */}
                                                             <div className="flex space-x-4 mt-4">
                                                                 <div className="flex-1">
-                                                                    <h5 className="font-medium text-gray-700 dark:text-gray-300">Strengths</h5>
-                                                                    <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
+                                                                    <h5 className="text-gray-800 dark:text-white font-semibold mb-2">Strengths</h5>
+                                                                    <p className="text-m text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
                                                                         {aiData.strengths ?? 'N/A'}
                                                                     </p>
                                                                 </div>
                                                                 <div className="flex-1">
-                                                                    <h5 className="font-medium text-gray-700 dark:text-gray-300">Weaknesses</h5>
-                                                                    <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
+                                                                    <h5 className="text-gray-800 dark:text-white font-semibold mb-2">Weaknesses</h5>
+                                                                    <p className="text-m text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
                                                                         {aiData.weaknesses ?? 'N/A'}
                                                                     </p>
                                                                 </div>
                                                             </div>
 
-                                                            {/* Detailed AI Text */}
                                                             <div className="mt-4">
-                                                                <h5 className="text-gray-700 dark:text-gray-300 font-medium mb-1">Detailed Analysis</h5>
-                                                                <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
+                                                                <h5 className="text-gray-800 dark:text-white font-semibold mb-2">Detailed Analysis</h5>
+                                                                <p className="text-m text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
                                                                     {aiData.ai_text || 'No report available'}
                                                                 </p>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                </tr>
+                                                </tr> */}
                                             </React.Fragment>
                                         );
                                     })}
@@ -477,18 +507,20 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                         key={`report-${match.id}`}
                                         id={`report-content-${match.id}`}
                                         className="hidden w-full p-6 bg-white"
-                                        style={{ background: 'white', padding: '20px', fontSize: '14px', lineHeight: '1.5' }}
+                                        style={{ background: 'white', padding: '20px', fontSize: '20px',  lineHeight: 'normal' }}
                                     >
                                         {/* Logo */}
                                         <div className="flex items-center justify-center mb-6">
                                             {/* <img src='/images/skillsync-title.png' alt="SkillSync.ai" className="h-12 object-contain" /> */}
-                                            <img src="/images/skillsync-logo.png" alt="SkillSync.ai" className="h-10 object-contain" />
+                                            <img src="/images/skillsync-logo.png" alt="SkillSync.ai" className="h-12 object-contain" />
                                         </div>
 
-                                        <div className="space-y-6" style={{ fontSize: '14px', lineHeight: '1.6' }}>
-                                            {/* Overall Match */}
-                                            <div>
-                                                <h4 className="font-semibold text-gray-800 mb-2" style={{ fontSize: '16px' }}>
+                                        <div className="space-y-6" style={{ fontSize: '20px',  lineHeight: 'normal' }}>
+                                            {/* Overall Match & ATS Score*/}
+                                            <div className="flex space-x-4 mb-6">
+                                                {/* Overall Match */}
+                                                <div className="flex-1">
+                                                <h4 className="font-semibold text-gray-800 mb-3" style={{ fontSize: '20px', lineHeight: 'normal' }}>
                                                     Overall Match: {aiData.overall_match_percentage ?? 0}%
                                                 </h4>
                                                 <div className="w-full bg-gray-200 rounded-full h-5">
@@ -497,13 +529,26 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                         style={{ width: `${aiData.overall_match_percentage ?? 0}%` }}
                                                     />
                                                 </div>
+                                                </div>
+                                                {/* ATS Score */}
+                                                <div className="flex-1">
+                                                    <h4 className="font-semibold text-gray-800 mb-3" style={{fontSize: '20px', lineHeight: 'normal' }}>
+                                                        ATS Score: {aiData.ats_best_practice?.ats_score ?? 0}%
+                                                    </h4>
+                                                    <div className="w-full bg-gray-200 rounded-full h-5">
+                                                        <div
+                                                            className="bg-green-500 h-5 rounded-full transition-all duration-500"
+                                                            style={{ width: `${aiData.ats_best_practice?.ats_score ?? 0}%` }}
+                                                        ></div>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             {/* Scores Bars */}
                                             <div className="grid grid-cols-3 gap-4">
                                                 {['semantic_score', 'keyword_score', 'keyword_gap'].map((key) => (
                                                     <div key={key}>
-                                                        <h5 className="text-gray-700 text-base font-medium capitalize mb-1">
+                                                        <h5 className="text-gray-700 text-base font-medium capitalize mb-3" style={{fontSize: '20px', lineHeight: 'normal' }}>
                                                             {key.replace('_', ' ')}
                                                         </h5>
                                                         <div className="w-full bg-gray-200 rounded-full h-4">
@@ -512,19 +557,38 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                                 style={{ width: `${aiData.scores?.[key] ?? 0}%` }}
                                                             />
                                                         </div>
-                                                        <p className="text-sm text-gray-600 mt-1">
+                                                        <p className="text-sm text-gray-600 mt-1"  style={{fontSize: '16px', lineHeight: 'normal' }}>
                                                             {aiData.scores?.[key] ?? 0}%
                                                         </p>
                                                     </div>
                                                 ))}
                                             </div>
 
+                                            <div className="mb-6">
+                                                <h4 className="text-gray-800  font-semibold mb-3">ATS Best Practices</h4>
+                                                {/* ATS Details Table */}
+                                                <table className="w-full text-left border-collapse">
+                                                    <tbody>
+                                                        {aiData.ats_best_practice &&
+                                                            Object.entries(aiData.ats_best_practice)
+                                                                .filter(([key]) => key !== 'ats_score')
+                                                                .map(([key, value]) => (
+                                                                    <tr key={key} className="border-b border-gray-200">
+                                                                        <td className="px-2 py-2 font-medium text-gray-700 capitalize">
+                                                                            {key.replace(/_/g, ' ')}
+                                                                        </td>
+                                                                        <td className="px-2 py-2 text-gray-600">{value}</td>
+                                                                    </tr>
+                                                                ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                             {/* Skills Table */}
                                             <div className="overflow-x-auto">
-                                                <table className="min-w-full text-left border border-gray-300 rounded" style={{ fontSize: '14px' }}>
+                                                <table className="min-w-full text-left border border-gray-300 rounded" style={{ fontSize: '22px', lineHeight: 'normal' }}>
                                                     <thead className="bg-gray-100">
                                                         <tr>
-                                                            <th className="p-2">Skill</th>
+                                                            <th className="p-2">Skills</th>
                                                             <th className="p-2">Resume</th>
                                                             <th className="p-2">Job Description</th>
                                                             <th className="p-2">Gap</th>
@@ -548,14 +612,14 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                             {/* Strengths & Weaknesses */}
                                             <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 break-inside-avoid">
                                                 <div className="flex-1">
-                                                    <h5 className="font-medium text-gray-700" style={{ fontSize: '15px' }}>Strengths</h5>
-                                                    <p className="text-gray-700 whitespace-pre-wrap" style={{ fontSize: '14px' }}>
+                                                    <h5 className="text-gray-800 font-semibold mb-3" style={{ fontSize: '22px' }}>Strengths</h5>
+                                                    <p className="text-gray-700 whitespace-pre-wrap" style={{ fontSize: '20px', lineHeight: 'normal' }}>
                                                         {aiData.strengths ?? 'N/A'}
                                                     </p>
                                                 </div>
                                                 <div className="flex-1">
-                                                    <h5 className="font-medium text-gray-700" style={{ fontSize: '15px' }}>Weaknesses</h5>
-                                                    <p className="text-gray-700 whitespace-pre-wrap" style={{ fontSize: '14px' }}>
+                                                    <h5 className="text-gray-800 font-semibold mb-3" style={{ fontSize: '22px' }}>Weaknesses</h5>
+                                                    <p className="text-gray-700 whitespace-pre-wrap" style={{ fontSize: '20px', lineHeight: 'normal' }}>
                                                         {aiData.weaknesses ?? 'N/A'}
                                                     </p>
                                                 </div>
@@ -563,8 +627,8 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
 
                                             {/* Detailed AI Text */}
                                             <div>
-                                                <h5 className="text-gray-700 font-medium mb-1" style={{ fontSize: '15px' }}>Detailed Analysis</h5>
-                                                <p className="text-gray-700 whitespace-pre-wrap" style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                                                <h5 className="text-gray-800 font-semibold mb-3" style={{ fontSize: '22px' }}>Detailed Analysis</h5>
+                                                <p className="text-gray-700 whitespace-pre-wrap" style={{ fontSize: '20px', lineHeight: 'normal' }}>
                                                     {aiData.ai_text || 'No report available'}
                                                 </p>
                                             </div>

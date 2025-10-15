@@ -23,9 +23,7 @@ export default function Index({ resumes, filters }) {
     };
 
     const confirmDelete = () => {
-        router.delete(`/resumes/${deleteId}`, {
-            onSuccess: () => toast.success('Resume deleted successfully.'),
-        });
+        router.delete(`/resumes/${deleteId}`);
         setDeleteId(null);
     };
 

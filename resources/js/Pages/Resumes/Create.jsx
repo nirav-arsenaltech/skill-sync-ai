@@ -4,6 +4,7 @@ import { Link } from '@inertiajs/react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { Head } from '@inertiajs/react';
+import { PaperClipIcon } from '@heroicons/react/24/outline';
 
 export default function Create() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -62,9 +63,18 @@ export default function Create() {
                                     setData('file', e.target.files[0]);
                                     setFileName(e.target.files[0]?.name || '');
                                 }}
-                                className={`w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white
-                                    ${errors.file ? 'border-red-600 border-2' : 'border border-gray-300 dark:border-gray-600'}`}
+                                className="hidden"
+                                id="file_input"
                             />
+
+                            <label
+                                htmlFor="file_input"
+                                className={`cursor-pointer border border-gray-300 dark:bg-gray-900 dark:border-gray-700 rounded-md py-2 px-4 inline-flex items-center
+                                ${errors.file ? 'border-red-600 dark:border-red-600 border-2' : ''}`}
+                            >
+                                <PaperClipIcon className="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" />
+                                <span className="truncate">{fileName || 'Choose a file'}</span>
+                            </label>
 
                             {fileName && <p className="mt-1 text-gray-500">{fileName}</p>}
                             {errors.file && <div className="mt-1 text-red-600">{errors.file}</div>}

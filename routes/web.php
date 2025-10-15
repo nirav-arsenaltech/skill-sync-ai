@@ -41,4 +41,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
     Route::post('/analytics/scan', [AnalyticsController::class, 'scan'])->name('analytics.scan');
     Route::delete('/analytics/{match}', [AnalyticsController::class, 'destroy'])->name('analytics.destroy');
+    Route::get('/analytics/match-history/{id}', [AnalyticsController::class, 'showMatchHistory'])->name('analytics.match-history');
 });
