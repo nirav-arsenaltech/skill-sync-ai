@@ -50,7 +50,7 @@ class AnalyticsController extends Controller
                     'keyword_score' => $match->keyword_score ?? 0,
                     'keyword_gap' => $match->keyword_gap ?? 0,
                 ];
-               
+
 
                 return [
                     'id' => $match->id,
@@ -297,7 +297,7 @@ class AnalyticsController extends Controller
         }
         $match->delete();
 
-        return redirect()->route('analytics.index')->with('flash', ['success' => 'Match Deleted successfully!']);;
+        return redirect()->route('analytics.index')->with('flash', ['success' => 'Match Deleted successfully!']);
     }
 
 }
