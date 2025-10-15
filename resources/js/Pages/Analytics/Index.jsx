@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import autoTable from 'jspdf-autotable';
@@ -14,6 +14,7 @@ import Select from 'react-select';
 export default function Analytics({ jobs, resumes, matchedHistory: initialHistory, pagination }) {
     const { props } = usePage();
     const flash = props.flash || {};
+    const matchedHistoryRef = useRef(null); 
 
     const [selectedJob, setSelectedJob] = useState('');
     const [selectedResumes, setSelectedResumes] = useState([]);
@@ -27,12 +28,23 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
     const [perPage, setPerPage] = useState(pagination.per_page || 10);
     const [currentPage, setCurrentPage] = useState(pagination.current_page || 1);
 
+    const scrollToMatchedHistory = () => {
+        if (matchedHistoryRef.current) {
+            matchedHistoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     const handlePerPageChange = (e) => {
         const newPerPage = e.target.value;
         setPerPage(newPerPage);
         setCurrentPage(1);
         router.get(location.pathname, { per_page: newPerPage, page: 1 });
+        setTimeout(scrollToMatchedHistory, 300);
     };
+
+    useEffect(() => {
+        scrollToMatchedHistory();
+    }, [currentPage, perPage]);  
 
     useEffect(() => {
         if (flash.success) toast.success(flash.success);
@@ -289,7 +301,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                 </div>
                 {matchedHistory.length > 0 && (
                     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6 mt-4">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4" ref={matchedHistoryRef}>
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
                                 Scan History
                             </h3>
