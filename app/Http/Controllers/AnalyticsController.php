@@ -15,27 +15,19 @@ use Illuminate\Support\Facades\Auth;
 class AnalyticsController extends Controller
 {
     // Show Analytics page
-    public function index()
+    public function index(Request $request)
     {
         $userId = Auth::id();
 
         $jobs = Job::where('user_id', $userId)->latest()->get(['id', 'title', 'description']);
         $resumes = Resume::where('user_id', $userId)->latest()->get(['id', 'name', 'file_path']);
 
+        $perPage = $request->get('per_page', 10);
         $matchedHistory = Matches::where('user_id', $userId)
             ->orderBy('created_at', 'desc')
-            ->get([
-                'id',
-                'resume_id',
-                'job_description_id',
-                'match_percentage',
-                'semantic_score',
-                'keyword_score',
-                'keyword_gap',
-                'ai_result',
-                'created_at',
-            ])
-            ->map(function ($match) use ($jobs) {
+            ->paginate($perPage)
+            ->withQueryString();
+            $matchedHistoryData = $matchedHistory->map(function ($match) use ($jobs) {
                 $resume = $match->resume;
 
                 $aiData = [];
@@ -65,7 +57,8 @@ class AnalyticsController extends Controller
         return Inertia::render('Analytics/Index', [
             'jobs' => $jobs,
             'resumes' => $resumes,
-            'matchedHistory' => $matchedHistory,
+            'matchedHistory' => $matchedHistoryData,
+            'pagination' => $matchedHistory,
             'flash' => [
                 'success' => session('success'),
                 'error' => session('error'),

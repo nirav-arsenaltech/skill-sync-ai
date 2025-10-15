@@ -11,7 +11,7 @@ import { Link } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import Select from 'react-select';
 
-export default function Analytics({ jobs, resumes, matchedHistory: initialHistory }) {
+export default function Analytics({ jobs, resumes, matchedHistory: initialHistory, pagination }) {
     const { props } = usePage();
     const flash = props.flash || {};
 
@@ -24,6 +24,15 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
     const [matchToDelete, setMatchToDelete] = useState(null);
     const [downloading, setDownloading] = useState(null);
     const [showAllSkills, setShowAllSkills] = useState(false);
+    const [perPage, setPerPage] = useState(pagination.per_page || 10);
+    const [currentPage, setCurrentPage] = useState(pagination.current_page || 1);
+
+    const handlePerPageChange = (e) => {
+        const newPerPage = e.target.value;
+        setPerPage(newPerPage);
+        setCurrentPage(1);
+        router.get(location.pathname, { per_page: newPerPage, page: 1 });
+    };
 
     useEffect(() => {
         if (flash.success) toast.success(flash.success);
@@ -643,6 +652,42 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                     </div>
                                 );
                             })}
+                        </div>
+                        {/* Pagination + Per Page Selector */}
+                        <div className="container mt-6">
+                            <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0">
+                                {/* Per Page Selector */}
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-gray-700 dark:text-gray-300">Show:</span>
+                                    <select
+                                        value={perPage}
+                                        onChange={handlePerPageChange}
+                                        className="border rounded px-5 py-1 dark:bg-gray-800 dark:text-white text-sm"
+                                    >
+                                        {[10, 25, 50, 100].map((n) => (
+                                            <option key={n} value={n}>{n}</option>
+                                        ))}
+                                    </select>
+                                    <span className="text-gray-500 dark:text-gray-400">of {pagination.total} entries</span>
+                                </div>
+
+                                {/* Pagination Links */}
+                                <div className="flex space-x-1 overflow-x-auto">
+                                    {pagination.links
+                                        .filter(link => link.url || link.label === '« Previous' || link.label === 'Next »')
+                                        .map((link, index) => (
+                                            <Link
+                                                key={index}
+                                                href={link.url || '#'}
+                                                className={`px-3 py-1 border rounded-md transition whitespace-nowrap dark:border-gray-500 ${link.active
+                                                    ? 'bg-gray-800 text-white'
+                                                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600'
+                                                    } ${!link.url ? 'pointer-events-none opacity-50' : ''}`}
+                                                dangerouslySetInnerHTML={{ __html: link.label }}
+                                            />
+                                        ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}
