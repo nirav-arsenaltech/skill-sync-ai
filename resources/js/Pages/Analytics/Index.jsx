@@ -532,7 +532,6 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                             })}
                         </div>
                         {/* Pagination + Per Page Selector */}
-                        <div className="container mt-6">
                             <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between space-y-2 md:space-y-0">
                                 {/* Per Page Selector */}
                                 <div className="flex items-center space-x-2">
@@ -564,7 +563,6 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                             />
                                         ))}
-                                </div>
                             </div>
                         </div>
                     </div>
