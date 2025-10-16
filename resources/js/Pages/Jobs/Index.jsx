@@ -87,7 +87,7 @@ export default function Index({ jobs, filters }) {
 
                 <div className="overflow-x-auto rounded-lg shadow-lg">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead className="bg-gray-50 dark:bg-gray-700">
+                        <thead className="bg-gray-100 dark:bg-gray-700">
                             <tr>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     Title
