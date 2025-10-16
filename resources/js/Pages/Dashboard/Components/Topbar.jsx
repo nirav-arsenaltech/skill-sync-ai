@@ -1,19 +1,15 @@
 import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
-import { PowerIcon, UserCircleIcon, MoonIcon, SunIcon } from '@heroicons/react/24/outline';
+import { PowerIcon, UserCircleIcon, MoonIcon, SunIcon, Bars3Icon } from '@heroicons/react/24/outline';
 
-export default function Topbar() {
+export default function Topbar({ onMenuToggle }) {
     const [darkMode, setDarkMode] = useState(false);
 
-    // Load theme on mount
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
             document.documentElement.classList.add('dark');
             setDarkMode(true);
-        } else {
-            document.documentElement.classList.remove('dark');
-            setDarkMode(false);
         }
     }, []);
 
@@ -30,36 +26,27 @@ export default function Topbar() {
         }
     };
 
-    const handleLogout = () => {
-        router.post('/logout', {}, {
-            onStart: () => console.log('Logout initiated...'),
-            onFinish: () => console.log('Logout request finished.')
-        });
-    };
-
-    const handleProfileClick = () => {
-        router.visit('/profile');
-    };
+    const handleLogout = () => router.post('/logout');
+    const handleProfileClick = () => router.visit('/profile');
 
     return (
         <header className="h-16 bg-white dark:bg-gray-800 flex items-center justify-between px-6 shadow-sm sticky top-0 z-50">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white"></h2>
+            {/* Hamburger (mobile only) */}
+            <button
+                onClick={onMenuToggle}
+                className="md:hidden text-gray-700 dark:text-gray-200 hover:text-blue-500"
+            >
+                <Bars3Icon className="h-6 w-6" />
+            </button>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white hidden md:block"></h2>
             <div className="flex items-center gap-4">
                 {/* Theme Toggle */}
-                <button
-                    onClick={toggleTheme}
-                    className="text-gray-700 dark:text-gray-200"
-                    title="Toggle theme"
-                >
-                    {darkMode ? (
-                        <SunIcon className="h-5 w-5" />
-                    ) : (
-                        <MoonIcon className="h-5 w-5" />
-                    )}
+                <button onClick={toggleTheme} className="text-gray-700 dark:text-gray-200" title="Toggle theme">
+                    {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
                 </button>
 
                 {/* Profile */}
-                <button className="text-gray-700 dark:text-gray-200" title="Profile" onClick={handleProfileClick}>
+                <button onClick={handleProfileClick} className="text-gray-700 dark:text-gray-200" title="Profile">
                     <UserCircleIcon className="h-6 w-6" />
                 </button>
     
