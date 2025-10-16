@@ -11,21 +11,3 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Check PR description template
-        run: |
-          PR_BODY=$(curl -s \
-            -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" \
-            -X GET \
-            "https://api.github.com/repos/${{github.repository}}/pulls/${{github.event.pull_request.number}}")
-
-          PR_DESCRIPTION=$(echo "$PR_BODY" | jq -r .body)
-
-          # Define the template you want to enforce
-          REQUIRED_DESCRIPTION="**What's this PR do?**"
-
-          if [[ "$PR_DESCRIPTION" != *"$REQUIRED_DESCRIPTION"* ]]; then
-            echo "PR description does not follow the template."
-            echo "Please update the PR description to include the template."
-            exit 1
-          fi
