@@ -38,7 +38,6 @@ class DashboardController extends Controller
                 'id' => $r->id,
                 'name' => $r->name,
                 'date' => $r->created_at->format('d/m/Y'),
-                'status' => 'Added',
             ]);
 
         return Inertia::render('Dashboard/Index', [

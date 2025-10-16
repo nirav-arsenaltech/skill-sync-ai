@@ -307,7 +307,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                             </h3>
 
                             <table className="w-full text-left border-collapse">
-                                <thead className="bg-gray-50 dark:bg-gray-700">
+                                <thead className="bg-gray-100 dark:bg-gray-700">
                                     <tr className="border-b border-gray-300 dark:border-gray-600">
                                         <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Resume</th>
                                         <th className="px-2 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Job</th>
