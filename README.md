@@ -24,6 +24,14 @@
 
 ---
 
+## 🖼️ Images
+
+Here is a link to the image folder for **SkillSync.ai**:  
+[SkillSync.ai Images Folder](https://www.awesomescreenshot.com/s/folder/F09GL1dNx8/b872f6e38329e66255ce1601b159d9fa)
+
+Feel free to browse the images used throughout the project.
+
+---
 ## 🏗️ Tech Stack
 
 | Layer        | Technology                      |
