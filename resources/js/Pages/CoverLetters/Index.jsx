@@ -107,7 +107,7 @@ export default function CoverLettersIndex() {
                                             <button
                                                 className="text-blue-600 hover:text-blue-800"
                                                 title="view"
-                                                onClick={() => Inertia.get(`/cover-letters/show/${cl.id}`)}
+                                                onClick={() => Inertia.get(`/cover-letters/${cl.id}`)}
                                             >
                                                 <EyeIcon className="h-5 w-5" />
                                             </button>
