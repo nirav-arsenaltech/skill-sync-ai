@@ -168,16 +168,17 @@ class AppNeuronMyAgent extends Agent
         $resumeTexts = collect($resumes)->map(function ($resume) {
             return "Resume ID: {$resume['id']}\n\n{$resume['content']}";
         })->implode("\n\n----------------------------------------\n\n");
+        $userName= auth()->user()->name ;
 
         $systemPrompt = <<<PROMPT
         You are an advanced AI writing assistant that crafts **concise, elegant, single-page professional cover letters**.
 
         Your goal:
-        - Generate a polished, ATS-friendly cover letter based on the applicant’s resume and the provided job description.
-        - Output must fit within a single A4 page (around 250–300 words maximum).
-        - Maintain excellent readability and professional tone throughout.
-        - Do NOT include applicant’s email, phone, or LinkedIn in the letter body; these will be added separately in the PDF header.
-        - Include the applicant’s full name only in the closing line after "Sincerely,".
+        - Generate a polished, ATS-friendly cover letter based on the applicant’s resume and job description.
+        - Output must fit within a single A4 page (~250–300 words maximum).
+        - Maintain excellent readability and professional tone.
+        - Do NOT include applicant email, phone, LinkedIn in letter body; these are added in PDF header.
+        - Include applicant's full name only in closing line after "Sincerely,".
 
         PROMPT;
 
@@ -217,7 +218,7 @@ class AppNeuronMyAgent extends Agent
 
         4. Return a valid JSON object using exactly these keys:
         {
-            "applicant_name": "Full name from resume or Applicant",
+            "applicant_name": "Full name from resume or fallback to logged-in user",
             "email": "applicant@example.com",
             "phone": "+1 (555) 555-5555" (if available),
             "linkedin": "https://linkedin.com/in/example" (if available),
@@ -278,13 +279,12 @@ class AppNeuronMyAgent extends Agent
                 if (filter_var($firstLine, FILTER_VALIDATE_EMAIL) || preg_match('/^\+?\d/', $firstLine)) {
                     $firstLine = '';
                 }
-                $applicantName = $firstLine ?: 'Applicant';
 
                 // take whole cleaned raw as letter body wrapped as paragraphs
                 $coverHtml = '<p>' . nl2br(e(trim($raw))) . '</p>';
 
                 $decoded = [
-                    'applicant_name' => $applicantName,
+                    'applicant_name' => $firstLine ?: $userName ?: 'Applicant',
                     'email' => $email,
                     'phone' => $phone,
                     'linkedin' => $linkedin,
@@ -293,7 +293,7 @@ class AppNeuronMyAgent extends Agent
             } else {
                 // ensure fields exist and sanitize
                 $decoded = [
-                    'applicant_name' => trim($decoded['applicant_name'] ?? '') ?: 'Applicant',
+                    'applicant_name' => trim($decoded['applicant_name'] ?? '') ?: $userName ?: 'Applicant',
                     'email' => trim($decoded['email'] ?? ''),
                     'phone' => trim($decoded['phone'] ?? ''),
                     'linkedin' => trim($decoded['linkedin'] ?? ''),
@@ -306,11 +306,11 @@ class AppNeuronMyAgent extends Agent
             Log::error('AI generation failed: ' . $e->getMessage());
             // fallback minimal JSON
             $fallback = [
-                'applicant_name' => 'Applicant',
+                'applicant_name' => $userName ?: 'Applicant',
                 'email' => '',
                 'phone' => '',
                 'linkedin' => '',
-                'cover_letter_html' => '<p>AI generation failed. Check logs for details.</p>',
+                'cover_letter_html' => '<p>Unable to generate cover letter at this time..</p>',
             ];
             return json_encode($fallback, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         }
