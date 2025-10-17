@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\CoverLetterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
@@ -27,6 +28,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Resume routes
     Route::resource('resumes', ResumeController::class);
+    Route::resource('cover-letters', CoverLetterController::class);
+    Route::get('/cover-letters/show/{id}', [CoverLetterController::class, 'show'])->name('coverLetters.show');
     // Profile routes
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');

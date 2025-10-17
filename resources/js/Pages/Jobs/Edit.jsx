@@ -100,7 +100,7 @@ export default function Edit({ job }) {
 
                             <Link
                                 href="/jobs"
-                                className="px-5 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400 transition font-medium"
+                                className="px-5 py-2 bg-gray-300 rounded-md hover:bg-gray-400 dark:bg-gray-500 dark:hover:bg-gray-600 transition font-medium"
                             >
                                 Cancel
                             </Link>
