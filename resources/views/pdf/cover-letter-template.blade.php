@@ -7,7 +7,7 @@
         body { font-family: Arial, Helvetica, sans-serif; color: #222; margin: 40px; }
         .container { max-width: 800px; margin: auto; background: #fff; padding: 36px; border-radius: 6px; }
         .header { border-bottom: 2px solid #e6e6e6; padding-bottom: 10px; margin-bottom: 18px; }
-        .name { font-size: 24px; color: #0b63c6; font-weight: 700; font-family: 'Times New Roman', Times, serif; }
+        .name { font-size: 27px; color: #0b63c6; font-weight: 700; font-family: 'Times New Roman', Times, serif; }
         .contact-line { font-size: 13px; color: #555; margin-top: 6px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; }
         a.link { color: #0b63c6; text-decoration: none; }
         .divider { height: 1px; background: #eee; margin: 20px 0; }
