@@ -1,6 +1,6 @@
 # 🚀 SkillSync.ai
 
-**SkillSync.ai** is an AI-powered resume and job description matcher built with **Laravel 12**, **React**, and **Inertia.js** — empowering job seekers and hiring teams to instantly assess resume relevance, identify skill gaps, and improve hiring efficiency.
+**SkillSync.ai** is an AI-powered resume and job description matcher & cover letter creator built with **Laravel 12**, **React**, and **Inertia.js** — empowering job seekers and hiring teams to instantly assess resume relevance, identify skill gaps, and improve hiring efficiency.
 
 ---
 
@@ -22,6 +22,11 @@
 - 💾 Resume storage & AI scan history
 - 🧼 Robust file validation & encoding cleanup
 
+**Cover Letter Features**
+
+- ✍️ Create a Cover Letter: Generate a personalized cover letter based on your resume and the job description for a company.
+- 👁️ View Cover Letter: Preview the generated cover letter directly in the app.
+- 📥 Download as PDF: Easily download your generated cover letter as a PDF.
 ---
 
 ## 🖼️ Images
