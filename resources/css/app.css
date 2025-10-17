@@ -93,3 +93,7 @@
 .react-select__input-container input {
     cursor: text;
 }
+
+body:has(div#app) {
+  margin: 0;
+}

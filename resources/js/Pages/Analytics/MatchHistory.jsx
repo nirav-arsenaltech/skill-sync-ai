@@ -10,7 +10,6 @@ export default function MatchHistory({ match, aiData, jobTitle, resumeName }) {
     return (
         <Layout>
             <Head title="Match history" />
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6 mt-4">
                 <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                         Match History Details #{match.id}
@@ -19,11 +18,12 @@ export default function MatchHistory({ match, aiData, jobTitle, resumeName }) {
                         href="/analytics"
                         className="text-blue-500 hover:underline"
                     >
-                        Back to History
+                       ← Back to History
                     </Link>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-700">
-                    <div className="p-4 border-t border-gray-200 dark:border-gray-600">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6 mt-4">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div className="p-4 border-gray-200 dark:border-gray-600">
 
                         <div className="space-y-4">
                             {/* Overall Match Bar */}

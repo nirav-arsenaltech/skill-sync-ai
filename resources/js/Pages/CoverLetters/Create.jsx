@@ -166,6 +166,17 @@ export default function Create({ jobs, resumes }) {
                     </form>
                 </div>
             </div>
+            {/* Loader CSS */}
+            <style>{`
+                .loader {
+                    border-top-color: #3498db;
+                    animation: spin 1s ease-in-out infinite;
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `}</style>
         </Layout>
     );
 }

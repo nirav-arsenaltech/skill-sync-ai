@@ -178,6 +178,10 @@ class CoverLetterController extends Controller
             if (!file_exists(dirname($pdfFilePath))) {
                 mkdir(dirname($pdfFilePath), 0755, true);
             }
+            // --- Prepare absolute URLs for images for barryvdh PDF ---
+            $emailIcon = asset('images/email.png');
+            $phoneIcon = asset('images/phone.png');
+            $linkedinIcon = asset('images/linkedin.png');
 
             // --- Build HTML layout ---
             $html = view('pdf.cover-letter-template', [
@@ -186,11 +190,21 @@ class CoverLetterController extends Controller
                 'phone' => $phone,
                 'linkedin' => $linkedin,
                 'coverLetterHtml' => $coverLetterHtml,
+                'emailIcon' => $emailIcon,
+                'phoneIcon' => $phoneIcon,
+                'linkedinIcon' => $linkedinIcon,
             ])->render();
 
             // --- Generate PDF ---
-            Pdf::loadHTML($html)->setPaper('a4')->save($pdfFilePath);
+            $pdf = Pdf::loadHTML($html)
+                ->setPaper('a4')
+                ->setOption('isRemoteEnabled', true)
+                ->setOption('margin-top', '10mm')
+                ->setOption('margin-bottom', '10mm')
+                ->setOption('margin-left', '10mm')
+                ->setOption('margin-right', '10mm');
 
+            $pdf->save($pdfFilePath);
 
             // --- Save DB record ---
             CoverLetter::create([
@@ -214,6 +228,49 @@ class CoverLetterController extends Controller
         return redirect()->route('cover-letters.index')->with('success', 'Cover letter generated successfully!');
     }
 
+    public function show($id)
+    {
+        $coverLetter = CoverLetter::findOrFail($id);
+
+        $data = is_array($coverLetter->ai_result)
+            ? $coverLetter->ai_result
+            : json_decode($coverLetter->ai_result, true);
+
+        // PDF paths (for barryvdh PDF generation)
+        $emailIconPDF = public_path('images/email.png');
+        $phoneIconPDF = public_path('images/phone.png');
+        $linkedinIconPDF = public_path('images/linkedin.png');
+
+        // Web paths (for preview in React)
+        $emailIconWeb = asset('images/email.png');
+        $phoneIconWeb = asset('images/phone.png');
+        $linkedinIconWeb = asset('images/linkedin.png');
+
+        $html = view('pdf.cover-letter-template', [
+            'name' => $data['applicant_name'] ?? 'Applicant',
+            'email' => $data['email'] ?? '',
+            'phone' => $data['phone'] ?? '',
+            'linkedin' => $data['linkedin'] ?? '',
+            'coverLetterHtml' => $data['cover_letter_html'] ?? '',
+            // use PDF icons here for generating PDF
+            'emailIcon' => $emailIconPDF,
+            'phoneIcon' => $phoneIconPDF,
+            'linkedinIcon' => $linkedinIconPDF,
+        ])->render();
+
+        return Inertia::render('CoverLetters/Show', [
+            'coverLetter' => [
+                'id' => $coverLetter->id,
+                'company_name' => $coverLetter->company_name,
+                // for React preview, use web-accessible icons
+                'html' => str_replace(
+                    [$emailIconPDF, $phoneIconPDF, $linkedinIconPDF],
+                    [$emailIconWeb, $phoneIconWeb, $linkedinIconWeb],
+                    $html
+                ),
+            ],
+        ]);
+    }
 
 
     public function destroy($id)

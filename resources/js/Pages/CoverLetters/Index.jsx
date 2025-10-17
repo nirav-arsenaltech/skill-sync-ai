@@ -3,11 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import toast, { Toaster } from 'react-hot-toast';
 import { Head } from '@inertiajs/react';
+import { Inertia } from '@inertiajs/inertia';
 import {
     TrashIcon,
     PlusCircleIcon,
     ArrowDownTrayIcon,
     XMarkIcon,
+    EyeIcon,
 } from '@heroicons/react/24/outline';
 
 export default function CoverLettersIndex() {
@@ -102,6 +104,13 @@ export default function CoverLettersIndex() {
                                             {cl.company_name || '—'}
                                         </td>
                                         <td className="px-6 py-4 flex items-center space-x-4">
+                                            <button
+                                                className="text-blue-600 hover:text-blue-800"
+                                                title="view"
+                                                onClick={() => Inertia.get(`/cover-letters/show/${cl.id}`)}
+                                            >
+                                                <EyeIcon className="h-5 w-5" />
+                                            </button>
                                             {cl.file_path ? (
                                                 <a
                                                     href={`/storage/${cl.file_path}`}

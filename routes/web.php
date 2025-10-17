@@ -29,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
     // Resume routes
     Route::resource('resumes', ResumeController::class);
     Route::resource('cover-letters', CoverLetterController::class);
+    Route::get('/cover-letters/show/{id}', [CoverLetterController::class, 'show'])->name('coverLetters.show');
     // Profile routes
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
