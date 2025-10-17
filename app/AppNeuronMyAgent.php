@@ -163,6 +163,159 @@ class AppNeuronMyAgent extends Agent
             return "AI analysis failed. Check logs for details.";
         }
     }
+    public function createCoverLetterData(string $jobTitle, string $jobDescription, array $resumes, string $companyName): string
+    {
+        $resumeTexts = collect($resumes)->map(function ($resume) {
+            return "Resume ID: {$resume['id']}\n\n{$resume['content']}";
+        })->implode("\n\n----------------------------------------\n\n");
+
+        $systemPrompt = <<<PROMPT
+        You are an advanced AI writing assistant that crafts **concise, elegant, single-page professional cover letters**.
+
+        Your goal:
+        - Generate a polished, ATS-friendly cover letter based on the applicant’s resume and the provided job description.
+        - Output must fit within a single A4 page (around 250–300 words maximum).
+        - Maintain excellent readability and professional tone throughout.
+        - Do NOT include applicant’s email, phone, or LinkedIn in the letter body; these will be added separately in the PDF header.
+        - Include the applicant’s full name only in the closing line after "Sincerely,".
+
+        PROMPT;
+
+        $fullPrompt = <<<PROMPT
+        {$systemPrompt}
+
+        -------------------------------
+        **JOB INFORMATION**
+        -------------------------------
+        Title: {$jobTitle}
+        Description:
+        {$jobDescription}
+
+        -------------------------------
+        **COMPANY INFORMATION**
+        -------------------------------
+        Company Name: {$companyName}
+
+        -------------------------------
+        **RESUME CONTENT**
+        -------------------------------
+        {$resumeTexts}
+
+        -------------------------------
+        **INSTRUCTIONS**
+        -------------------------------
+        1. Generate a **complete, single-page professional cover letter** that includes:
+        - A proper greeting (“Dear Hiring Manager,” or use company name if provided).
+        - Clear reference to the job title and company.
+        - A summary of relevant achievements and skills (2–3 short paragraphs maximum).
+        - A short closing with call-to-action (e.g., “I look forward to discussing how my skills can contribute to your team.”).
+        - Polite, confident closing line (“Sincerely,” + applicant name).
+
+        2. **Do NOT include applicant name, email, phone, LinkedIn, or any dates inside the cover letter content.**
+
+        3. Keep total content length under **300 words**, formatted for a single A4 page.
+
+        4. Return a valid JSON object using exactly these keys:
+        {
+            "applicant_name": "Full name from resume or Applicant",
+            "email": "applicant@example.com",
+            "phone": "+1 (555) 555-5555" (if available),
+            "linkedin": "https://linkedin.com/in/example" (if available),
+            "cover_letter_html": "<the full HTML version of the formatted cover letter body — no name, email, phone, LinkedIn or dates>"
+        }
+
+        PROMPT;
+
+        try {
+            $userMessage = new UserMessage($fullPrompt);
+            $response = $this->chat([$userMessage]);
+            $aiContent = $response->getContent();
+
+            $cleaned = trim($aiContent);
+            $cleaned = preg_replace('/^```(json)?\s*/i', '', $cleaned);
+            $cleaned = preg_replace('/\s*```$/', '', $cleaned);
+            $cleaned = trim($cleaned);
+
+            $decoded = json_decode($cleaned, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                if (preg_match('/\{(?:[^{}]|(?R))*\}/s', $cleaned, $match)) {
+                    $maybeJson = $match[0];
+                    $decoded = json_decode($maybeJson, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        $decoded = null;
+                    } else {
+                        Log::info('Successfully decoded JSON after extraction.');
+                    }
+                }
+            }
+
+            if (!is_array($decoded)) {
+                // best-effort extraction using regex
+                $raw = $cleaned;
+                // attempt to find email
+                preg_match('/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i', $raw, $mEmail);
+                $email = $mEmail[0] ?? '';
+
+                // attempt to find linkedin url
+                preg_match('/https?:\/\/(www\.)?linkedin\.com[^\s"]+/i', $raw, $mLn);
+                if (!isset($mLn[0])) {
+                    // fallback find linkedin path without http
+                    preg_match('/linkedin\.com\/[^\s"]+/i', $raw, $mLn);
+                }
+                $linkedin = $mLn[0] ?? '';
+
+                // attempt to find phone (simple)
+                preg_match('/(\+?\d[\d\-\s\(\)]{6,}\d)/', $raw, $mPhone);
+                $phone = $mPhone[0] ?? '';
+
+                // attempt to find name: use first line of resume content or "Applicant"
+                $firstLine = '';
+                if (!empty($resumes) && !empty($resumes[0]['content'])) {
+                    $lines = preg_split('/\r\n|\r|\n/', trim($resumes[0]['content']));
+                    $firstLine = trim($lines[0] ?? '');
+                }
+                // If the first line looks like an email or phone, ignore
+                if (filter_var($firstLine, FILTER_VALIDATE_EMAIL) || preg_match('/^\+?\d/', $firstLine)) {
+                    $firstLine = '';
+                }
+                $applicantName = $firstLine ?: 'Applicant';
+
+                // take whole cleaned raw as letter body wrapped as paragraphs
+                $coverHtml = '<p>' . nl2br(e(trim($raw))) . '</p>';
+
+                $decoded = [
+                    'applicant_name' => $applicantName,
+                    'email' => $email,
+                    'phone' => $phone,
+                    'linkedin' => $linkedin,
+                    'cover_letter_html' => $coverHtml,
+                ];
+            } else {
+                // ensure fields exist and sanitize
+                $decoded = [
+                    'applicant_name' => trim($decoded['applicant_name'] ?? '') ?: 'Applicant',
+                    'email' => trim($decoded['email'] ?? ''),
+                    'phone' => trim($decoded['phone'] ?? ''),
+                    'linkedin' => trim($decoded['linkedin'] ?? ''),
+                    'cover_letter_html' => $decoded['cover_letter_html'] ?? '',
+                ];
+            }
+
+            return json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        } catch (\Throwable $e) {
+            Log::error('AI generation failed: ' . $e->getMessage());
+            // fallback minimal JSON
+            $fallback = [
+                'applicant_name' => 'Applicant',
+                'email' => '',
+                'phone' => '',
+                'linkedin' => '',
+                'cover_letter_html' => '<p>AI generation failed. Check logs for details.</p>',
+            ];
+            return json_encode($fallback, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        }
+    }
+
     protected function chatHistory(): ChatHistoryInterface
     {
         return new InMemoryChatHistory(

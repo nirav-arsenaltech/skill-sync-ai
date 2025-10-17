@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\AppNeuronMyAgent;
-use App\Models\Matched;
 use App\Models\Matches;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
