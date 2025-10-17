@@ -5,7 +5,7 @@ import { Link } from '@inertiajs/react';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { Head } from '@inertiajs/react';
 
-export default function Dashboard({ cards, recentJobs, recentResumes }) {
+export default function Dashboard({ cards, recentJobs, recentResumes, recentCoverLetters }) {
     return (
         <Layout>
             <Head title="Dashboard" />
@@ -15,7 +15,7 @@ export default function Dashboard({ cards, recentJobs, recentResumes }) {
                 </div>
 
                 {/* Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     {cards.map((c, i) => (
                         <Card key={i} title={c.title} value={c.value} />
                     ))}
@@ -110,6 +110,52 @@ export default function Dashboard({ cards, recentJobs, recentResumes }) {
                 ) : (
                     <div className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow text-gray-500 dark:text-gray-400">
                         No resumes available
+                    </div>
+                )}
+
+                {/* Recent Cover letters */}
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mt-8 mb-4">Recent Cover Letters</h3>
+                {recentCoverLetters.length > 0 ? (
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden mt-6">
+                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-100 dark:bg-gray-700">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Company Name
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Date
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                {recentCoverLetters.map(coverLetter => (
+                                    <tr key={coverLetter.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td className="px-6 py-4 text-sm text-gray-700 dark:text-white" style={{ minWidth: '200px', maxWidth: '300px', wordBreak: 'break-word' }}>
+                                            {coverLetter.company_name}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-700 dark:text-white" style={{ minWidth: '150px', maxWidth: '200px', wordBreak: 'break-word' }}>
+                                            {coverLetter.date}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-700 dark:text-white">
+                                            <Link
+                                                href={`/cover-letters/${coverLetter.id}`}
+                                                className="text-indigo-500 hover:text-indigo-600 flex items-center gap-1"
+                                            >
+                                                <EyeIcon className="h-5 w-5" /> View
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <div className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow text-gray-500 dark:text-gray-400">
+                        No Cover Letters available
                     </div>
                 )}
             </div>

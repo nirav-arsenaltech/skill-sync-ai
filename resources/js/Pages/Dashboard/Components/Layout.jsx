@@ -7,7 +7,7 @@ export default function Layout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
-        <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
+        <div className="flex min-h-screen min-w-fit bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
             {/* Sidebar */}
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
