@@ -212,7 +212,7 @@ class AppNeuronMyAgent extends Agent
         - A short closing with call-to-action (e.g., “I look forward to discussing how my skills can contribute to your team.”).
         - Polite, confident closing line (“Sincerely,” + applicant name).
 
-        2. **Do NOT include applicant name, email, phone, LinkedIn, or any dates inside the cover letter content.**
+        2. **Do NOT include applicant name, email, phone, LinkedIn, and any dates inside the cover letter content.**
 
         3. Keep total content length under **300 words**, formatted for a single A4 page.
 
@@ -222,7 +222,7 @@ class AppNeuronMyAgent extends Agent
             "email": "applicant@example.com",
             "phone": "+1 (555) 555-5555" (if available),
             "linkedin": "https://linkedin.com/in/example" (if available),
-            "cover_letter_html": "<the full HTML version of the formatted cover letter body — no name, email, phone, LinkedIn or dates>"
+            "cover_letter_html": "<the full HTML version of the formatted cover letter body — no name, email, phone, LinkedIn and any dates>"
         }
 
         PROMPT;
