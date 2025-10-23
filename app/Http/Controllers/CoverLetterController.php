@@ -19,12 +19,14 @@ class CoverLetterController extends Controller
     public function index(Request $request)
     {
         $userId = Auth::id();
+        $perPage = $request->input('per_page', 10);
 
         // Fetch user's cover letters with relations
         $coverLetters = CoverLetter::with(['resume', 'job'])
             ->where('user_id', $userId)
             ->latest()
-            ->paginate(10);
+            ->paginate($perPage)
+            ->appends(['per_page' => $perPage]);
 
         $jobs = Job::where('user_id', $userId)->latest()->get(['id', 'title', 'description']);
         $resumes = Resume::where('user_id', $userId)->latest()->get(['id', 'name', 'file_path']);

@@ -204,7 +204,7 @@ export default function CoverLettersIndex() {
                                     const perPage = e.target.value;
                                     router.get(
                                         location.pathname,
-                                        { per_page: perPage, search },
+                                        { per_page: perPage },
                                         { preserveState: true, replace: true }
                                     );
                                 }}
