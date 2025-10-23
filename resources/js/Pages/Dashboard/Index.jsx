@@ -1,5 +1,5 @@
 import Layout from './Components/Layout';
-import Card from './Components/Card';
+import Card from './Components/card';
 import Table from './Components/Table';
 import { Link } from '@inertiajs/react';
 import { EyeIcon } from '@heroicons/react/24/outline';
