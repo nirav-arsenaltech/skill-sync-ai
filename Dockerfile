@@ -1,7 +1,7 @@
 # Use an official PHP image with Composer preinstalled
 FROM php:8.3-fpm
 
-# Install system dependencies and GD extension
+# Install system dependencies and GD extension + pdo_mysql
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install gd zip \
+    && docker-php-ext-install gd zip pdo_mysql \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -38,5 +38,5 @@ RUN npm ci && npm run build
 # Expose port for Laravel dev server
 EXPOSE 8000
 
-# Start Laravel with migration before serving
+# Run migrations before starting Laravel server
 CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
