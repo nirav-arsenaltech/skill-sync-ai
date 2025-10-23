@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     git \
     curl \
-    mysql-client \
+    default-mysql-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install gd zip pdo_mysql \
     && apt-get clean \
