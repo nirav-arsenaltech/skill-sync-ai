@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     git \
     curl \
+    default-mysql-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install gd zip pdo_mysql \
     && apt-get clean \
@@ -35,8 +36,12 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install
 # Build frontend assets
 RUN npm ci && npm run build
 
+# Copy the entrypoint script and make it executable
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Expose port for Laravel dev server
 EXPOSE 8000
 
-# Run migrations before starting Laravel server
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+# Use the entrypoint script as the container's command
+CMD ["docker-entrypoint.sh"]
