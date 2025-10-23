@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install gd
+    && docker-php-ext-install gd zip
 
 # Install Composer (if not included)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
