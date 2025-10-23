@@ -2,17 +2,20 @@
 FROM php:8.3-fpm
 
 # Install system dependencies and GD extension
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
     libwebp-dev \
+    libzip-dev \
     zip \
     unzip \
     git \
     curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install gd zip
+    && docker-php-ext-install gd zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Composer (if not included)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
