@@ -19,7 +19,7 @@ export default function Show({ coverLetter }) {
                 </div>
 
                 <div
-                    className="bg-white dark:bg-gray-800 rounded-lg shadow p-8 mx-auto overflow-auto margin-0"
+                    className="bg-white dark:bg-gray-800 p-8 mx-auto overflow-auto margin-0"
                     dangerouslySetInnerHTML={{ __html: coverLetter.html }}
                 />
             </div>

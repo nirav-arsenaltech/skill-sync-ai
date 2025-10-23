@@ -10,6 +10,7 @@ import {
     ArrowDownTrayIcon,
     XMarkIcon,
     EyeIcon,
+    PencilIcon,
 } from '@heroicons/react/24/outline';
 
 export default function CoverLettersIndex() {
@@ -104,6 +105,13 @@ export default function CoverLettersIndex() {
                                             {cl.company_name || '—'}
                                         </td>
                                         <td className="px-6 py-4 flex items-center space-x-4">
+                                            <Link
+                                                href={`/cover-letters/${cl.id}/edit`}
+                                                className="text-green-600 hover:text-green-800"
+                                                title="Edit"
+                                            >
+                                                <PencilIcon className="h-5 w-5" />
+                                            </Link>
                                             <button
                                                 className="text-blue-600 hover:text-blue-800"
                                                 title="view"
