@@ -1,7 +1,7 @@
 # Use an official PHP image with Composer preinstalled
 FROM php:8.3-fpm
 
-# Install system dependencies and GD extension + pdo_mysql
+# Install system dependencies and GD + pdo_mysql extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     git \
     curl \
-    default-mysql-client \
+    mysql-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install gd zip pdo_mysql \
     && apt-get clean \
@@ -20,6 +20,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Composer (if not included)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 
 # Set working directory
 WORKDIR /var/www/html
@@ -30,18 +33,15 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-scripts --no-interaction --prefer-dist
 
-# Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
-
 # Build frontend assets
 RUN npm ci && npm run build
 
-# Copy the entrypoint script and make it executable
-COPY docker-entrypoint.sh /usr/local/bin/
+# Copy the entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expose port for Laravel dev server
 EXPOSE 8000
 
-# Use the entrypoint script as the container's command
-CMD ["docker-entrypoint.sh"]
+# Use the entrypoint script as CMD
+ENTRYPOINT ["docker-entrypoint.sh"]
