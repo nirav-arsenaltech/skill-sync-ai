@@ -27,6 +27,7 @@
 - ✍️ Create a Cover Letter: Generate a personalized cover letter based on your resume and the job description for a company.
 - 👁️ View Cover Letter: Preview the generated cover letter directly in the app.
 - 📥 Download as PDF: Easily download your generated cover letter as a PDF.
+- 📝 Edit Cover Letter with Real-Time Preview: Modify and refine your generated cover letter directly within the app, with instant real-time updates as you edit.
 ---
 
 ## 🖼️ Images
