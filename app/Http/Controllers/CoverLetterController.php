@@ -271,6 +271,93 @@ class CoverLetterController extends Controller
             ],
         ]);
     }
+    public function edit($id)
+    {
+        $coverLetter = CoverLetter::findOrFail($id);
+
+        $aiResult = is_array($coverLetter->ai_result)
+            ? $coverLetter->ai_result
+            : json_decode($coverLetter->ai_result, true);
+
+        // Optionally render initial HTML preview
+        $emailIconWeb = asset('images/email.png');
+        $phoneIconWeb = asset('images/phone.png');
+        $linkedinIconWeb = asset('images/linkedin.png');
+
+        $html = view('pdf.cover-letter-template', [
+            'name' => $aiResult['applicant_name'] ?? 'Applicant',
+            'email' => $aiResult['email'] ?? '',
+            'phone' => $aiResult['phone'] ?? '',
+            'linkedin' => $aiResult['linkedin'] ?? '',
+            'coverLetterHtml' => $aiResult['cover_letter_html'] ?? '',
+            'emailIcon' => $emailIconWeb,
+            'phoneIcon' => $phoneIconWeb,
+            'linkedinIcon' => $linkedinIconWeb,
+        ])->render();
+
+        return Inertia::render('CoverLetters/Edit', [
+            'coverLetter' => [
+                'id' => $coverLetter->id,
+                'company_name' => $coverLetter->company_name,
+                'ai_result' => $aiResult,
+                'html' => $html,
+            ],
+        ]);
+    }
+
+
+    public function update(Request $request, CoverLetter $coverLetter)
+    {
+        $aiResult = $request->ai_result;
+
+        if (is_string($aiResult)) {
+            $aiResult = json_decode($aiResult, true);
+        }
+
+        $coverLetter->update([
+            'company_name' => $request->company_name,
+            'ai_result' => json_encode($aiResult, JSON_UNESCAPED_UNICODE),
+        ]);
+
+        if ($coverLetter->file_path) {
+            $pdf = Pdf::loadView('pdf.cover-letter-template', [
+                'name' => $aiResult['applicant_name'] ?? 'Applicant',
+                'email' => $aiResult['email'] ?? '',
+                'phone' => $aiResult['phone'] ?? '',
+                'linkedin' => $aiResult['linkedin'] ?? '',
+                'coverLetterHtml' => $aiResult['cover_letter_html'] ?? '',
+                'emailIcon' => public_path('images/email.png'),
+                'phoneIcon' => public_path('images/phone.png'),
+                'linkedinIcon' => public_path('images/linkedin.png'),
+            ]);
+
+            $pdf->save(storage_path('app/public/' . $coverLetter->file_path));
+        }
+
+        return redirect()->route('cover-letters.index')->with('success', 'Cover Letter updated successfully!');
+    }
+
+    public function preview(Request $request, CoverLetter $coverLetter)
+    {
+        $aiResult = $request->ai_result;
+
+        $emailIconWeb = asset('images/email.png');
+        $phoneIconWeb = asset('images/phone.png');
+        $linkedinIconWeb = asset('images/linkedin.png');
+
+        $html = view('pdf.cover-letter-template', [
+            'name' => $aiResult['applicant_name'] ?? 'Applicant',
+            'email' => $aiResult['email'] ?? '',
+            'phone' => $aiResult['phone'] ?? '',
+            'linkedin' => $aiResult['linkedin'] ?? '',
+            'coverLetterHtml' => $aiResult['cover_letter_html'] ?? '',
+            'emailIcon' => $emailIconWeb,
+            'phoneIcon' => $phoneIconWeb,
+            'linkedinIcon' => $linkedinIconWeb,
+        ])->render();
+
+        return response()->json(['html' => $html]);
+    }
 
 
     public function destroy($id)

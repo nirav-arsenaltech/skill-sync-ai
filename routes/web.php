@@ -29,6 +29,8 @@ Route::middleware(['auth'])->group(function () {
     // Resume routes
     Route::resource('resumes', ResumeController::class);
     Route::resource('cover-letters', CoverLetterController::class);
+    Route::post('cover-letters/{coverLetter}/update', [CoverLetterController::class, 'update'])->name('cover-letters.update');
+    Route::post('cover-letters/{coverLetter}/preview', [CoverLetterController::class, 'preview'])->name('cover-letters.preview');
     Route::get('/cover-letters/{id}', [CoverLetterController::class, 'show'])->name('coverLetters.show');
     // Profile routes
     Route::prefix('profile')->group(function () {
