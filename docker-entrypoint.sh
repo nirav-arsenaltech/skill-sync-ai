@@ -16,5 +16,8 @@ echo "Database connection established."
 echo "Running migrations..."
 php artisan migrate --force
 
+echo "Linking storage (public/storage)..."
+php artisan storage:link || true
+
 echo "Starting Laravel development server..."
 php artisan serve --host=0.0.0.0 --port=8000

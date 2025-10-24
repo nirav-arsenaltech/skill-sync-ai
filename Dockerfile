@@ -36,12 +36,19 @@ RUN composer install --optimize-autoloader --no-scripts --no-interaction --prefe
 # Build frontend assets
 RUN npm ci && npm run build
 
+# Ensure writable permissions for Laravel
+RUN chmod -R 775 storage bootstrap/cache && \
+    chown -R www-data:www-data storage bootstrap/cache
+
+# Create the public storage symlink
+RUN php artisan storage:link || true
+
+# Expose Laravel port
+EXPOSE 8000
+
 # Copy the entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# Expose port for Laravel dev server
-EXPOSE 8000
 
 # Use the entrypoint script as CMD
 ENTRYPOINT ["docker-entrypoint.sh"]
