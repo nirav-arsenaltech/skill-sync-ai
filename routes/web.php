@@ -31,6 +31,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('verified')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('jobs', JobController::class);
+        Route::get('/logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->middleware(['auth']);
 });
 
     // Resume routes
