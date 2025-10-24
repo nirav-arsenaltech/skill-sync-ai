@@ -76,9 +76,37 @@ class CoverLetterController extends Controller
         $companyName = $validated['company_name'];
 
         // --- Get Resume data ---
-        $resume = Resume::where('id', $validated['resume_id'])->where('user_id', $userId)->first();
+        $resume = Resume::where('id', $validated['resume_id'])
+                        ->where('user_id', $userId)
+                        ->first();
+
         if (!$resume) {
+            Log::error('Resume not found in DB', [
+                'user_id' => $userId,
+                'resume_id' => $validated['resume_id']
+            ]);
             return back()->with('error', 'Resume not found.');
+        }
+
+        $filePath = storage_path('app/public/' . $resume->file_path);
+
+        // --- Log debug info about file path ---
+        Log::debug('Checking resume file', [
+            'resume_id' => $resume->id,
+            'file_path_db' => $resume->file_path,
+            'resolved_file_path' => $filePath,
+            'file_exists' => file_exists($filePath),
+            'is_readable' => is_readable($filePath),
+            'storage_dir_list' => is_dir(storage_path('app/public')) ? scandir(storage_path('app/public')) : null,
+        ]);
+
+        // --- Throw if file missing ---
+        if (!file_exists($filePath)) {
+            Log::error("Resume file not found at {$filePath}", [
+                'resume_id' => $resume->id,
+                'user_id' => $userId
+            ]);
+            return back()->with('error', "Resume file not found at {$filePath}");
         }
 
         $filePath = storage_path('app/public/' . $resume->file_path);
