@@ -228,7 +228,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                         <div>
                                             <h4 className="font-semibold text-gray-800 dark:text-white">{resume.name}</h4>
                                             <a
-                                                href={`/storage/${resume.file_path}`}
+                                                href={`/resumes/view/${resume.file_path.split('/').pop()}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="text-sm text-blue-600 dark:text-blue-400"

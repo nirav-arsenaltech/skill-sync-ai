@@ -19,6 +19,13 @@ Route::get('/', function () {
 | Authenticated Routes                                                     |
 |--------------------------------------------------------------------------|
 */
+
+Route::get('/resumes/view/{filename}', function ($filename) {
+    $file = storage_path('app/public/resumes/' . $filename);
+    abort_unless(file_exists($file), 404);
+    return response()->file($file);
+});
+
 Route::middleware(['auth'])->group(function () {
     // Verified routes
     Route::middleware('verified')->group(function () {

@@ -102,9 +102,7 @@ export default function Index({ resumes, filters }) {
                                     <tr key={resume.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                                         <td className="px-6 py-4 text-gray-800 dark:text-white">{resume.name}</td>
                                         <td className="px-6 py-4 text-blue-600 dark:text-blue-400">
-                                            <a href={`/storage/${resume.file_path}`} target="_blank" rel="noopener noreferrer">
-                                                View File
-                                            </a>
+                                            <a href={`/resumes/view/${resume.file_path.split('/').pop()}`} target="_blank">View File</a>
                                         </td>
                                         <td className="px-6 py-4 flex space-x-3">
                                             <Link
