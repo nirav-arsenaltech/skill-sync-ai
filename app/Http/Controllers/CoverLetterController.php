@@ -144,6 +144,7 @@ class CoverLetterController extends Controller
             $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1, Windows-1252', true));
             $content = preg_replace('/[^\PC\s]/u', '', $content);
         } catch (\Exception $e) {
+            Log::error("file error: " . $e->getMessage());
             return back()->with('error', 'Failed to read resume file.');
         }
 
