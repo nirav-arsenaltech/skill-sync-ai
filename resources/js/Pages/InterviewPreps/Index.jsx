@@ -71,6 +71,9 @@ export default function InterviewPrepIndex() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                                     Job
                                 </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                                    Date
+                                </th>
 
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                                     Actions
@@ -95,6 +98,7 @@ export default function InterviewPrepIndex() {
                                             </Link>
                                         </td>
 
+                                        <td className="px-6 py-4 text-gray-800 dark:text-white">{new Date(ip.created_at).toLocaleDateString()}</td>
                                        
                                         <td className="px-6 py-4 flex items-center space-x-4">
                                             
