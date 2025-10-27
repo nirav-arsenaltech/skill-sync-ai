@@ -315,6 +315,64 @@ class AppNeuronMyAgent extends Agent
             return json_encode($fallback, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         }
     }
+    public function createInterviewPrep(string $jobTitle, string $jobDescription, array $resumes): string
+    {
+        $resumeTexts = collect($resumes)->map(function ($resume) {
+            return "Resume ID: {$resume['id']}\n\n{$resume['content']}";
+        })->implode("\n\n----------------------------------------\n\n");
+
+        $systemPrompt = <<<PROMPT
+            You are an expert AI career coach. Your task is to generate **interview questions, answers, and a summary** for a candidate.
+
+            Instructions:
+            - Use the candidate's resume and the job description.
+            - Generate 10-15 relevant interview questions.
+            - Provide clear, concise answers tailored to the candidate's skills and experience.
+            - Write a short **summary** highlighting the candidate's key strengths, skills, and areas to focus on in the interview.
+            - Format the output as JSON:
+
+            {
+            "summary": "Short summary text here",
+            "questions_answers": [
+                {
+                "question": "Question text here",
+                "answer": "Answer text here"
+                }
+            ]
+            }
+
+            - Make sure the answers reference skills or experiences from the resume where appropriate.
+            PROMPT;
+
+
+        $fullPrompt = <<<PROMPT
+
+        {$systemPrompt}
+
+        Job Title: {$jobTitle}
+        Job Description: {$jobDescription}
+
+        Candidate Resume(s):
+        {$resumeTexts}
+
+        Generate interview Q&A in JSON format only.
+        PROMPT;
+
+        try {
+            $userMessage = new UserMessage($fullPrompt);
+            $response = $this->chat([$userMessage]);
+            $aiContent = $response->getContent();
+            $cleaned = trim($aiContent);
+            $cleaned = preg_replace('/^```(json)?\s*/i', '', $cleaned);
+            $cleaned = preg_replace('/\s*```$/', '', $cleaned);
+
+            $decoded = json_decode($cleaned, true);
+            return json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        } catch (\Throwable $e) {
+            Log::error('AI generation failed: ' . $e->getMessage());
+            return json_encode([], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        }
+    }
 
     protected function chatHistory(): ChatHistoryInterface
     {

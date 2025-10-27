@@ -2,6 +2,7 @@
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CoverLetterController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InterviewPrepController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResumeController;
@@ -32,8 +33,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('jobs', JobController::class);
         Route::get('/logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->middleware(['auth']);
-});
+    });
 
+    //  interview prep route:
+    Route::resource('interview-preps', InterviewPrepController::class);
     // Resume routes
     Route::resource('resumes', ResumeController::class);
     Route::resource('cover-letters', CoverLetterController::class);

@@ -28,5 +28,10 @@ class AppServiceProvider extends ServiceProvider
 
         // Optional: limit vite prefetch concurrency
         Vite::prefetch(concurrency: 3);
+        //Load global helpers
+        $helpersPath = app_path('helpers.php');
+        if (file_exists($helpersPath)) {
+            require_once $helpersPath;
+        }
     }
 }
