@@ -17,7 +17,7 @@ export default function Layout({ children }) {
                 <Topbar onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
 
                 {/* Page Content */}
-                <main className="flex-1 p-6 overflow-y-auto">
+                <main className="flex-1 p-6 overflow-y-auto bg-gray-100 dark:bg-gray-900">
                     {children}
                 </main>
             </div>

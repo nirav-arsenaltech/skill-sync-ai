@@ -5,6 +5,7 @@ export default function Card({ title, value }) {
         'Total Jobs': '/jobs',
         'Total Matches': '/analytics',
         'Total Cover Letters': '/cover-letters',
+        'Total Interview Preps': '/interview-preps',
     };
     return (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition">

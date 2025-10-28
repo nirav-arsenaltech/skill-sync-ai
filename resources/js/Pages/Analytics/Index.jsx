@@ -555,6 +555,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                                         .map((link, index) => (
                                             <Link
                                                 key={index}
+                                                onClick={handlePerPageChange}
                                                 href={link.url || '#'}
                                                 className={`px-3 py-1 border rounded-md transition whitespace-nowrap dark:border-gray-500 ${link.active
                                                     ? 'bg-gray-800 text-white'

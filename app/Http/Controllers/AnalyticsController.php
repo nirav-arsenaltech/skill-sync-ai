@@ -124,57 +124,9 @@ class AnalyticsController extends Controller
 
             $filePath = storage_path('app/public/' . $resume->file_path);
             $content = '';
-            $ext = 'UNKNOWN';
+            $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION)) ?? 'UNKNOWN';
 
-            try {
-                if (file_exists($filePath)) {
-                    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                    if (in_array($ext, ['txt', 'json', 'xml'])) {
-                        $content = file_get_contents($filePath);
-                    } elseif ($ext === 'pdf') {
-                        $content = \Spatie\PdfToText\Pdf::getText($filePath);
-                    } elseif ($ext === 'docx') {
-                        $phpWord = \PhpOffice\PhpWord\IOFactory::load($filePath, 'Word2007');
-                        foreach ($phpWord->getSections() as $section) {
-                            foreach ($section->getElements() as $e) {
-                                if (method_exists($e, 'getText')) {
-                                    $content .= $e->getText() . "\n";
-                                }
-                            }
-                        }
-                    } elseif ($ext === 'doc') {
-                        $outputDir = storage_path('app/tmp');
-                        if (!file_exists($outputDir)) {
-                            mkdir($outputDir, 0755, true);
-                        }
-
-                        $outputPath = $outputDir . '/' . pathinfo($filePath, PATHINFO_FILENAME) . '.txt';
-                        $sofficePath = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'
-                            ? '"C:\\Program Files\\LibreOffice\\program\\soffice.exe"'
-                            : '/usr/bin/soffice';
-
-                        if (!file_exists(trim($sofficePath, '"'))) {
-                            continue;
-                        }
-
-                        $cmd = $sofficePath . ' --headless --convert-to txt:Text --outdir ' . escapeshellarg($outputDir) . ' ' . escapeshellarg($filePath);
-                        exec($cmd, $output, $returnCode);
-                        if ($returnCode === 0 && file_exists($outputPath)) {
-                            $content = file_get_contents($outputPath);
-                            unlink($outputPath);
-                        } else {
-                            Log::error("LibreOffice failed to convert .doc file", ['resume_id' => $resume->id, 'cmd' => $cmd, 'output' => $output, 'return_code' => $returnCode]);
-                            continue;
-                        }
-                    }
-
-                    $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1, ISO-8859-15, Windows-1252', true));
-                    $content = preg_replace('/[^\PC\s]/u', '', $content);
-                }
-            } catch (\Exception $e) {
-                Log::error("Error reading resume file ID {$resume->id}: " . $e->getMessage());
-                continue;
-            }
+            $content = extractResumeContent($filePath);
 
             $resumesData[] = [
                 'id' => $resume->id,

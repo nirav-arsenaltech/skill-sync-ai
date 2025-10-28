@@ -5,7 +5,6 @@ import { Link, Head } from '@inertiajs/react';
 export default function Show({ interviewPrep }) {
 
     useEffect(() => {
-        console.log('InterviewPrep data:', interviewPrep);
     }, [interviewPrep]);
 
     const qaList = Array.isArray(interviewPrep.questions_answers)

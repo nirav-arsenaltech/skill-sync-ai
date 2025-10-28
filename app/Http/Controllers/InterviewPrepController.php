@@ -96,7 +96,7 @@ class InterviewPrepController extends Controller
 
     public function show($id)
     {
-        $InterviewPrepData = InterviewPrep::with('job', 'resume')->findOrFail($id);
+        $InterviewPrepData = InterviewPrep::with('job')->findOrFail($id);
 
         $questionsAnswers = [];
         if (!empty($InterviewPrepData->questions_answers)) {
@@ -115,7 +115,6 @@ class InterviewPrepController extends Controller
             'interviewPrep' => [
                 'id' => $InterviewPrepData->id,
                 'job' => $InterviewPrepData->job,
-                'resume' => $InterviewPrepData->resume,
                 'summary' => $InterviewPrepData->summary,
                 'questions_answers' => $questionsAnswers,
                 'created_at' => $InterviewPrepData->created_at->format('d M, Y H:i'),

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CoverLetter;
+use App\Models\InterviewPrep;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Job;
@@ -19,6 +20,7 @@ class DashboardController extends Controller
         $totalJobs = Job::where('user_id', $userId)->count();
         $totalMatches = Matches::where('user_id', $userId)->count();
         $totalCoverLetters = CoverLetter::where('user_id', $userId)->count();
+        $totalInterviewPreps = InterviewPrep::where('user_id', $userId)->count();
 
         // Recent jobs (latest 5)
         $recentJobs = Job::where('user_id', $userId)
@@ -51,16 +53,30 @@ class DashboardController extends Controller
                 'company_name' => $cl->company_name ?? '',
                 'date' => $cl->created_at->format('d/m/Y'),
             ]);
+
+        $recentInterviewPreps = InterviewPrep::where('user_id', $userId)
+            ->latest()
+            ->take(5)
+            ->with('job')
+            ->get(['id', 'created_at', 'job_description_id'])
+            ->map(fn($ip) => [
+                'id' => $ip->id,
+                'job_title' => $ip->job->title ?? '',
+                'date' => $ip->created_at->format('d/m/Y'),
+            ]);
+
         return Inertia::render('Dashboard/Index', [
             'cards' => [
                 ['title' => 'Total Resumes', 'value' => $totalResumes ?: 0],
                 ['title' => 'Total Jobs', 'value' => $totalJobs ?: 0],
                 ['title' => 'Total Matches', 'value' => $totalMatches ?: 0],
                 ['title' => 'Total Cover Letters', 'value' => $totalCoverLetters ?: 0],
+                ['title' => 'Total Interview Preps', 'value' => $totalInterviewPreps ?: 0],
             ],
             'recentJobs' => $recentJobs,
             'recentResumes' => $recentResumes,
             'recentCoverLetters' => $recentCoverLetters,
+            'recentInterviewPreps' => $recentInterviewPreps,
         ]);
     }
 
