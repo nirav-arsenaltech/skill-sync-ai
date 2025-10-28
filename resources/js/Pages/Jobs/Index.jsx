@@ -90,6 +90,9 @@ export default function Index({ jobs, filters }) {
                         <thead className="bg-gray-100 dark:bg-gray-700">
                             <tr>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    #ID
+                                </th>
+                                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     Title
                                 </th>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -101,6 +104,7 @@ export default function Index({ jobs, filters }) {
                             {jobs.data.length > 0 ? (
                                 jobs.data.map((job) => (
                                     <tr key={job.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                        <td className="px-2 py-4 text-gray-800 dark:text-white w-16 text-center">{job.id}</td>
                                         <td className="px-6 py-4 text-gray-800 dark:text-white">{job.title}</td>
                                         <td className="px-6 py-4 flex space-x-3">
                                             <Link

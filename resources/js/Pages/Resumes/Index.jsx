@@ -86,6 +86,9 @@ export default function Index({ resumes, filters }) {
                         <thead className="bg-gray-100 dark:bg-gray-700">
                             <tr>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    #ID
+                                </th>
+                                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     Name
                                 </th>
                                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -100,6 +103,7 @@ export default function Index({ resumes, filters }) {
                             {resumes.data.length > 0 ? (
                                 resumes.data.map((resume) => (
                                     <tr key={resume.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                        <td className="px-2 py-4 text-gray-800 dark:text-white w-16 text-center">{resume.id}</td>
                                         <td className="px-6 py-4 text-gray-800 dark:text-white">{resume.name}</td>
                                         <td className="px-6 py-4 text-blue-600 dark:text-blue-400">
                                             <a href={`/resumes/view/${resume.file_path.split('/').pop()}`} target="_blank">View File</a>

@@ -48,7 +48,7 @@ export default function InterviewPrepIndex() {
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Interview Preparaton
+                        Interview Preparations
                     </h1>
 
                     <Link

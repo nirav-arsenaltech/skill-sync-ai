@@ -5,7 +5,7 @@ import { Link } from '@inertiajs/react';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { Head } from '@inertiajs/react';
 
-export default function Dashboard({ cards, recentJobs, recentResumes, recentCoverLetters }) {
+export default function Dashboard({ cards, recentJobs, recentResumes, recentCoverLetters, recentInterviewPreps }) {
     return (
         <Layout>
             <Head title="Dashboard" />
@@ -156,6 +156,52 @@ export default function Dashboard({ cards, recentJobs, recentResumes, recentCove
                 ) : (
                     <div className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow text-gray-500 dark:text-gray-400">
                         No Cover Letters available
+                    </div>
+                )}
+
+                {/* Recenet Interview Preps */}
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mt-8 mb-4">Recent Interview Preps</h3>
+                {recentInterviewPreps.length > 0 ? (
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden mt-6">
+                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-100 dark:bg-gray-700">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Job Title
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Date
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                {recentInterviewPreps.map(interviewPreps => (
+                                    <tr key={interviewPreps.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td className="px-6 py-4 text-sm text-gray-700 dark:text-white" style={{ minWidth: '200px', maxWidth: '300px', wordBreak: 'break-word' }}>
+                                            {interviewPreps.job_title}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-700 dark:text-white" style={{ minWidth: '150px', maxWidth: '200px', wordBreak: 'break-word' }}>
+                                            {interviewPreps.date}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-700 dark:text-white">
+                                            <Link
+                                                href={`/interview-preps/${interviewPreps.id}`}
+                                                className="text-indigo-500 hover:text-indigo-600 flex items-center gap-1"
+                                            >
+                                                <EyeIcon className="h-5 w-5" /> View
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <div className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow text-gray-500 dark:text-gray-400">
+                        No Interview Preps available
                     </div>
                 )}
             </div>

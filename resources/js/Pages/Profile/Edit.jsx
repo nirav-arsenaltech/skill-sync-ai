@@ -13,7 +13,7 @@ export default function Edit() {
             <div className='p-6'>
 
                 <div className="flex justify-between items-center mb-6"><h2 className="text-3xl font-bold text-gray-800 dark:text-white">Profile</h2></div>
-                <div className="max-w-3xl mx-auto mt-10 space-y-10">
+                <div className="max-w-8xl mx-auto mt-10 space-y-10 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
                     <UpdateProfileInformation
                         mustVerifyEmail={mustVerifyEmail}
                         status={status}
