@@ -1,6 +1,6 @@
 # 🚀 SkillSync.ai
 
-**SkillSync.ai** is an AI-powered resume and job description matcher & cover letter creator built with **Laravel 12**, **React**, and **Inertia.js** — empowering job seekers and hiring teams to instantly assess resume relevance, identify skill gaps, and improve hiring efficiency.
+**SkillSync.ai** is an AI-powered platform for analytics, resume-job matching, interview preparation, and cover-letter creation, built with **Laravel 12**, **React**, and **Inertia.js** — empowering job seekers and hiring teams to instantly assess resume relevance, identify skill gaps, prepare for interviews, and create tailored cover letters to improve hiring efficiency.
 
 ---
 ## 🔗 Demo
@@ -12,25 +12,47 @@ Use the demo account to log in:
 - **Email:** `admin@gmail.com`
 - **Password:** `123456789`
 ---
-
 ## 🧠 Features
 
-- 🤖 AI-powered resume-job matching using **Gemini 2.5 Flash**
-- 📄 Upload job descriptions & resumes (PDF, DOCX, DOC, TXT, JSON, XML)
-- 📊 Get scores: Match %, Keyword %, Semantic Score, Keyword Gap, ATS Score
-- 📥 Download AI Scan Report (PDF)
-- 🔍 Automatic **skill extraction**, comparison & gap analysis
-- 💬 Full AI-generated summary for each resume
-- 🔒 Authenticated dashboard (Laravel Breeze)
-- 💾 Resume storage & AI scan history
-- 🧼 Robust file validation & encoding cleanup
+- 🤖 AI-powered resume-job matching using **Gemini 2.5 Flash**  
+- 📄 Upload job descriptions & resumes (PDF, DOCX, DOC, TXT, JSON, XML)  
+- 📊 Get scores: Match %, Keyword %, Semantic Score, Keyword Gap, ATS Score  
+- 📥 Download AI Scan Report (PDF)  
+- 🔍 Automatic **skill extraction**, comparison & gap analysis  
+- 💬 Full AI-generated summary for each resume  
+- 🔒 Authenticated dashboard (Laravel Breeze)  
+- 💾 Resume storage & AI scan history  
+- 🧼 Robust file validation & encoding cleanup  
+
+**Analytics Features**
+
+- 📈 Analytics: Dive deep into how well the resume and job description align:  
+  - ✅ Match % — Overall compatibility between resume & job description  
+  - 📊 ATS Score % — How well the resume fares through Applicant Tracking System filters  
+  - 🧠 Semantic Score % — AI-evaluated semantic match between your resume and the job description  
+  - 🔑 Keyword Score % — How many relevant keywords from the job description appear in your resume  
+  - ⚠️ Keyword Gap — Which keywords are missing or under-represented  
+  - 🧰 ATS Best Practices — Insights and suggestions to improve resume formatting and structure for ATS  
+  - 🛠️ Skill Overview — Key skills identified in the resume mapped against those required in the job  
+  - 💪 Strengths & 📉 Weaknesses — AI-highlighted areas where the resume is strong, and areas where improvement is needed  
+  - 📋 Detailed Analysis — A full breakdown and commentary of the resume vs job description alignment  
+  - 👀 View & 📥 Download Full Report — Ability to view online and download a full-fledged report (PDF) for your records  
 
 **Cover Letter Features**
 
-- ✍️ Create a Cover Letter: Generate a personalized cover letter based on your resume and the job description for a company.
-- 👁️ View Cover Letter: Preview the generated cover letter directly in the app.
-- 📥 Download as PDF: Easily download your generated cover letter as a PDF.
+- ✍️ Create a Cover Letter: Generate a personalized cover letter based on your resume and the job description for a company.  
+- 👁️ View Cover Letter: Preview the generated cover letter directly in the app.  
+- 📥 Download as PDF: Easily download your generated cover letter as a PDF.  
 - 📝 Edit Cover Letter with Real-Time Preview: Modify and refine your generated cover letter directly within the app, with instant real-time updates as you edit.
+
+**Interview Preparation Features**
+
+- 🧑‍💼 Interview Prep: Based on the selected job description and your resume data, get a full interview-ready package:  
+  - 🔍 Summary: Key highlights and insights from your resume matched to the job description.  
+  - ❓ Question List: AI-generated likely interview questions tailored to the job description and your resume.  
+  - 🧠 Answer Suggestions: AI-crafted example answers you can use as a basis and refine for your own responses.
+
+
 ---
 
 ## 🖼️ Images
