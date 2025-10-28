@@ -4,7 +4,8 @@ import {
     BriefcaseIcon,
     DocumentTextIcon,
     ChartBarIcon,
-    EnvelopeOpenIcon
+    EnvelopeOpenIcon,
+    PencilSquareIcon
 
 } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
@@ -19,6 +20,7 @@ export default function Sidebar({ isOpen, onClose }) {
         { name: 'Resumes', href: '/resumes', icon: <DocumentTextIcon className="h-5 w-5 mr-3" /> },
         { name: 'Analytics', href: '/analytics', icon: <ChartBarIcon className="h-5 w-5 mr-3" /> },
         { name: 'Cover Letters', href: '/cover-letters', icon: <EnvelopeOpenIcon className="h-5 w-5 mr-3" /> },
+        { name: 'Interview Prepration', href: '/interview-preps', icon: <PencilSquareIcon className="h-5 w-5 mr-3" /> },
     ];
 
     return (
