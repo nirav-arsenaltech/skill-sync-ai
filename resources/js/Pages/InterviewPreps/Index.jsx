@@ -23,6 +23,18 @@ export default function InterviewPrepIndex() {
         if (flash.error) toast.error(flash.error);
     }, [flash]);
 
+    useEffect(() => {
+        if (isModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isModalOpen]);
+
     const handleDelete = () => {
         if (!deleteId) return;
         router.delete(`/interview-preps/${deleteId}`, {

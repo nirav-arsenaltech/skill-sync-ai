@@ -50,6 +50,19 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
         if (flash.success) toast.success(flash.success);
         if (flash.error) toast.error(flash.error);
     }, [flash]);
+
+    useEffect(() => {
+        if (isModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isModalOpen]);
+
     const jobOptions = jobs.map(job => ({
         value: job.id,
         label: job.title,
