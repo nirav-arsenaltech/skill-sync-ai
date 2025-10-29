@@ -4,7 +4,7 @@ import Table from './Components/Table';
 import { Link } from '@inertiajs/react';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { Head } from '@inertiajs/react';
-import { useEffect, useState  } from 'react';
+import { useEffect, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import toast, { Toaster } from 'react-hot-toast';
 
