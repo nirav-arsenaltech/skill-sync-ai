@@ -4,10 +4,28 @@ import Table from './Components/Table';
 import { Link } from '@inertiajs/react';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { Head } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import { usePage } from '@inertiajs/react';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function Dashboard({ cards, recentJobs, recentResumes, recentCoverLetters, recentInterviewPreps }) {
+    const { flash } = usePage().props;
+    const [shown, setShown] = useState(false);
+
+
+    useEffect(() => {
+        if (!shown && flash?.message) {
+            if (flash.type === 'success') toast.success(flash.message);
+            else if (flash.type === 'error') toast.error(flash.message);
+            else toast(flash.message);
+
+            setShown(true);
+        }
+    }, [flash, shown]);
+
     return (
         <Layout>
+            <Toaster position="top-right" />
             <Head title="Dashboard" />
             <div className="p-6">
                 <div className="flex justify-between items-center mb-6">

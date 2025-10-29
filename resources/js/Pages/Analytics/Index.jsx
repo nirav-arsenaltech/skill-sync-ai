@@ -50,6 +50,19 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
         if (flash.success) toast.success(flash.success);
         if (flash.error) toast.error(flash.error);
     }, [flash]);
+
+    useEffect(() => {
+        if (isModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isModalOpen]);
+
     const jobOptions = jobs.map(job => ({
         value: job.id,
         label: job.title,
@@ -301,7 +314,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                 </div>
                 {matchedHistory.length > 0 && (
                     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6 mt-4">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 matched-history-table">
+                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-2 matched-history-table">
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
                                 Scan History
                             </h3>

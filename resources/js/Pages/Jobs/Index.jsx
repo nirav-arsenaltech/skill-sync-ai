@@ -18,6 +18,18 @@ export default function Index({ jobs, filters }) {
         if (flash.error) toast.error(flash.error);
     }, [flash]);
 
+    useEffect(() => {
+        if (isModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isModalOpen]);
+
     const confirmDelete = (id) => {
         setDeleteId(id);
         setIsModalOpen(true);

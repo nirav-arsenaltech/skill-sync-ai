@@ -34,6 +34,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
             {/* Sidebar Panel */}
             <aside className={`fixed lg:sticky lg:top-0 z-40 h-full lg:h-screen w-72 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+                <Link href='/dashboard'>
                 <div className="h-16 px-6 py-6 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
                     {/* <img src='/images/skillsync-title.png' alt="SkillSync.ai" className="h-10 object-contain" /> */}
                     <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-400 dark:from-blue-400 dark:to-purple-500">
@@ -47,6 +48,7 @@ export default function Sidebar({ isOpen, onClose }) {
                         <XMarkIcon className="h-6 w-6" />
                     </button>
                 </div>
+                </Link>
 
                 <nav className="flex-1 px-4 py-6 space-y-2">
                     {menuItems.map((item, index) => {
