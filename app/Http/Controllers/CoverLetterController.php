@@ -49,9 +49,37 @@ class CoverLetterController extends Controller
         $jobs = Job::where('user_id', $userId)->latest()->get(['id', 'title']);
         $resumes = Resume::where('user_id', $userId)->latest()->get(['id', 'name', 'file_path']);
 
+        $templates = [
+            [
+                'id' => 0,
+                'name' => 'Classic',
+                'preview' => asset('images/cover_letter_sample_0.jpg'),
+
+            ],
+            [
+                'id' => 1,
+                'name' => 'Modern',
+                'preview' => asset('images/cover_letter_sample_1.jpg'),
+
+            ],
+            [
+                'id' => 2,
+                'name' => 'Elegant',
+                'preview' => asset('images/cover_letter_sample_2.jpg'),
+
+            ],
+            [
+                'id' => 3,
+                'name' => 'Ivy League',
+                'preview' => asset('images/cover_letter_sample_3.jpg') ?? '',
+
+            ],
+        ];
+
         return Inertia::render('CoverLetters/Create', [
             'jobs' => $jobs,
             'resumes' => $resumes,
+            'templates' => $templates,
         ]);
     }
 
@@ -63,6 +91,7 @@ class CoverLetterController extends Controller
             'job_id' => "required",
             'resume_id' => 'required',
             'company_name' => 'required|string|max:255',
+            'template_id' => 'required',
         ]);
 
         // --- Get Job data ---
@@ -77,8 +106,8 @@ class CoverLetterController extends Controller
 
         // --- Get Resume data ---
         $resume = Resume::where('id', $validated['resume_id'])
-                        ->where('user_id', $userId)
-                        ->first();
+            ->where('user_id', $userId)
+            ->first();
 
         if (!$resume) {
             Log::error('Resume not found in DB', [
@@ -135,8 +164,11 @@ class CoverLetterController extends Controller
                 mkdir(dirname($pdfFilePath), 0755, true);
             }
 
+            $templateId = (int) $validated['template_id'];
+            $view = coverLetterTemplateView($templateId);
+
             // --- PDF generation ---
-            $html = view('pdf.cover-letter-template', [
+            $html = view($view, [
                 'name' => $applicantName,
                 'email' => $email,
                 'phone' => $phone,
@@ -158,6 +190,7 @@ class CoverLetterController extends Controller
                 'resume_id' => $resume->id,
                 'job_description_id' => $job->id,
                 'company_name' => $companyName,
+                'template_id' => $templateId,
                 'ai_result' => $data,
                 'file_path' => 'cover_letters/' . $pdfFileName,
             ]);
@@ -192,7 +225,10 @@ class CoverLetterController extends Controller
         $phoneIconWeb = asset('images/phone.png');
         $linkedinIconWeb = asset('images/linkedin.png');
 
-        $html = view('pdf.cover-letter-template', [
+        $templateId = $coverLetter->template_id;
+        $view = coverLetterTemplateView($templateId);
+
+        $html = view($view, [
             'name' => $data['applicant_name'] ?? 'Applicant',
             'email' => $data['email'] ?? '',
             'phone' => $data['phone'] ?? '',
@@ -225,7 +261,36 @@ class CoverLetterController extends Controller
             ? $coverLetter->ai_result
             : json_decode($coverLetter->ai_result, true);
 
-        $html = view('pdf.cover-letter-template', [
+        $templateId = $coverLetter->template_id;
+        $view = coverLetterTemplateView($templateId);
+
+        $templates = [
+            [
+                'id' => 0,
+                'name' => 'Classic',
+                'preview' => asset('images/cover_letter_sample_0.jpg'),
+
+            ],
+            [
+                'id' => 1,
+                'name' => 'Modern',
+                'preview' => asset('images/cover_letter_sample_1.jpg'),
+
+            ],
+            [
+                'id' => 2,
+                'name' => 'Elegant',
+                'preview' => asset('images/cover_letter_sample_2.jpg'),
+
+            ],
+            [
+                'id' => 3,
+                'name' => 'Ivy League',
+                'preview' => asset('images/cover_letter_sample_3.jpg'),
+
+            ],
+        ];
+        $html = view($view, [
             'name' => $aiResult['applicant_name'] ?? 'Applicant',
             'email' => $aiResult['email'] ?? '',
             'phone' => $aiResult['phone'] ?? '',
@@ -241,6 +306,8 @@ class CoverLetterController extends Controller
                 'id' => $coverLetter->id,
                 'company_name' => $coverLetter->company_name,
                 'ai_result' => $aiResult,
+                'templates' => $templates,
+                'template_id' => $templateId,
                 'html' => $html,
             ],
         ]);
@@ -258,10 +325,14 @@ class CoverLetterController extends Controller
         $coverLetter->update([
             'company_name' => $request->company_name,
             'ai_result' => json_encode($aiResult, JSON_UNESCAPED_UNICODE),
+            'template_id' => $request->template_id,
         ]);
 
+        $templateId = $coverLetter->template_id;
+        $view = coverLetterTemplateView($templateId);
+
         if ($coverLetter->file_path) {
-            $pdf = Pdf::loadView('pdf.cover-letter-template', [
+            $pdf = Pdf::loadView($view, [
                 'name' => $aiResult['applicant_name'] ?? 'Applicant',
                 'email' => $aiResult['email'] ?? '',
                 'phone' => $aiResult['phone'] ?? '',
@@ -281,12 +352,14 @@ class CoverLetterController extends Controller
     public function preview(Request $request, CoverLetter $coverLetter)
     {
         $aiResult = $request->ai_result;
+        $templateId = $request->template_id ?? 0;
+        $view = coverLetterTemplateView($templateId);
 
         $emailIconWeb = asset('images/email.png');
         $phoneIconWeb = asset('images/phone.png');
         $linkedinIconWeb = asset('images/linkedin.png');
 
-        $html = view('pdf.cover-letter-template', [
+        $html = view($view, [
             'name' => $aiResult['applicant_name'] ?? 'Applicant',
             'email' => $aiResult['email'] ?? '',
             'phone' => $aiResult['phone'] ?? '',

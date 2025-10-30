@@ -15,6 +15,7 @@ export default function Edit({ coverLetter }) {
         company_name: coverLetter.company_name || '',
         ai_result: { ...aiData },
         html: coverLetter.html || '',
+        template_id: coverLetter.template_id || 0,
     });
 
     // Update preview only on cover letter field changes
@@ -25,12 +26,14 @@ export default function Edit({ coverLetter }) {
             const res = await axios.post(`/cover-letters/${coverLetter.id}/preview`, {
                 company_name: formData.company_name,
                 ai_result: updatedAi,
+                template_id: formData.template_id,
             });
             setFormData(prev => ({ ...prev, html: res.data.html }));
         } catch (err) {
             console.error('Failed to update preview', err);
         }
     };
+
 
     // Editable fields
     const handleValueChange = (field, value) => {
@@ -45,11 +48,15 @@ export default function Edit({ coverLetter }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!formData.company_name || formData.company_name === '') {
+            toast.error('Please add company name.');
+            return;
+        }
         setLoading(true);
-
         Inertia.post(`/cover-letters/${coverLetter.id}/update`, {
             company_name: formData.company_name,
             ai_result: formData.ai_result,
+            template_id: formData.template_id,
         }, {
             onSuccess: () => {
                 setLoading(false);
@@ -175,6 +182,78 @@ export default function Edit({ coverLetter }) {
                                     className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-gray-200 resize-vertical"
                                 />
                             </div>
+                        </div>
+                        {/* templates  */}
+                        <div className="w-full">
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Choose Template
+                            </label>
+
+                            {(!coverLetter.templates || coverLetter.templates.length === 0) ? (
+                                <p className="text-gray-500 text-sm">No templates available.</p>
+                            ) : (
+                                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                    {coverLetter.templates.map((tpl) => (
+                                        <div
+                                            key={tpl.id}
+                                            onClick={async () => {
+                                                // Update template_id in formData
+                                                setFormData(prev => ({ ...prev, template_id: tpl.id }));
+
+                                                // Call preview API with current AI result + new template
+                                                try {
+                                                    const res = await axios.post(`/cover-letters/${coverLetter.id}/preview`, {
+                                                        company_name: formData.company_name,
+                                                        ai_result: formData.ai_result,
+                                                        template_id: tpl.id,
+                                                    });
+                                                    setFormData(prev => ({ ...prev, html: res.data.html }));
+                                                } catch (err) {
+                                                    console.error('Failed to update preview', err);
+                                                }
+                                            }}
+                                            className={`cursor-pointer rounded-xl border-2 overflow-hidden transition-all duration-200 hover:scale-[1.03] hover:shadow-lg ${formData.template_id === tpl.id ? 'border-blue-600 shadow-lg ring-2 ring-blue-400/40' : 'border-gray-200 dark:border-gray-700'}`}
+                                        >
+                                            {/* Image container */}
+                                            <div className="flex items-center justify-center bg-gray-50 dark:bg-gray-800 p-3">
+                                                <div
+                                                    className="relative w-full max-w-[200px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] shadow-sm rounded-md overflow-hidden flex items-center justify-center"
+                                                    style={{ aspectRatio: '3 / 4' }}
+                                                >
+                                                    <img
+                                                        src={tpl.preview}
+                                                        alt={tpl.name}
+                                                        className="w-full h-full object-contain"
+                                                    />
+
+                                                    {/*  transparent overlay when selected */}
+                                                    {formData.template_id === tpl.id && (
+                                                        <div className="absolute inset-0 bg-blue-500/50 pointer-events-none flex items-center justify-center transition-all duration-300">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="w-10 h-10 text-white"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                                strokeWidth={2}
+                                                            >
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Template info */}
+                                            <div className="p-3 text-center bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                                                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">
+                                                    {tpl.name}
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex items-center space-x-3">
