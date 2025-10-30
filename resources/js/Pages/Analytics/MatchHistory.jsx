@@ -16,7 +16,7 @@ export default function MatchHistory({ match, aiData, jobTitle, resumeName }) {
                     </h3>
                     <Link
                         href="/analytics"
-                        className="text-blue-500 hover:underline"
+                        className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                     >
                        ← Back to History
                     </Link>

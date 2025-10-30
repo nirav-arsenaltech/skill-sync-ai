@@ -12,7 +12,7 @@ export default function Show({ coverLetter }) {
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Cover Letter Preview #{coverLetter.id}</h3>
                     <Link
                         href="/cover-letters"
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                     >
                         ← Back to List
                     </Link>
