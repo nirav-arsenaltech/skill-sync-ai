@@ -5,8 +5,8 @@
     <title>Cover Letter</title>
     <style>
         body { font-family: Arial, Helvetica, sans-serif; color: #222; margin: 0; padding: 0;}
-        .container { max-width: 800px; margin: 20px auto; background: #fff; padding: 36px; border-radius: 6px; box-sizing: border-box; box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.2); }
-        .header { border-bottom: 2px solid #e6e6e6; padding-bottom: 10px; margin-bottom: 18px; }
+        .container { max-width: 800px; margin: 20px auto; background: #fff; padding: 36px; border-radius: 6px; box-sizing: border-box; box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.2); background-image: url('https://app.enhancv.com/images/25-5db3bf22505fe7652246.png'); }
+        .header { border-bottom: 2px solid #6a6a6a; padding-bottom: 10px; margin-bottom: 18px;}
         .name { font-size: 27px; color: #0b63c6; font-weight: 700; font-family: 'Times New Roman', Times, serif; }
         .contact-line {
             font-size: 13px;
@@ -19,6 +19,7 @@
             gap: 10px;
             align-items: center; 
         }
+        
 
         .contact-info {
             display: inline-flex;

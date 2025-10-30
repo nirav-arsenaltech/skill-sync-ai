@@ -77,3 +77,22 @@ if (!function_exists('extractResumeContent')) {
         }
     }
 }
+
+if (! function_exists('coverLetterTemplateView')) {
+    /**
+     * Get the Blade view path for a given cover letter template ID.
+     *
+     * @param int $templateId
+     * @return string
+     */
+    function coverLetterTemplateView(int $templateId = 0): string
+    {
+        return match($templateId) {
+            1 => 'pdf.cover-letter-template-1',
+            2 => 'pdf.cover-letter-template-2',
+            3 => 'pdf.cover-letter-template-3',
+
+            default => 'pdf.cover-letter-template',
+        };
+    }
+}

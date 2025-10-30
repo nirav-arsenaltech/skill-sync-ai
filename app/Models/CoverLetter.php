@@ -18,6 +18,7 @@ class CoverLetter extends Model
         'company_name',
         'ai_result',
         'file_path',
+        'template_id',
     ];
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s',
