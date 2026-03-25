@@ -112,7 +112,7 @@ export default function Create({ jobs, resumes, templates }) {
                                             <div>
                                                 <h4 className="font-semibold text-gray-800 dark:text-white">{resume.name}</h4>
                                                 <a
-                                                    href={`/resumes/view/${resume.file_path.split('/').pop()}`}
+                                                    href={resume.file_url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="text-sm text-blue-600 dark:text-blue-400"

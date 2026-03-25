@@ -137,7 +137,7 @@ export default function CoverLettersIndex() {
                                             </button>
                                             {cl.file_path ? (
                                                 <a
-                                                    href={`/storage/${cl.file_path}`}
+                                                    href={cl.file_url}
                                                     download
                                                     className="text-green-600 hover:text-green-800 flex items-center"
                                                     title="Download DPF"

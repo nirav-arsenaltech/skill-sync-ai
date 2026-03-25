@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\AppNeuronMyAgent;
 use App\Models\InterviewPrep;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
 use App\Models\Job;
 use App\Models\Resume;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class InterviewPrepController extends Controller
 {
@@ -64,16 +64,16 @@ class InterviewPrepController extends Controller
         // --- Get Resume data ---
         $resume = Resume::where('id', $validated['resume_id'])->where('user_id', $userId)->firstOrFail();
 
-        $filePath = storage_path('app/public/' . $resume->file_path);
-
+        $content = withStoredFile($resume->file_path, function (string $filePath): string {
         // --- Extract resume text ---
-        $content = extractResumeContent($filePath);
+        return extractResumeContent($filePath);
+        });
 
         // --- AI Generation ---
         try {
-            $agent = new AppNeuronMyAgent();
+            $agent = new AppNeuronMyAgent;
             $aiResult = $agent->createInterviewPrep($job->title, $job->description ?? '', [
-                ['id' => $resume->id, 'content' => $content]
+                ['id' => $resume->id, 'content' => $content],
             ]);
         } catch (\Exception $e) {
             Log::error("InterviewPrep AI error: " . $e->getMessage());

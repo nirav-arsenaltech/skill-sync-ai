@@ -106,7 +106,7 @@ export default function Index({ resumes, filters }) {
                                         <td className="px-2 py-4 text-gray-800 dark:text-white w-16 text-center">{resume.id}</td>
                                         <td className="px-6 py-4 text-gray-800 dark:text-white">{resume.name}</td>
                                         <td className="px-6 py-4 text-blue-600 dark:text-blue-400">
-                                            <a href={`/resumes/view/${resume.file_path.split('/').pop()}`} target="_blank">View File</a>
+                                            <a href={resume.file_url} target="_blank" rel="noopener noreferrer">View File</a>
                                         </td>
                                         <td className="px-6 py-4 flex space-x-3">
                                             <Link

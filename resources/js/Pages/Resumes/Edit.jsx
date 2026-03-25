@@ -78,7 +78,7 @@ export default function Edit({ resume }) {
                                 <p className="mt-1 text-gray-500">{fileName}</p>
                             ) : (
                                 <p className="mt-1 text-blue-600">
-                                    Current: <a href={`/storage/${resume.file_path}`} target="_blank" rel="noopener noreferrer">View File</a>
+                                    Current: <a href={resume.file_url} target="_blank" rel="noopener noreferrer">View File</a>
                                 </p>
                             )}
                             {errors.file && <div className="mt-1 text-red-600">{errors.file}</div>}

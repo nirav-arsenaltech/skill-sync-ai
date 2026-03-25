@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\AppNeuronMyAgent;
+use App\Models\Job;
 use App\Models\Matches;
+use App\Models\Resume;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-use App\Models\Job;
-use App\Models\Resume;
-use Illuminate\Support\Facades\Auth;
 
 class AnalyticsController extends Controller
 {
@@ -26,7 +26,7 @@ class AnalyticsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)
             ->withQueryString();
-        $matchedHistoryData = $matchedHistory->map(function ($match) use ($jobs) {
+        $matchedHistoryData = $matchedHistory->map(function ($match) {
             $resume = $match->resume;
 
             $aiData = [];
@@ -108,8 +108,9 @@ class AnalyticsController extends Controller
 
         // Get Job data
         $job = Job::where('id', $validated['job_id'])->where('user_id', $userId)->first();
-        if (!$job)
+        if (!$job){
             return back()->with('error', 'Job not found');
+        }
 
         $jobTitle = $job->title;
         $jobDescription = $job->description ?? '';
@@ -119,14 +120,16 @@ class AnalyticsController extends Controller
         $resumeFileTypes = [];
         foreach ($validated['resume_ids'] as $resumeId) {
             $resume = Resume::where('id', $resumeId)->where('user_id', $userId)->first();
-            if (!$resume)
+            if (!$resume){
                 continue;
+            }
 
-            $filePath = storage_path('app/public/' . $resume->file_path);
             $content = '';
-            $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION)) ?? 'UNKNOWN';
+            $ext = strtolower(pathinfo($resume->file_path, PATHINFO_EXTENSION)) ?: 'UNKNOWN';
 
-            $content = extractResumeContent($filePath);
+            $content = withStoredFile($resume->file_path, function (string $filePath): string {
+                return extractResumeContent($filePath);
+            });
 
             $resumesData[] = [
                 'id' => $resume->id,
@@ -138,7 +141,7 @@ class AnalyticsController extends Controller
 
         // --- AI Analysis ---
         try {
-            $agent = new AppNeuronMyAgent();
+            $agent = new AppNeuronMyAgent;
             $aiResult = $agent->analyzeJobAndResumes($jobTitle, $jobDescription, $resumesData, $resumeFileTypes);
         } catch (\Exception $e) {
             Log::error("Error during AI analysis: " . $e->getMessage());
@@ -157,8 +160,9 @@ class AnalyticsController extends Controller
 
             foreach ($resumesData as $index => $resume) {
                 $resumeResult = $parsedResults[$index] ?? [];
-                if (!$resumeResult)
+                if (!$resumeResult){
                     continue;
+                }
                 // Ensure numeric values
                 $matchPercentage = $resumeResult['overall_match_percentage'] ?? 0;
                 $semanticScore = $resumeResult['scores']['semantic_score'] ?? 0;
@@ -169,13 +173,13 @@ class AnalyticsController extends Controller
                 if (empty($resumeResult['ats_best_practice'])) {
                     $resumeResult['ats_best_practice'] = [
                         'resume_file_type' => "Your resume is a {$resumeFileTypes[$resume['id']]}, which can be scanned by ATS systems.",
-                        'email_address' => "Check that your email address is on your resume.",
-                        'phone_number' => "Check that your phone number is on your resume.",
-                        'linkedin_profile' => "Include LinkedIn profile for better ATS scoring.",
-                        'job_title_match' => "Include your target job title.",
-                        'education_match' => "Make sure your education matches JD requirements.",
-                        'experience_match' => "Include your relevant experience clearly.",
-                        'ats_score' => 0 // default, AI will update if possible
+                        'email_address' => 'Check that your email address is on your resume.',
+                        'phone_number' => 'Check that your phone number is on your resume.',
+                        'linkedin_profile' => 'Include LinkedIn profile for better ATS scoring.',
+                        'job_title_match' => 'Include your target job title.',
+                        'education_match' => 'Make sure your education matches JD requirements.',
+                        'experience_match' => 'Include your relevant experience clearly.',
+                        'ats_score' => 0, // default, AI will update if possible
                     ];
                 }
 
@@ -204,7 +208,7 @@ class AnalyticsController extends Controller
                     Log::error('json_encode failed', [
                         'resume_id' => $resume['id'],
                         'error' => json_last_error_msg(),
-                        'data' => $resumeResult
+                        'data' => $resumeResult,
                     ]);
                     throw new \Exception('json_encode failed: ' . json_last_error_msg());
                 }
@@ -236,12 +240,11 @@ class AnalyticsController extends Controller
     public function destroy($id)
     {
         $match = Matches::find($id);
-        if (!$match) {
+        if (! $match) {
             return back()->with('error', 'Match not found.');
         }
         $match->delete();
 
         return redirect()->route('analytics.index')->with('flash', ['success' => 'Match Deleted successfully!']);
     }
-
 }
