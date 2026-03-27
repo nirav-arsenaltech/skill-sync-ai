@@ -1,7 +1,9 @@
 import Layout from "../Dashboard/Components/Layout";
 import { useState } from "react";
 import { Link, Head } from "@inertiajs/react";
+import toast, { Toaster } from "react-hot-toast";
 import {
+    ArrowDownTrayIcon,
     ChevronLeftIcon,
     CheckIcon,
     ChevronDownIcon,
@@ -9,6 +11,7 @@ import {
     DocumentTextIcon,
     BriefcaseIcon,
 } from "@heroicons/react/24/outline";
+import { downloadMatchReportPdf } from "./reportPdf";
 
 /*
     TEXT COLOR SCALE (dark bg = var(--ss-bg), card bg = var(--ss-surface))
@@ -43,6 +46,16 @@ const styles = `
         transition: all 0.18s; white-space: nowrap;
     }
     .mh-back:hover { background: rgba(56,189,248,0.15); }
+
+    .mh-header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .mh-download {
+        display:inline-flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:8px;
+    background:rgba(52,211,153,0.09); border:1px solid rgba(52,211,153,0.20);
+    color:#34d399; font-size:12px; font-weight:600;
+    text-decoration:none; transition:all 0.18s;
+    }
+    .mh-download:hover { background:rgba(52,211,153,0.18); }
 
     /* ── Meta pills ── */
     .mh-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
@@ -166,6 +179,16 @@ const styles = `
     .mh-analysis-text { font-size: 13px; color: var(--ss-text-soft); line-height: 1.85; white-space: pre-wrap; }
 `;
 
+const TOAST_OPTS = {
+    style: {
+        background: 'var(--ss-surface)', color: 'var(--ss-text)',
+        border: '1px solid var(--ss-alpha-08)',
+        borderRadius: '10px', fontSize: '13px',
+    },
+    success: { iconTheme: { primary: '#22c55e', secondary: 'var(--ss-surface)' } },
+    error: { iconTheme: { primary: '#f87171', secondary: 'var(--ss-surface)' } },
+};
+
 const SCORE_DEFS = [
     {
         key: "overall",
@@ -242,6 +265,16 @@ function SectionCard({
 export default function MatchHistory({ match, aiData, jobTitle, resumeName }) {
     const [showAllSkills, setShowAllSkills] = useState(false);
 
+    const handleDownload = () => {
+        try {
+            downloadMatchReportPdf({ match, aiData, jobTitle, resumeName });
+            toast.success("PDF downloaded successfully!");
+        } catch (error) {
+            console.error("[PDF] Error during download:", error);
+            toast.error("Failed to download PDF.");
+        }
+    };
+
     const scores = [
         { ...SCORE_DEFS[0], value: aiData.overall_match_percentage ?? 0 },
         { ...SCORE_DEFS[1], value: aiData.ats_best_practice?.ats_score ?? 0 },
@@ -263,6 +296,7 @@ export default function MatchHistory({ match, aiData, jobTitle, resumeName }) {
         <Layout>
             <style>{styles}</style>
             <Head title={`Match History #${match.id}`} />
+            <Toaster position="top-right" toastOptions={TOAST_OPTS} />
 
             <div className="mh-root">
                 {/* Header */}
@@ -275,10 +309,16 @@ export default function MatchHistory({ match, aiData, jobTitle, resumeName }) {
                             AI resume analysis report
                         </div>
                     </div>
-                    <Link href="/analytics" className="mh-back">
-                        <ChevronLeftIcon style={{ width: 14, height: 14 }} />
-                        Back to History
-                    </Link>
+                    <div className="mh-header-actions">
+                        <button type="button" onClick={handleDownload} className="mh-download">
+                            <ArrowDownTrayIcon style={{ width: 14, height: 14 }} />
+                            Download PDF
+                        </button>
+                        <Link href="/analytics" className="mh-back">
+                            <ChevronLeftIcon style={{ width: 14, height: 14 }} />
+                            Back to History
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Meta pills */}

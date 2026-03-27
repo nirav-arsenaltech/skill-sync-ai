@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import autoTable from 'jspdf-autotable';
+import React, { useState, useEffect } from 'react';
+
 import { usePage, router } from '@inertiajs/react';
 import toast, { Toaster } from 'react-hot-toast';
 import Layout from '../Dashboard/Components/Layout';
@@ -13,6 +11,12 @@ import {
 import { Head, Link } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
 import Select from 'react-select';
+import { downloadMatchReportPdf } from './reportPdf';
+
+const formatMetricValue = (value) => `${Number(value ?? 0)}%`;
+const formatMetricLabel = (key) => key
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase());
 
 /* ─────────────────────────────────────────────
    Styles  (ai- prefix = analytics index)
@@ -388,42 +392,20 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
         });
     };
 
-    /* PDF download — logic unchanged */
     const handleDownload = async (matchId) => {
         setDownloading(matchId);
         try {
             const match = matchedHistory.find(m => m.id === matchId);
             if (!match) throw new Error('Match not found');
 
-            const reportElement = document.getElementById(`report-content-${matchId}`);
-            if (!reportElement) throw new Error('Report not found');
-
-            const cloned = reportElement.cloneNode(true);
-            cloned.style.display  = 'block';
-            cloned.classList.remove('hidden');
-            cloned.style.background = 'white';
-            cloned.style.padding    = '20px';
-            cloned.querySelectorAll('.strength-weakness').forEach(el => {
-                el.style.breakInside = 'avoid';
+            const aiData = parseAi(match);
+            const job = jobs.find(item => item.id === match.job_description_id);
+            downloadMatchReportPdf({
+                match,
+                aiData,
+                jobTitle: job?.title,
+                resumeName: match.resume_name,
             });
-            document.body.appendChild(cloned);
-
-            const canvas  = await html2canvas(cloned, { scale: 2, useCORS: true });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf     = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth  = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            let remainingHeight = pdfHeight;
-            let position = 0;
-            while (remainingHeight > 0) {
-                pdf.addImage(imgData, 'PNG', 0, -position, pdfWidth, pdfHeight);
-                remainingHeight -= pageHeight;
-                position        += pageHeight;
-                if (remainingHeight > 0) pdf.addPage();
-            }
-            pdf.save(`match-report-${matchId}.pdf`);
-            document.body.removeChild(cloned);
             toast.success('PDF downloaded successfully!');
         } catch (err) {
             console.error('[PDF] Error during download:', err);
@@ -674,128 +656,138 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
             {/* ── Hidden PDF report divs (unchanged — required for html2canvas) ── */}
             {matchedHistory.map((match) => {
                 const aiData = parseAi(match);
+                const job = jobs.find(item => item.id === match.job_description_id);
                 return (
                     <div
                         key={`report-${match.id}`}
                         id={`report-content-${match.id}`}
-                        className="hidden w-full p-6 bg-white"
-                        style={{ background: 'white', padding: '20px', fontSize: '20px', lineHeight: 'normal' }}
+                        className="hidden w-full bg-white p-8 text-slate-800"
+                        style={{ background: 'white' }}
                     >
-                        {/* Logo */}
-                        <div className="flex items-center justify-center mb-6">
-                            <img src="/images/skillsync-logo.png" alt="SkillSync.ai" className="h-12 object-contain" />
+                        <div className="rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-blue-50 px-8 py-7 text-slate-900 shadow-sm">
+                            <div className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-500">SkillSync.ai</div>
+                            <h2 className="mt-3 text-4xl font-bold tracking-tight text-slate-900">Match Report</h2>
+                            <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
+                                Analytics summary with ATS best-practice checks, skills coverage, and recommendation details.
+                            </p>
+                            <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-600">
+                                <div className="rounded-full border border-sky-100 bg-white px-4 py-2 shadow-sm">
+                                    Resume: {match.resume_name || 'N/A'}
+                                </div>
+                                <div className="rounded-full border border-sky-100 bg-white px-4 py-2 shadow-sm">
+                                    Job: {job?.title || 'N/A'}
+                                </div>
+                                <div className="rounded-full border border-sky-100 bg-white px-4 py-2 shadow-sm">
+                                    Generated: {new Date(match.created_at).toLocaleDateString()}
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="space-y-6" style={{ fontSize: '20px', lineHeight: 'normal' }}>
-                            {/* Overall Match & ATS Score */}
-                            <div className="flex space-x-4 mb-6">
-                                <div className="flex-1">
-                                    <h4 className="font-semibold text-gray-800 mb-3" style={{ fontSize: '20px', lineHeight: 'normal' }}>
-                                        Overall Match: {aiData.overall_match_percentage ?? 0}%
-                                    </h4>
-                                    <div className="w-full bg-gray-200 rounded-full h-5">
-                                        <div className="bg-indigo-500 h-5 rounded-full transition-all duration-500"
-                                            style={{ width: `${aiData.overall_match_percentage ?? 0}%` }} />
-                                    </div>
-                                </div>
-                                <div className="flex-1">
-                                    <h4 className="font-semibold text-gray-800 mb-3" style={{ fontSize: '20px', lineHeight: 'normal' }}>
-                                        ATS Score: {aiData.ats_best_practice?.ats_score ?? 0}%
-                                    </h4>
-                                    <div className="w-full bg-gray-200 rounded-full h-5">
-                                        <div className="bg-green-500 h-5 rounded-full transition-all duration-500"
-                                            style={{ width: `${aiData.ats_best_practice?.ats_score ?? 0}%` }} />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Score bars */}
-                            <div className="grid grid-cols-3 gap-4">
-                                {['semantic_score', 'keyword_score', 'keyword_gap'].map((key) => (
-                                    <div key={key}>
-                                        <h5 className="text-gray-700 text-base font-medium capitalize mb-3" style={{ fontSize: '20px', lineHeight: 'normal' }}>
-                                            {key.replace('_', ' ')}
-                                        </h5>
-                                        <div className="w-full bg-gray-200 rounded-full h-4">
-                                            <div className="bg-rose-500 h-4 rounded-full transition-all duration-500"
-                                                style={{ width: `${aiData.scores?.[key] ?? 0}%` }} />
+                        <div className="mt-8 grid grid-cols-2 gap-4">
+                            {[
+                                { label: 'Overall Match', value: formatMetricValue(aiData.overall_match_percentage), color: 'bg-sky-500' },
+                                { label: 'ATS Score', value: formatMetricValue(aiData.ats_best_practice?.ats_score), color: 'bg-emerald-500' },
+                                { label: 'Semantic Score', value: formatMetricValue(aiData.scores?.semantic_score), color: 'bg-violet-500' },
+                                { label: 'Keyword Score', value: formatMetricValue(aiData.scores?.keyword_score), color: 'bg-orange-500' },
+                                { label: 'Keyword Gap', value: formatMetricValue(aiData.scores?.keyword_gap), color: 'bg-rose-500' },
+                            ].map((metric) => (
+                                <div
+                                    key={metric.label}
+                                    className={`rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm ${metric.label === 'Keyword Gap' ? 'col-span-2' : ''}`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span className={`h-10 w-2 rounded-full ${metric.color}`} />
+                                        <div>
+                                            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{metric.label}</div>
+                                            <div className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{metric.value}</div>
                                         </div>
-                                        <p className="text-sm text-gray-600 mt-1" style={{ fontSize: '16px', lineHeight: 'normal' }}>
-                                            {aiData.scores?.[key] ?? 0}%
-                                        </p>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))}
+                        </div>
 
-                            {/* ATS Best Practices */}
-                            <div className="mb-6">
-                                <h4 className="text-gray-800 font-semibold mb-3">ATS Best Practices</h4>
-                                <table className="w-full text-left border-collapse">
-                                    <tbody>
-                                        {aiData.ats_best_practice &&
-                                            Object.entries(aiData.ats_best_practice)
-                                                .filter(([key]) => key !== 'ats_score')
-                                                .map(([key, value]) => (
-                                                    <tr key={key} className="border-b border-gray-200">
-                                                        <td className="px-2 py-2 font-medium text-gray-700 capitalize">{key.replace(/_/g, ' ')}</td>
-                                                        <td className="px-2 py-2 text-gray-600">{value}</td>
-                                                    </tr>
-                                                ))}
+                        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm break-inside-avoid">
+                            <h3 className="text-xl font-semibold text-slate-900">ATS Best Practices</h3>
+                            <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
+                                <table className="min-w-full divide-y divide-slate-200 text-left">
+                                    <thead className="bg-sky-50 text-sm uppercase tracking-[0.18em] text-sky-700">
+                                        <tr>
+                                            <th className="px-4 py-3">Check</th>
+                                            <th className="px-4 py-3">Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-200 bg-white text-sm leading-6 text-slate-600">
+                                        {Object.entries(aiData.ats_best_practice || {})
+                                            .filter(([key]) => key !== 'ats_score')
+                                            .map(([key, value]) => (
+                                                <tr key={key}>
+                                                    <td className="px-4 py-3 font-semibold text-slate-900">{formatMetricLabel(key)}</td>
+                                                    <td className="px-4 py-3">{value}</td>
+                                                </tr>
+                                            ))}
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
 
-                            {/* Skills table */}
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full text-left border border-gray-300 rounded" style={{ fontSize: '22px', lineHeight: 'normal' }}>
-                                    <thead className="bg-gray-100">
+                        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm break-inside-avoid">
+                            <h3 className="text-xl font-semibold text-slate-900">Skills Analysis</h3>
+                            <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
+                                <table className="min-w-full divide-y divide-slate-200 text-left">
+                                    <thead className="bg-sky-50 text-sm uppercase tracking-[0.18em] text-sky-700">
                                         <tr>
-                                            <th className="p-2">Skills</th>
-                                            <th className="p-2">Resume</th>
-                                            <th className="p-2">Job Description</th>
-                                            <th className="p-2">Gap</th>
-                                            <th className="p-2">Matched</th>
+                                            <th className="px-4 py-3">Skill</th>
+                                            <th className="px-4 py-3">Resume</th>
+                                            <th className="px-4 py-3">Job</th>
+                                            <th className="px-4 py-3">Gap</th>
+                                            <th className="px-4 py-3">Matched</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody className="divide-y divide-slate-200 bg-white text-sm text-slate-600">
                                         {aiData.skills_analysis?.map((skill) => (
-                                            <tr key={skill.skill} className="border-t border-gray-200">
-                                                <td className="p-2">{skill.skill}</td>
-                                                <td className="p-2">{skill.resume_count}</td>
-                                                <td className="p-2">{skill.job_count}</td>
-                                                <td className="p-2">{skill.gap}</td>
-                                                <td className="p-2">
-                                                    {skill.matched ? <CheckIcon className="h-5 w-5 text-green-500" /> : '-'}
+                                            <tr key={skill.skill}>
+                                                <td className="px-4 py-3 font-semibold text-slate-900">{skill.skill}</td>
+                                                <td className="px-4 py-3">{skill.resume_count}</td>
+                                                <td className="px-4 py-3">{skill.job_count}</td>
+                                                <td className="px-4 py-3">{skill.gap}</td>
+                                                <td className="px-4 py-3">
+                                                    {skill.matched ? (
+                                                        <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                                                            Yes
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-rose-700">
+                                                            No
+                                                        </span>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
 
-                            {/* Strengths & Weaknesses */}
-                            <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 break-inside-avoid strength-weakness">
-                                <div className="flex-1">
-                                    <h5 className="text-gray-800 font-semibold mb-3" style={{ fontSize: '22px' }}>Strengths</h5>
-                                    <p className="text-gray-700 whitespace-pre-wrap" style={{ fontSize: '20px', lineHeight: 'normal' }}>
-                                        {aiData.strengths ?? 'N/A'}
-                                    </p>
-                                </div>
-                                <div className="flex-1">
-                                    <h5 className="text-gray-800 font-semibold mb-3" style={{ fontSize: '22px' }}>Weaknesses</h5>
-                                    <p className="text-gray-700 whitespace-pre-wrap" style={{ fontSize: '20px', lineHeight: 'normal' }}>
-                                        {aiData.weaknesses ?? 'N/A'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Detailed AI text */}
-                            <div>
-                                <h5 className="text-gray-800 font-semibold mb-3" style={{ fontSize: '22px' }}>Detailed Analysis</h5>
-                                <p className="text-gray-700 whitespace-pre-wrap" style={{ fontSize: '20px', lineHeight: 'normal' }}>
-                                    {aiData.ai_text || 'No report available'}
+                        <div className="mt-8 grid grid-cols-2 gap-4 break-inside-avoid strength-weakness">
+                            <div className="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-6 shadow-sm">
+                                <h3 className="text-xl font-semibold text-emerald-900">Strengths</h3>
+                                <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-emerald-950">
+                                    {aiData.strengths ?? 'N/A'}
                                 </p>
                             </div>
+                            <div className="rounded-3xl border border-rose-200 bg-gradient-to-br from-rose-50 to-white p-6 shadow-sm">
+                                <h3 className="text-xl font-semibold text-rose-900">Weaknesses</h3>
+                                <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-rose-950">
+                                    {aiData.weaknesses ?? 'N/A'}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-sm break-inside-avoid">
+                            <h3 className="text-xl font-semibold text-slate-900">Detailed Analysis</h3>
+                            <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">
+                                {aiData.ai_text || 'No report available'}
+                            </p>
                         </div>
                     </div>
                 );
