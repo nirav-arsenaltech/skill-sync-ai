@@ -10,7 +10,9 @@ class CoverLetter extends Model
     use HasFactory;
 
     protected $table = 'cover_letters';
+
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'user_id',
         'resume_id',
@@ -35,7 +37,7 @@ class CoverLetter extends Model
 
     public function job()
     {
-        return $this->belongsTo(Job::class,'job_description_id');
+        return $this->belongsTo(Job::class, 'job_description_id');
     }
 
     public function getFileUrlAttribute(): ?string

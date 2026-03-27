@@ -3,20 +3,23 @@
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\CoverLetterController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InterviewPrepController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\OnlineExamController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResumeController;
 use App\Models\Resume;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
 
-Route::get('/', function () {
-    return Auth::check() ? redirect()->route('dashboard') : redirect()->route('login');
-});
+// Route::get('/', function () {
+//     return Auth::check() ? redirect()->route('dashboard') : redirect()->route('login');
+// });
 
+Route::get('/', [HomeController::class, 'index'])->name('home');
 /*
 |--------------------------------------------------------------------------|
 | Authenticated Routes                                                     |
@@ -59,6 +62,8 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
+
+    Route::resource('online-exams', OnlineExamController::class);
 
     // Analytics routes
     Route::prefix('analytics')->group(function () {

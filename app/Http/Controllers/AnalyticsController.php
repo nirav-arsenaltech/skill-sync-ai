@@ -42,7 +42,6 @@ class AnalyticsController extends Controller
                 'keyword_gap' => $match->keyword_gap ?? 0,
             ];
 
-
             return [
                 'id' => $match->id,
                 'resume_id' => $match->resume_id,
@@ -94,8 +93,6 @@ class AnalyticsController extends Controller
         ]);
     }
 
-
-
     public function scan(Request $request)
     {
         $userId = Auth::id();
@@ -108,7 +105,7 @@ class AnalyticsController extends Controller
 
         // Get Job data
         $job = Job::where('id', $validated['job_id'])->where('user_id', $userId)->first();
-        if (!$job){
+        if (! $job) {
             return back()->with('error', 'Job not found');
         }
 
@@ -120,7 +117,7 @@ class AnalyticsController extends Controller
         $resumeFileTypes = [];
         foreach ($validated['resume_ids'] as $resumeId) {
             $resume = Resume::where('id', $resumeId)->where('user_id', $userId)->first();
-            if (!$resume){
+            if (! $resume) {
                 continue;
             }
 
@@ -144,7 +141,8 @@ class AnalyticsController extends Controller
             $agent = new AppNeuronMyAgent;
             $aiResult = $agent->analyzeJobAndResumes($jobTitle, $jobDescription, $resumesData, $resumeFileTypes);
         } catch (\Exception $e) {
-            Log::error("Error during AI analysis: " . $e->getMessage());
+            Log::error('Error during AI analysis: '.$e->getMessage());
+
             return back()->with('error', 'AI scan failed. Check logs for details.');
         }
 
@@ -154,13 +152,19 @@ class AnalyticsController extends Controller
             $cleanedAiResult = preg_replace('/\s*```$/', '', $cleanedAiResult);
             $parsedResults = json_decode($cleanedAiResult, true);
 
-            if (!is_array($parsedResults)) {
-                throw new \Exception('Invalid AI result format.');
+            if (json_last_error() !== JSON_ERROR_NONE || ! is_array($parsedResults)) {
+
+                Log::error('Final AI JSON parse failed', [
+                    'error' => json_last_error_msg(),
+                    'data' => $cleanedAiResult,
+                ]);
+
+                return back()->with('error', 'AI returned invalid format. Please try again.');
             }
 
             foreach ($resumesData as $index => $resume) {
                 $resumeResult = $parsedResults[$index] ?? [];
-                if (!$resumeResult){
+                if (! $resumeResult) {
                     continue;
                 }
                 // Ensure numeric values
@@ -189,7 +193,7 @@ class AnalyticsController extends Controller
                     $resumeKeywords = collect(preg_split('/\s+/', $resume['content']));
                     $skillsAnalysis = [];
                     foreach ($jdKeywords as $keyword) {
-                        $resumeCount = $resumeKeywords->filter(fn($k) => strtolower($k) === strtolower($keyword))->count();
+                        $resumeCount = $resumeKeywords->filter(fn ($k) => strtolower($k) === strtolower($keyword))->count();
                         $jobCount = 1;
                         $skillsAnalysis[] = [
                             'skill' => $keyword,
@@ -210,7 +214,7 @@ class AnalyticsController extends Controller
                         'error' => json_last_error_msg(),
                         'data' => $resumeResult,
                     ]);
-                    throw new \Exception('json_encode failed: ' . json_last_error_msg());
+                    throw new \Exception('json_encode failed: '.json_last_error_msg());
                 }
 
                 Matches::create([
@@ -229,8 +233,9 @@ class AnalyticsController extends Controller
         } catch (\Exception $e) {
             Log::error('Error saving AI results', [
                 'exception' => $e->getMessage(),
-                'ai_result' => $aiResult
+                'ai_result' => $aiResult,
             ]);
+
             return back()->with('error', 'Failed to save AI scan results. Check logs.');
         }
 

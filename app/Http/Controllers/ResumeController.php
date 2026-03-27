@@ -58,6 +58,7 @@ class ResumeController extends Controller
     public function edit(Resume $resume)
     {
         $this->authorizeResumeAccess($resume);
+
         return Inertia::render('Resumes/Edit', ['resume' => $resume]);
     }
 
@@ -98,5 +99,4 @@ class ResumeController extends Controller
             abort(403, 'Unauthorized action.');
         }
     }
-
 }
