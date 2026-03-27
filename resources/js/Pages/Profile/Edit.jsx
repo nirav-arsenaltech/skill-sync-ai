@@ -12,16 +12,16 @@ import {
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.pe-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:#0f172a; min-height:100%; }
+.pe-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:var(--ss-bg); min-height:100%; }
 
 /* ── Page header ── */
 .pe-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
-.pe-title    { font-size:22px; font-weight:800; color:#f1f5f9; letter-spacing:-0.5px; }
-.pe-subtitle { font-size:13px; color:#6e7e95; margin-top:3px; }
+.pe-title    { font-size:22px; font-weight:800; color:var(--ss-text-strong); letter-spacing:-0.5px; }
+.pe-subtitle { font-size:13px; color:var(--ss-text-muted); margin-top:3px; }
 
 /* ── Section cards ── */
 .pe-card {
-    background:#1e293b; border:1px solid rgba(255,255,255,0.07);
+    background:var(--ss-surface); border:1px solid var(--ss-alpha-07);
     border-radius:16px; padding:28px; margin-bottom:16px;
 }
 
@@ -36,7 +36,7 @@ const styles = `
 .pe-card-icon-blue   { background:rgba(56,189,248,0.10);  border:1px solid rgba(56,189,248,0.20); color:#38bdf8; }
 .pe-card-icon-green  { background:rgba(52,211,153,0.10);  border:1px solid rgba(52,211,153,0.20); color:#34d399; }
 .pe-card-icon-red    { background:rgba(248,113,113,0.10); border:1px solid rgba(248,113,113,0.20); color:#f87171; }
-.pe-card-section-title { font-size:13px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.6px; }
+.pe-card-section-title { font-size:13px; font-weight:700; color:var(--ss-text-soft); text-transform:uppercase; letter-spacing:0.6px; }
 `;
 
 export default function Edit() {

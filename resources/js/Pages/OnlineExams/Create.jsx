@@ -28,27 +28,27 @@ const featureList = [
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.oec-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:#0f172a; min-height:100%; }
+.oec-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:var(--ss-bg); min-height:100%; }
 
 /* ── Loading overlay ── */
 .oec-loading {
     position:fixed; inset:0; z-index:50;
-    background:rgba(0,0,0,0.55); backdrop-filter:blur(3px);
+    background:var(--ss-overlay); backdrop-filter:blur(3px);
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
 }
 .oec-spinner {
     width:52px; height:52px; border-radius:50%;
-    border:4px solid rgba(255,255,255,0.10);
+    border:4px solid var(--ss-alpha-10);
     border-top-color:#38bdf8;
     animation:oec-spin 0.9s linear infinite;
 }
 @keyframes oec-spin { to { transform:rotate(360deg); } }
-.oec-spinner-label { font-size:13px; color:#94a3b8; font-weight:500; }
+.oec-spinner-label { font-size:13px; color:var(--ss-text-soft); font-weight:500; }
 
 /* ── Hero banner ── */
 .oec-hero {
     border-radius:16px; overflow:hidden; margin-bottom:20px;
-    background:linear-gradient(135deg,#0f2744 0%,#0f172a 50%,#0c2340 100%);
+    background:linear-gradient(135deg,var(--ss-bg-alt) 0%,var(--ss-bg) 50%,var(--ss-bg-alt-2) 100%);
     border:1px solid rgba(56,189,248,0.15);
     box-shadow:0 8px 32px rgba(0,0,0,0.4);
 }
@@ -66,22 +66,22 @@ const styles = `
     text-transform:uppercase; letter-spacing:0.3em; margin-bottom:14px;
 }
 .oec-hero-title {
-    font-size:24px; font-weight:800; color:#f1f5f9;
+    font-size:24px; font-weight:800; color:var(--ss-text-strong);
     line-height:1.35; letter-spacing:-0.5px; max-width:560px; margin-bottom:10px;
 }
 .oec-hero-desc {
-    font-size:13px; color:#7b94b7; line-height:1.7; max-width:520px;
+    font-size:13px; color:var(--ss-text-muted); line-height:1.7; max-width:520px;
 }
 
 /* hero right stats box */
 .oec-stats-box {
-    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09);
+    background:var(--ss-alpha-05); border:1px solid var(--ss-alpha-09);
     border-radius:14px; padding:22px; backdrop-filter:blur(8px);
     display:flex; flex-direction:column; gap:16px;
 }
-.oec-stat-val   { font-size:30px; font-weight:800; color:#f1f5f9; line-height:1; }
-.oec-stat-label { font-size:12px; color:#7b94b7; margin-top:4px; }
-.oec-stat-note  { font-size:12px; color:#6e7e95; line-height:1.6; }
+.oec-stat-val   { font-size:30px; font-weight:800; color:var(--ss-text-strong); line-height:1; }
+.oec-stat-label { font-size:12px; color:var(--ss-text-muted); margin-top:4px; }
+.oec-stat-note  { font-size:12px; color:var(--ss-text-muted); line-height:1.6; }
 
 /* ── Two-col layout ── */
 .oec-two-col {
@@ -92,24 +92,24 @@ const styles = `
 
 /* ── Shared card ── */
 .oec-card {
-    background:#1e293b; border:1px solid rgba(255,255,255,0.07);
+    background:var(--ss-surface); border:1px solid var(--ss-alpha-07);
     border-radius:16px; padding:28px;
 }
 
 /* ── Form headings ── */
-.oec-form-title    { font-size:18px; font-weight:800; color:#f1f5f9; margin-bottom:4px; }
-.oec-form-subtitle { font-size:12px; color:#6e7e95; margin-bottom:24px; }
+.oec-form-title    { font-size:18px; font-weight:800; color:var(--ss-text-strong); margin-bottom:4px; }
+.oec-form-subtitle { font-size:12px; color:var(--ss-text-muted); margin-bottom:24px; }
 
 /* ── Form fields ── */
 .oec-field { margin-bottom:18px; }
 .oec-label {
-    display:block; font-size:12px; font-weight:600; color:#6e7e95;
+    display:block; font-size:12px; font-weight:600; color:var(--ss-text-muted);
     text-transform:uppercase; letter-spacing:0.7px; margin-bottom:8px;
 }
 .oec-select, .oec-textarea {
     width:100%; padding:10px 14px;
-    background:#0f172a; border:1px solid rgba(255,255,255,0.09);
-    border-radius:10px; color:#e2e8f0; font-size:13px;
+    background:var(--ss-bg); border:1px solid var(--ss-alpha-09);
+    border-radius:10px; color:var(--ss-text); font-size:13px;
     font-family:'Inter',sans-serif; outline:none; transition:all 0.18s;
     appearance:none; -webkit-appearance:none;
 }
@@ -117,11 +117,11 @@ const styles = `
     border-color:rgba(56,189,248,0.40);
     box-shadow:0 0 0 3px rgba(56,189,248,0.08);
 }
-.oec-select option { background:#1e293b; color:#e2e8f0; }
+.oec-select option { background:var(--ss-surface); color:var(--ss-text); }
 .oec-textarea {
     resize:vertical; min-height:100px; line-height:1.6;
 }
-.oec-textarea::placeholder { color:#6e7e95; }
+.oec-textarea::placeholder { color:var(--ss-text-muted); }
 .oec-error { font-size:12px; color:#f87171; margin-top:5px; }
 
 /* grid for 2 selects side by side */
@@ -144,22 +144,22 @@ const styles = `
 .oec-btn-back {
     display:inline-flex; align-items:center; gap:7px;
     padding:10px 18px; border-radius:10px;
-    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09);
-    color:#94a3b8; font-size:13px; font-weight:600;
+    background:var(--ss-alpha-05); border:1px solid var(--ss-alpha-09);
+    color:var(--ss-text-soft); font-size:13px; font-weight:600;
     text-decoration:none; transition:all 0.18s;
 }
-.oec-btn-back:hover { background:rgba(255,255,255,0.09); color:#e2e8f0; }
+.oec-btn-back:hover { background:var(--ss-alpha-09); color:var(--ss-text); }
 
 /* ── Aside ── */
-.oec-aside-title    { font-size:16px; font-weight:800; color:#f1f5f9; margin-bottom:4px; }
-.oec-aside-subtitle { font-size:12px; color:#6e7e95; margin-bottom:18px; }
+.oec-aside-title    { font-size:16px; font-weight:800; color:var(--ss-text-strong); margin-bottom:4px; }
+.oec-aside-subtitle { font-size:12px; color:var(--ss-text-muted); margin-bottom:18px; }
 
 .oec-feature-list { display:flex; flex-direction:column; gap:10px; margin-bottom:18px; }
 .oec-feature-item {
     display:flex; align-items:flex-start; gap:10px;
-    background:#0f172a; border:1px solid rgba(255,255,255,0.06);
+    background:var(--ss-bg); border:1px solid var(--ss-alpha-06);
     border-radius:10px; padding:12px 14px;
-    font-size:13px; color:#94a3b8; line-height:1.5;
+    font-size:13px; color:var(--ss-text-soft); line-height:1.5;
 }
 .oec-feature-icon { color:#34d399; flex-shrink:0; margin-top:1px; }
 

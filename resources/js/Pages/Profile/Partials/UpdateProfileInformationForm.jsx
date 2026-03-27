@@ -11,13 +11,13 @@ const styles = `
 .upf-section { font-family:'Inter',sans-serif; }
 
 .upf-header { margin-bottom:24px; }
-.upf-header-title    { font-size:16px; font-weight:800; color:#f1f5f9; margin-bottom:4px; }
-.upf-header-subtitle { font-size:13px; color:#6e7e95; line-height:1.6; }
+.upf-header-title    { font-size:16px; font-weight:800; color:var(--ss-text-strong); margin-bottom:4px; }
+.upf-header-subtitle { font-size:13px; color:var(--ss-text-muted); line-height:1.6; }
 
 /* ── Fields ── */
 .upf-field { margin-bottom:18px; }
 .upf-label {
-    display:block; font-size:11px; font-weight:600; color:#6e7e95;
+    display:block; font-size:11px; font-weight:600; color:var(--ss-text-muted);
     text-transform:uppercase; letter-spacing:0.7px; margin-bottom:7px;
 }
 
@@ -26,8 +26,8 @@ const styles = `
 .upf-section input[type="email"],
 .upf-section input[type="password"] {
     width:100%; padding:10px 14px !important;
-    background:#0f172a !important; border:1px solid rgba(255,255,255,0.09) !important;
-    border-radius:10px !important; color:#e2e8f0 !important; font-size:13px !important;
+    background:var(--ss-bg) !important; border:1px solid var(--ss-alpha-09) !important;
+    border-radius:10px !important; color:var(--ss-text) !important; font-size:13px !important;
     font-family:'Inter',sans-serif !important; outline:none !important;
     transition:all 0.18s !important; box-shadow:none !important;
 }
@@ -35,7 +35,7 @@ const styles = `
     border-color:rgba(56,189,248,0.40) !important;
     box-shadow:0 0 0 3px rgba(56,189,248,0.08) !important;
 }
-.upf-section input::placeholder { color:#6e7e95 !important; }
+.upf-section input::placeholder { color:var(--ss-text-muted) !important; }
 
 /* ── Verify email notice ── */
 .upf-verify-box {
@@ -68,7 +68,7 @@ const styles = `
 .upf-btn-save:disabled { opacity:0.50; cursor:not-allowed; transform:none; }
 .upf-saved-label { font-size:13px; color:#34d399; font-weight:600; }
 
-.upf-divider { border:none; border-top:1px solid rgba(255,255,255,0.05); margin:20px 0; }
+.upf-divider { border:none; border-top:1px solid var(--ss-alpha-05); margin:20px 0; }
 `;
 
 export default function UpdateProfileInformation({

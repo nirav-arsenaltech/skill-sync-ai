@@ -15,7 +15,7 @@ const styles = `
     .rc-root {
         font-family: 'Inter', sans-serif;
         padding: 28px 28px 60px;
-        background: #0f172a;
+        background: var(--ss-bg);
         min-height: 100%;
     }
 
@@ -25,8 +25,8 @@ const styles = `
         justify-content: space-between;
         margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
     }
-    .rc-title    { font-size: 22px; font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
-    .rc-subtitle { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+    .rc-title    { font-size: 22px; font-weight: 800; color: var(--ss-text-strong); letter-spacing: -0.5px; }
+    .rc-subtitle { font-size: 13px; color: var(--ss-text-soft); margin-top: 4px; }
 
     .rc-back {
         display: inline-flex; align-items: center; gap: 6px;
@@ -39,8 +39,8 @@ const styles = `
 
     /* ── Card — full width ── */
     .rc-card {
-        background: #1e293b;
-        border: 1px solid rgba(255,255,255,0.08);
+        background: var(--ss-surface);
+        border: 1px solid var(--ss-alpha-08);
         border-radius: 16px;
         padding: 32px;
         width: 100%;
@@ -50,19 +50,19 @@ const styles = `
     .rc-field { margin-bottom: 24px; }
     .rc-label {
         display: block; margin-bottom: 8px;
-        font-size: 13px; font-weight: 600; color: #cbd5e1;
+        font-size: 13px; font-weight: 600; color: var(--ss-text-soft);
     }
     .rc-input {
         width: 100%; padding: 11px 14px;
-        background: #0f172a;
-        border: 1px solid rgba(255,255,255,0.10);
+        background: var(--ss-bg);
+        border: 1px solid var(--ss-alpha-10);
         border-radius: 10px;
-        color: #e2e8f0; font-size: 14px;
+        color: var(--ss-text); font-size: 14px;
         font-family: 'Inter', sans-serif;
         outline: none; transition: border-color 0.18s, box-shadow 0.18s;
         box-sizing: border-box;
     }
-    .rc-input::placeholder { color: #6e7e95; }
+    .rc-input::placeholder { color: var(--ss-text-muted); }
     .rc-input:focus {
         border-color: rgba(56,189,248,0.45);
         box-shadow: 0 0 0 3px rgba(56,189,248,0.08);
@@ -91,8 +91,8 @@ const styles = `
         transition: all 0.22s;
         position: relative;
         /* Proper dashed border using SVG background — avoids gap issues */
-        background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='14' ry='14' stroke='rgba(255,255,255,0.14)' stroke-width='2' stroke-dasharray='8%2c 6' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
-        background-color: rgba(255,255,255,0.01);
+        background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='14' ry='14' stroke='var(--ss-alpha-14)' stroke-width='2' stroke-dasharray='8%2c 6' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
+        background-color: var(--ss-alpha-01);
     }
     .rc-dropzone:hover,
     .rc-dropzone-drag {
@@ -118,9 +118,9 @@ const styles = `
         transform: scale(1.06);
     }
 
-    .rc-drop-cta   { font-size: 15px; font-weight: 600; color: #cbd5e1; margin-bottom: 5px; }
+    .rc-drop-cta   { font-size: 15px; font-weight: 600; color: var(--ss-text-soft); margin-bottom: 5px; }
     .rc-drop-cta span { color: #38bdf8; }
-    .rc-drop-hint  { font-size: 12px; color: #6e7e95; margin-bottom: 16px; }
+    .rc-drop-hint  { font-size: 12px; color: var(--ss-text-muted); margin-bottom: 16px; }
 
     /* Format pills inside zone */
     .rc-formats {
@@ -145,9 +145,9 @@ const styles = `
         flex: 1; font-size: 13px; font-weight: 500; color: #7dd3fc;
         overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .rc-file-chip-size { font-size: 11px; color: #6e7e95; flex-shrink: 0; }
+    .rc-file-chip-size { font-size: 11px; color: var(--ss-text-muted); flex-shrink: 0; }
     .rc-file-chip-remove {
-        background: none; border: none; color: #64748b;
+        background: none; border: none; color: var(--ss-text-subtle);
         cursor: pointer; padding: 3px; display: flex; align-items: center;
         border-radius: 5px; transition: color 0.15s; flex-shrink: 0;
     }
@@ -161,7 +161,7 @@ const styles = `
 
     /* ── Divider ── */
     .rc-divider {
-        border: none; border-top: 1px solid rgba(255,255,255,0.06);
+        border: none; border-top: 1px solid var(--ss-alpha-06);
         margin: 28px 0;
     }
 
@@ -183,12 +183,12 @@ const styles = `
     .rc-btn-cancel {
         display: inline-flex; align-items: center;
         padding: 11px 22px; border-radius: 10px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.09);
-        color: #94a3b8; font-size: 14px; font-weight: 600;
+        background: var(--ss-alpha-04);
+        border: 1px solid var(--ss-alpha-09);
+        color: var(--ss-text-soft); font-size: 14px; font-weight: 600;
         text-decoration: none; transition: all 0.18s;
     }
-    .rc-btn-cancel:hover { background: rgba(255,255,255,0.07); color: #cbd5e1; }
+    .rc-btn-cancel:hover { background: var(--ss-alpha-07); color: var(--ss-text-soft); }
 
     /* ── Spinner ── */
     @keyframes rc-spin { to { transform: rotate(360deg); } }
@@ -204,21 +204,21 @@ const FORMATS = [
     { ext: "PDF", color: "#f87171", bg: "rgba(248,113,113,0.12)" },
     { ext: "DOCX", color: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
     { ext: "DOC", color: "#93c5fd", bg: "rgba(147,197,253,0.12)" },
-    { ext: "TXT", color: "#94a3b8", bg: "rgba(148,163,184,0.12)" },
+    { ext: "TXT", color: "var(--ss-text-soft)", bg: "rgba(148,163,184,0.12)" },
     { ext: "JSON", color: "#fcd34d", bg: "rgba(252,211,77,0.12)" },
     { ext: "XML", color: "#6ee7b7", bg: "rgba(110,231,183,0.12)" },
 ];
 
 const TOAST_OPTS = {
     style: {
-        background: "#1e293b",
-        color: "#e2e8f0",
-        border: "1px solid rgba(255,255,255,0.08)",
+        background: "var(--ss-surface)",
+        color: "var(--ss-text)",
+        border: "1px solid var(--ss-alpha-08)",
         borderRadius: "10px",
         fontSize: "13px",
     },
-    success: { iconTheme: { primary: "#22c55e", secondary: "#1e293b" } },
-    error: { iconTheme: { primary: "#f87171", secondary: "#1e293b" } },
+    success: { iconTheme: { primary: "#22c55e", secondary: "var(--ss-surface)" } },
+    error: { iconTheme: { primary: "#f87171", secondary: "var(--ss-surface)" } },
 };
 
 function formatBytes(bytes) {

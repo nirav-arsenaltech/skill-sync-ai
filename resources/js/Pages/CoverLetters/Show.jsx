@@ -5,12 +5,12 @@ import { ArrowLeftIcon, PencilIcon, ArrowDownTrayIcon } from '@heroicons/react/2
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.cls-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:#0f172a; min-height:100%; }
+.cls-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:var(--ss-bg); min-height:100%; }
 
 /* ── Header ── */
 .cls-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
-.cls-title    { font-size:22px; font-weight:800; color:#f1f5f9; letter-spacing:-0.5px; }
-.cls-subtitle { font-size:13px; color:#6e7e95; margin-top:3px; }
+.cls-title    { font-size:22px; font-weight:800; color:var(--ss-text-strong); letter-spacing:-0.5px; }
+.cls-subtitle { font-size:13px; color:var(--ss-text-muted); margin-top:3px; }
 .cls-header-actions { display:flex; align-items:center; gap:10px; }
 
 /* ── Action buttons ── */
@@ -27,22 +27,22 @@ const styles = `
 .cls-btn-back {
     display:inline-flex; align-items:center; gap:7px;
     padding:9px 18px; border-radius:10px;
-    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09);
-    color:#94a3b8; font-size:13px; font-weight:600;
+    background:var(--ss-alpha-05); border:1px solid var(--ss-alpha-09);
+    color:var(--ss-text-soft); font-size:13px; font-weight:600;
     text-decoration:none; transition:all 0.18s;
 }
-.cls-btn-back:hover { background:rgba(255,255,255,0.09); color:#e2e8f0; }
+.cls-btn-back:hover { background:var(--ss-alpha-09); color:var(--ss-text); }
 
 /* ── Outer card ── */
 .cls-card {
-    background:#1e293b; border:1px solid rgba(255,255,255,0.07);
+    background:var(--ss-surface); border:1px solid var(--ss-alpha-07);
     border-radius:16px; overflow:hidden;
 }
 
 /* ── Card top bar ── */
 .cls-card-bar {
     display:flex; align-items:center; justify-content:space-between;
-    padding:16px 22px; border-bottom:1px solid rgba(255,255,255,0.06);
+    padding:16px 22px; border-bottom:1px solid var(--ss-alpha-06);
     flex-wrap:wrap; gap:10px;
 }
 .cls-card-bar-left { display:flex; align-items:center; gap:10px; }
@@ -50,7 +50,7 @@ const styles = `
     width:10px; height:10px; border-radius:50%;
     background:linear-gradient(135deg,#0ea5e9,#6366f1); flex-shrink:0;
 }
-.cls-card-bar-title { font-size:13px; font-weight:700; color:#94a3b8; }
+.cls-card-bar-title { font-size:13px; font-weight:700; color:var(--ss-text-soft); }
 .cls-card-bar-id    { font-size:12px; color:#475569; }
 
 /* download link in bar */
@@ -66,7 +66,7 @@ const styles = `
 /* ── White preview area ── */
 .cls-preview-wrap {
     padding:28px;
-    background:#0f172a; /* light bg so cover letter renders correctly */
+    background:var(--ss-bg); /* light bg so cover letter renders correctly */
 }
 .cls-preview-inner {
     background:#fff;

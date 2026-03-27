@@ -7,7 +7,13 @@ export default function Layout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
-        <div className="flex min-h-screen min-w-fit bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
+        <div
+            className="flex min-h-screen min-w-fit"
+            style={{
+                background: "var(--ss-bg)",
+                color: "var(--ss-text)",
+            }}
+        >
             {/* Sidebar */}
             <Sidebar
                 isOpen={isSidebarOpen}
@@ -20,7 +26,10 @@ export default function Layout({ children }) {
                 <Topbar onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
 
                 {/* Page Content */}
-                <main className="flex-1 p-6 overflow-y-auto bg-gray-900">
+                <main
+                    className="flex-1 overflow-y-auto p-6"
+                    style={{ background: "var(--ss-bg)" }}
+                >
                     {children}
                 </main>
             </div>

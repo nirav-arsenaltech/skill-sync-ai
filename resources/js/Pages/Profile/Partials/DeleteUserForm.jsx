@@ -12,9 +12,9 @@ const styles = `
 
 .duf-header { margin-bottom:20px; }
 .duf-header-title    { font-size:16px; font-weight:800; color:#f87171; margin-bottom:4px; }
-.duf-header-subtitle { font-size:13px; color:#6e7e95; line-height:1.6; }
+.duf-header-subtitle { font-size:13px; color:var(--ss-text-muted); line-height:1.6; }
 
-.duf-divider { border:none; border-top:1px solid rgba(255,255,255,0.05); margin:20px 0; }
+.duf-divider { border:none; border-top:1px solid var(--ss-alpha-05); margin:20px 0; }
 
 /* ── Warning box ── */
 .duf-danger-box {
@@ -42,7 +42,7 @@ const styles = `
 }
 .duf-modal {
     position:relative; z-index:61;
-    background:#1e293b; border:1px solid rgba(255,255,255,0.09);
+    background:var(--ss-surface); border:1px solid var(--ss-alpha-09);
     border-radius:18px; padding:32px 28px;
     width:500px; max-width:90vw;
     box-shadow:0 24px 60px rgba(0,0,0,0.6);
@@ -51,29 +51,29 @@ const styles = `
 .duf-modal-close {
     position:absolute; top:14px; right:14px;
     width:28px; height:28px; border-radius:7px;
-    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
-    color:#7b94b7; cursor:pointer;
+    background:var(--ss-alpha-05); border:1px solid var(--ss-alpha-08);
+    color:var(--ss-text-muted); cursor:pointer;
     display:flex; align-items:center; justify-content:center; transition:all 0.18s;
 }
-.duf-modal-close:hover { background:rgba(255,255,255,0.09); color:#94a3b8; }
+.duf-modal-close:hover { background:var(--ss-alpha-09); color:var(--ss-text-soft); }
 
 .duf-modal-icon {
     width:48px; height:48px; border-radius:14px;
     background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.22);
     display:flex; align-items:center; justify-content:center; margin-bottom:16px;
 }
-.duf-modal-title { font-size:17px; font-weight:700; color:#f1f5f9; margin-bottom:8px; }
-.duf-modal-desc  { font-size:13px; color:#7b94b7; line-height:1.7; margin-bottom:22px; }
+.duf-modal-title { font-size:17px; font-weight:700; color:var(--ss-text-strong); margin-bottom:8px; }
+.duf-modal-desc  { font-size:13px; color:var(--ss-text-muted); line-height:1.7; margin-bottom:22px; }
 
 /* password input inside modal */
 .duf-modal-field-label {
-    display:block; font-size:11px; font-weight:600; color:#6e7e95;
+    display:block; font-size:11px; font-weight:600; color:var(--ss-text-muted);
     text-transform:uppercase; letter-spacing:0.7px; margin-bottom:7px;
 }
 .duf-modal input[type="password"] {
     width:100%; padding:10px 14px !important;
-    background:#0f172a !important; border:1px solid rgba(255,255,255,0.09) !important;
-    border-radius:10px !important; color:#e2e8f0 !important; font-size:13px !important;
+    background:var(--ss-bg) !important; border:1px solid var(--ss-alpha-09) !important;
+    border-radius:10px !important; color:var(--ss-text) !important; font-size:13px !important;
     font-family:'Inter',sans-serif !important; outline:none !important;
     transition:all 0.18s !important; box-shadow:none !important;
 }
@@ -81,17 +81,17 @@ const styles = `
     border-color:rgba(248,113,113,0.45) !important;
     box-shadow:0 0 0 3px rgba(248,113,113,0.08) !important;
 }
-.duf-modal input::placeholder { color:#6e7e95 !important; }
+.duf-modal input::placeholder { color:var(--ss-text-muted) !important; }
 
 /* modal action buttons */
 .duf-modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
 .duf-modal-cancel {
     padding:9px 20px; border-radius:9px;
-    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09);
-    color:#64748b; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.18s;
+    background:var(--ss-alpha-05); border:1px solid var(--ss-alpha-09);
+    color:var(--ss-text-subtle); font-size:14px; font-weight:600; cursor:pointer; transition:all 0.18s;
     font-family:'Inter',sans-serif;
 }
-.duf-modal-cancel:hover { background:rgba(255,255,255,0.08); color:#94a3b8; }
+.duf-modal-cancel:hover { background:var(--ss-alpha-08); color:var(--ss-text-soft); }
 .duf-modal-confirm {
     padding:9px 20px; border-radius:9px;
     background:linear-gradient(135deg,#dc2626,#b91c1c); border:none;
@@ -104,14 +104,14 @@ const styles = `
 
 const TOAST_OPTS = {
     style: {
-        background: "#1e293b",
-        color: "#e2e8f0",
-        border: "1px solid rgba(255,255,255,0.08)",
+        background: "var(--ss-surface)",
+        color: "var(--ss-text)",
+        border: "1px solid var(--ss-alpha-08)",
         borderRadius: "10px",
         fontSize: "13px",
     },
-    success: { iconTheme: { primary: "#22c55e", secondary: "#1e293b" } },
-    error: { iconTheme: { primary: "#f87171", secondary: "#1e293b" } },
+    success: { iconTheme: { primary: "#22c55e", secondary: "var(--ss-surface)" } },
+    error: { iconTheme: { primary: "#f87171", secondary: "var(--ss-surface)" } },
 };
 
 export default function DeleteUserForm({ className = "" }) {

@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 import {
     PowerIcon,
-    UserCircleIcon,
     Bars3Icon,
     XMarkIcon,
     BellIcon,
 } from "@heroicons/react/24/outline";
 import toast, { Toaster } from "react-hot-toast";
+import ThemeToggle from "@/Components/ThemeToggle";
 
 const topbarStyles = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -17,10 +17,10 @@ const topbarStyles = `
         top: 0;
         z-index: 50;
         height: 67px;
-        background: rgba(15,23,42,0.90);
+        background: var(--ss-nav-bg);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid rgba(255,255,255,0.06);
+        border-bottom: 1px solid var(--ss-alpha-06);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -34,22 +34,22 @@ const topbarStyles = `
     .ss-menu-btn {
         display: none;
         width: 34px; height: 34px; border-radius: 8px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.07);
-        color: #64748b; cursor: pointer;
+        background: var(--ss-alpha-04);
+        border: 1px solid var(--ss-alpha-07);
+        color: var(--ss-text-subtle); cursor: pointer;
         align-items: center; justify-content: center;
         transition: all 0.18s;
     }
-    .ss-menu-btn:hover { background: rgba(255,255,255,0.08); color: #94a3b8; }
+    .ss-menu-btn:hover { background: var(--ss-alpha-08); color: var(--ss-text-soft); }
     @media (max-width: 1023px) { .ss-menu-btn { display: flex; } }
 
     .ss-topbar-breadcrumb {
         display: flex; align-items: center; gap: 6px;
-        font-size: 13px; color: #6e7e95;
+        font-size: 13px; color: var(--ss-text-muted);
     }
     .ss-topbar-breadcrumb-sep { color: #7793c1; }
     .ss-topbar-page-title {
-        font-size: 15px; font-weight: 700; color: #e2e8f0;
+        font-size: 15px; font-weight: 700; color: var(--ss-text);
     }
 
     /* Right side */
@@ -59,24 +59,24 @@ const topbarStyles = `
     .ss-icon-btn {
         width: 34px; height: 34px; border-radius: 9px;
         display: flex; align-items: center; justify-content: center;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.07);
-        color: #64748b; cursor: pointer;
+        background: var(--ss-alpha-03);
+        border: 1px solid var(--ss-alpha-07);
+        color: var(--ss-text-subtle); cursor: pointer;
         transition: all 0.18s; position: relative;
     }
-    .ss-icon-btn:hover { background: rgba(255,255,255,0.07); color: #94a3b8; border-color: rgba(255,255,255,0.12); }
+    .ss-icon-btn:hover { background: var(--ss-alpha-07); color: var(--ss-text-soft); border-color: var(--ss-alpha-12); }
     .ss-icon-btn-active { color: #38bdf8 !important; background: rgba(14,165,233,0.10) !important; border-color: rgba(14,165,233,0.20) !important; }
 
     /* Profile button */
     .ss-profile-btn {
         display: flex; align-items: center; gap: 8px;
         padding: 5px 10px 5px 5px; border-radius: 10px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.07);
+        background: var(--ss-alpha-03);
+        border: 1px solid var(--ss-alpha-07);
         cursor: pointer; transition: all 0.18s;
-        color: #64748b;
+        color: var(--ss-text-subtle);
     }
-    .ss-profile-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); color: #94a3b8; }
+    .ss-profile-btn:hover { background: var(--ss-alpha-07); border-color: var(--ss-alpha-12); color: var(--ss-text-soft); }
     .ss-profile-btn-active { color: #38bdf8 !important; background: rgba(14,165,233,0.10) !important; border-color: rgba(14,165,233,0.20) !important; }
     .ss-profile-avatar {
         width: 26px; height: 26px; border-radius: 7px;
@@ -89,7 +89,7 @@ const topbarStyles = `
     /* Divider */
     .ss-topbar-divider {
         width: 1px; height: 20px;
-        background: rgba(255,255,255,0.07); margin: 0 4px;
+        background: var(--ss-alpha-07); margin: 0 4px;
     }
 
     /* Logout — red tint on hover */
@@ -99,20 +99,20 @@ const topbarStyles = `
     .ss-notif-dot {
         position: absolute; top: 6px; right: 6px;
         width: 6px; height: 6px; border-radius: 50%;
-        background: #38bdf8; border: 1.5px solid #0f172a;
+        background: #38bdf8; border: 1.5px solid var(--ss-bg);
     }
 
     /* Modal backdrop */
     .ss-modal-backdrop {
         position: fixed; inset: 0; z-index: 60;
-        background: rgba(0,0,0,0.60);
+        background: var(--ss-overlay);
         display: flex; align-items: center; justify-content: center;
         backdrop-filter: blur(4px);
     }
     .ss-modal {
         position: relative; z-index: 61;
-        background: #1e293b;
-        border: 1px solid rgba(255,255,255,0.09);
+        background: var(--ss-surface);
+        border: 1px solid var(--ss-alpha-09);
         border-radius: 18px;
         padding: 32px 28px;
         width: 500px; max-width: 90vw;
@@ -122,13 +122,13 @@ const topbarStyles = `
     .ss-modal-close {
         position: absolute; top: 14px; right: 14px;
         width: 28px; height: 28px; border-radius: 7px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.08);
-        color: #7b94b7; cursor: pointer;
+        background: var(--ss-alpha-05);
+        border: 1px solid var(--ss-alpha-08);
+        color: var(--ss-text-muted); cursor: pointer;
         display: flex; align-items: center; justify-content: center;
         transition: all 0.18s;
     }
-    .ss-modal-close:hover { background: rgba(255,255,255,0.09); color: #94a3b8; }
+    .ss-modal-close:hover { background: var(--ss-alpha-09); color: var(--ss-text-soft); }
     .ss-modal-icon {
         width: 48px; height: 48px; border-radius: 14px;
         background: rgba(239,68,68,0.12);
@@ -136,17 +136,17 @@ const topbarStyles = `
         display: flex; align-items: center; justify-content: center;
         margin-bottom: 16px;
     }
-    .ss-modal-title { font-size: 17px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
-    .ss-modal-desc  { font-size: 14px; color: #7b94b7; line-height: 1.6; margin-bottom: 24px; }
+    .ss-modal-title { font-size: 17px; font-weight: 700; color: var(--ss-text-strong); margin-bottom: 8px; }
+    .ss-modal-desc  { font-size: 14px; color: var(--ss-text-muted); line-height: 1.6; margin-bottom: 24px; }
     .ss-modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
     .ss-modal-btn-cancel {
         padding: 9px 20px; border-radius: 9px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.09);
-        color: #64748b; font-size: 14px; font-weight: 600;
+        background: var(--ss-alpha-05);
+        border: 1px solid var(--ss-alpha-09);
+        color: var(--ss-text-subtle); font-size: 14px; font-weight: 600;
         cursor: pointer; transition: all 0.18s;
     }
-    .ss-modal-btn-cancel:hover { background: rgba(255,255,255,0.08); color: #94a3b8; }
+    .ss-modal-btn-cancel:hover { background: var(--ss-alpha-08); color: var(--ss-text-soft); }
     .ss-modal-btn-logout {
         padding: 9px 20px; border-radius: 9px;
         background: linear-gradient(135deg, #dc2626, #b91c1c);
@@ -223,14 +223,14 @@ export default function Topbar({ onMenuToggle }) {
                 position="top-right"
                 toastOptions={{
                     style: {
-                        background: "#1e293b",
-                        color: "#e2e8f0",
-                        border: "1px solid rgba(255,255,255,0.08)",
+                        background: "var(--ss-surface)",
+                        color: "var(--ss-text)",
+                        border: "1px solid var(--ss-alpha-08)",
                         borderRadius: "10px",
                         fontSize: "13px",
                     },
                     success: {
-                        iconTheme: { primary: "#22c55e", secondary: "#1e293b" },
+                        iconTheme: { primary: "#22c55e", secondary: "var(--ss-surface)" },
                     },
                 }}
             />
@@ -259,6 +259,8 @@ export default function Topbar({ onMenuToggle }) {
 
                 {/* Right */}
                 <div className="ss-topbar-right">
+                    <ThemeToggle className="h-[34px] w-[34px] px-0" />
+
                     {/* Notifications */}
                     <button
                         className="ss-icon-btn"

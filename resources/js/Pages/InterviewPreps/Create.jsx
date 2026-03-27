@@ -17,7 +17,7 @@ const styles = `
     .ipc-root {
         font-family: 'Inter', sans-serif;
         padding: 28px 28px 60px;
-        background: #0f172a;
+        background: var(--ss-bg);
         min-height: 100%;
     }
 
@@ -27,8 +27,8 @@ const styles = `
         justify-content: space-between;
         margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
     }
-    .ipc-title    { font-size: 22px; font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
-    .ipc-subtitle { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+    .ipc-title    { font-size: 22px; font-weight: 800; color: var(--ss-text-strong); letter-spacing: -0.5px; }
+    .ipc-subtitle { font-size: 13px; color: var(--ss-text-soft); margin-top: 4px; }
     .ipc-back {
         display: inline-flex; align-items: center; gap: 6px;
         font-size: 13px; font-weight: 600; color: #38bdf8;
@@ -40,8 +40,8 @@ const styles = `
 
     /* ── Card ── */
     .ipc-card {
-        background: #1e293b;
-        border: 1px solid rgba(255,255,255,0.08);
+        background: var(--ss-surface);
+        border: 1px solid var(--ss-alpha-08);
         border-radius: 16px;
         padding: 32px;
         width: 100%; box-sizing: border-box;
@@ -51,13 +51,13 @@ const styles = `
     .ipc-field { margin-bottom: 28px; }
     .ipc-label {
         display: block; font-size: 13px; font-weight: 600;
-        color: #cbd5e1; margin-bottom: 10px;
+        color: var(--ss-text-soft); margin-bottom: 10px;
     }
 
     /* ── react-select dark override ── */
     .ipc-select .react-select__control {
-        background: #0f172a !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
+        background: var(--ss-bg) !important;
+        border: 1px solid var(--ss-alpha-10) !important;
         border-radius: 10px !important;
         box-shadow: none !important;
         min-height: 44px !important;
@@ -72,12 +72,12 @@ const styles = `
         border-color: rgba(56,189,248,0.45) !important;
         box-shadow: 0 0 0 3px rgba(56,189,248,0.08) !important;
     }
-    .ipc-select .react-select__placeholder { color: #6e7e95 !important; }
-    .ipc-select .react-select__single-value { color: #e2e8f0 !important; }
-    .ipc-select .react-select__input-container { color: #e2e8f0 !important; }
+    .ipc-select .react-select__placeholder { color: var(--ss-text-muted) !important; }
+    .ipc-select .react-select__single-value { color: var(--ss-text) !important; }
+    .ipc-select .react-select__input-container { color: var(--ss-text) !important; }
     .ipc-select .react-select__menu {
-        background: #1e293b !important;
-        border: 1px solid rgba(255,255,255,0.09) !important;
+        background: var(--ss-surface) !important;
+        border: 1px solid var(--ss-alpha-09) !important;
         border-radius: 12px !important;
         box-shadow: 0 16px 40px rgba(0,0,0,0.4) !important;
         overflow: hidden;
@@ -87,42 +87,42 @@ const styles = `
     .ipc-select .react-select__menu-list { padding: 6px !important; }
     .ipc-select .react-select__option {
         background: transparent !important;
-        color: #94a3b8 !important;
+        color: var(--ss-text-soft) !important;
         border-radius: 8px !important;
         padding: 10px 12px !important;
         cursor: pointer !important;
         transition: all 0.15s !important;
     }
     .ipc-select .react-select__option:hover {
-        background: rgba(255,255,255,0.05) !important;
-        color: #e2e8f0 !important;
+        background: var(--ss-alpha-05) !important;
+        color: var(--ss-text) !important;
     }
     .ipc-select .react-select__option--is-selected {
         background: rgba(56,189,248,0.12) !important;
         color: #38bdf8 !important;
     }
     .ipc-select .react-select__option--is-focused {
-        background: rgba(255,255,255,0.04) !important;
-        color: #cbd5e1 !important;
+        background: var(--ss-alpha-04) !important;
+        color: var(--ss-text-soft) !important;
     }
-    .ipc-select .react-select__indicator-separator { background: rgba(255,255,255,0.08) !important; }
+    .ipc-select .react-select__indicator-separator { background: var(--ss-alpha-08) !important; }
     .ipc-select .react-select__dropdown-indicator,
     .ipc-select .react-select__clear-indicator { color: #475569 !important; cursor: pointer; }
     .ipc-select .react-select__dropdown-indicator:hover,
-    .ipc-select .react-select__clear-indicator:hover { color: #94a3b8 !important; }
+    .ipc-select .react-select__clear-indicator:hover { color: var(--ss-text-soft) !important; }
     .ipc-select .react-select__no-options-message { color: #475569 !important; font-size: 13px; padding: 12px; }
 
     /* ── Resume grid ── */
     .ipc-resume-grid-wrap {
-        border: 1px solid rgba(255,255,255,0.07);
+        border: 1px solid var(--ss-alpha-07);
         border-radius: 12px;
         max-height: 300px;
         overflow-y: auto;
         padding: 12px;
-        background: rgba(0,0,0,0.15);
+        background: var(--ss-surface-muted);
     }
     .ipc-resume-grid-wrap::-webkit-scrollbar { width: 4px; }
-    .ipc-resume-grid-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .ipc-resume-grid-wrap::-webkit-scrollbar-thumb { background: var(--ss-alpha-08); border-radius: 10px; }
 
     .ipc-resume-grid {
         display: grid;
@@ -133,21 +133,21 @@ const styles = `
     @media (max-width: 540px)  { .ipc-resume-grid { grid-template-columns: 1fr; } }
 
     .ipc-resume-card {
-        background: #1a2640;
-        border: 1px solid rgba(255,255,255,0.07);
+        background: var(--ss-surface);
+        border: 1px solid var(--ss-alpha-07);
         border-radius: 12px; padding: 14px;
         cursor: pointer; transition: all 0.18s;
         display: flex; flex-direction: column; gap: 8px;
         position: relative;
     }
     .ipc-resume-card:hover {
-        border-color: rgba(255,255,255,0.14);
-        background: rgba(255,255,255,0.04);
+        border-color: var(--ss-alpha-14);
+        background: var(--ss-surface-alt);
     }
     .ipc-resume-card-active {
         border-color: rgba(56,189,248,0.45) !important;
-        background: rgba(56,189,248,0.07) !important;
-        box-shadow: 0 0 0 3px rgba(56,189,248,0.07);
+        background: rgba(56,189,248,0.09) !important;
+        box-shadow: 0 0 0 3px rgba(56,189,248,0.09);
     }
 
     .ipc-resume-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
@@ -163,15 +163,15 @@ const styles = `
     }
     .ipc-resume-placeholder {
         width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
-        border: 1.5px solid rgba(255,255,255,0.10);
+        border: 1.5px solid var(--ss-alpha-10);
     }
 
     .ipc-resume-name {
-        font-size: 13px; font-weight: 600; color: #cbd5e1;
+        font-size: 13px; font-weight: 600; color: var(--ss-text-soft);
         line-height: 1.4; flex: 1; min-width: 0;
         overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .ipc-resume-card-active .ipc-resume-name { color: #e2e8f0; }
+    .ipc-resume-card-active .ipc-resume-name { color: var(--ss-text); }
 
     .ipc-resume-link {
         display: inline-flex; align-items: center; gap: 4px;
@@ -186,7 +186,7 @@ const styles = `
     }
 
     /* ── Divider ── */
-    .ipc-divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 28px 0; }
+    .ipc-divider { border: none; border-top: 1px solid var(--ss-alpha-06); margin: 28px 0; }
 
     /* ── Actions ── */
     .ipc-actions { display: flex; align-items: center; gap: 10px; }
@@ -204,11 +204,11 @@ const styles = `
     .ipc-btn-cancel {
         display: inline-flex; align-items: center;
         padding: 11px 22px; border-radius: 10px;
-        background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
-        color: #94a3b8; font-size: 14px; font-weight: 600;
+        background: var(--ss-alpha-04); border: 1px solid var(--ss-alpha-09);
+        color: var(--ss-text-soft); font-size: 14px; font-weight: 600;
         text-decoration: none; transition: all 0.18s;
     }
-    .ipc-btn-cancel:hover { background: rgba(255,255,255,0.07); color: #cbd5e1; }
+    .ipc-btn-cancel:hover { background: var(--ss-alpha-07); color: var(--ss-text-soft); }
 
     /* ── Full-screen loader overlay ── */
     .ipc-overlay {
@@ -219,7 +219,7 @@ const styles = `
         align-items: center; justify-content: center; gap: 20px;
     }
     .ipc-overlay-card {
-        background: #1e293b; border: 1px solid rgba(255,255,255,0.09);
+        background: var(--ss-surface); border: 1px solid var(--ss-alpha-09);
         border-radius: 20px; padding: 36px 44px;
         display: flex; flex-direction: column; align-items: center; gap: 16px;
         box-shadow: 0 24px 60px rgba(0,0,0,0.5);
@@ -231,18 +231,18 @@ const styles = `
         animation: ipc-spin 0.8s linear infinite;
     }
     @keyframes ipc-spin { to { transform: rotate(360deg); } }
-    .ipc-overlay-title { font-size: 15px; font-weight: 700; color: #e2e8f0; }
-    .ipc-overlay-sub   { font-size: 13px; color: #6e7e95; }
+    .ipc-overlay-title { font-size: 15px; font-weight: 700; color: var(--ss-text); }
+    .ipc-overlay-sub   { font-size: 13px; color: var(--ss-text-muted); }
 `;
 
 const TOAST_OPTS = {
     style: {
-        background: '#1e293b', color: '#e2e8f0',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: 'var(--ss-surface)', color: 'var(--ss-text)',
+        border: '1px solid var(--ss-alpha-08)',
         borderRadius: '10px', fontSize: '13px',
     },
-    success: { iconTheme: { primary: '#22c55e', secondary: '#1e293b' } },
-    error:   { iconTheme: { primary: '#f87171', secondary: '#1e293b' } },
+    success: { iconTheme: { primary: '#22c55e', secondary: 'var(--ss-surface)' } },
+    error:   { iconTheme: { primary: '#f87171', secondary: 'var(--ss-surface)' } },
 };
 
 export default function Create({ jobs, resumes }) {

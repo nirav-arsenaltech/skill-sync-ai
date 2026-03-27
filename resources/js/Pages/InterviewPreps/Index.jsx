@@ -14,12 +14,12 @@ import {
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.ip-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:#0f172a; min-height:100%; }
+.ip-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:var(--ss-bg); min-height:100%; }
 
 /* ── Header ── */
 .ip-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
-.ip-title    { font-size:22px; font-weight:800; color:#f1f5f9; letter-spacing:-0.5px; }
-.ip-subtitle { font-size:13px; color:#6e7e95; margin-top:3px; }
+.ip-title    { font-size:22px; font-weight:800; color:var(--ss-text-strong); letter-spacing:-0.5px; }
+.ip-subtitle { font-size:13px; color:var(--ss-text-muted); margin-top:3px; }
 
 .ip-btn-create {
     display:inline-flex; align-items:center; gap:7px;
@@ -33,24 +33,24 @@ const styles = `
 
 /* ── Table ── */
 .ip-table-wrap {
-    background:#1e293b; border:1px solid rgba(255,255,255,0.07);
+    background:var(--ss-surface); border:1px solid var(--ss-alpha-07);
     border-radius:14px; overflow:hidden;
 }
 .ip-table { width:100%; border-collapse:collapse; }
-.ip-table thead { background:rgba(255,255,255,0.025); }
+.ip-table thead { background:var(--ss-alpha-02); }
 .ip-table th {
     padding:12px 18px; text-align:left;
-    font-size:11px; font-weight:600; color:#6e7e95;
+    font-size:11px; font-weight:600; color:var(--ss-text-muted);
     text-transform:uppercase; letter-spacing:0.8px;
-    border-bottom:1px solid rgba(255,255,255,0.05); white-space:nowrap;
+    border-bottom:1px solid var(--ss-alpha-05); white-space:nowrap;
 }
 .ip-table td {
-    padding:13px 18px; font-size:13px; color:#94a3b8;
-    border-bottom:1px solid rgba(255,255,255,0.04); word-break:break-word;
+    padding:13px 18px; font-size:13px; color:var(--ss-text-soft);
+    border-bottom:1px solid var(--ss-alpha-04); word-break:break-word;
 }
 .ip-table tbody tr:last-child td { border-bottom:none; }
-.ip-table tbody tr:hover td { background:rgba(255,255,255,0.025); }
-.ip-table td.ip-td-id   { color:#6e7e95; font-size:12px; text-align:center; width:56px; }
+.ip-table tbody tr:hover td { background:var(--ss-alpha-02); }
+.ip-table td.ip-td-id   { color:var(--ss-text-muted); font-size:12px; text-align:center; width:56px; }
 .ip-table td.ip-td-link a {
     color:#38bdf8; text-decoration:none; font-size:13px; transition:color 0.15s;
 }
@@ -72,45 +72,45 @@ const styles = `
 /* ── Empty state ── */
 .ip-empty {
     padding:52px 20px; text-align:center;
-    background:#1e293b; border:1px solid rgba(255,255,255,0.07); border-radius:14px;
+    background:var(--ss-surface); border:1px solid var(--ss-alpha-07); border-radius:14px;
 }
 .ip-empty-icon { font-size:36px; margin-bottom:10px; }
-.ip-empty-text { font-size:14px; color:#6e7e95; font-weight:500; margin-bottom:16px; }
+.ip-empty-text { font-size:14px; color:var(--ss-text-muted); font-weight:500; margin-bottom:16px; }
 
 /* ── Pagination ── */
 .ip-pagination-row {
     display:flex; align-items:center; justify-content:space-between;
     margin-top:18px; flex-wrap:wrap; gap:12px;
 }
-.ip-per-page { display:flex; align-items:center; gap:8px; font-size:13px; color:#7b94b7; }
+.ip-per-page { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ss-text-muted); }
 .ip-per-page-select {
-    background:#1e293b; border:1px solid rgba(255,255,255,0.08);
-    color:#94a3b8; border-radius:8px; padding:5px 10px; font-size:13px;
+    background:var(--ss-surface); border:1px solid var(--ss-alpha-08);
+    color:var(--ss-text-soft); border-radius:8px; padding:5px 10px; font-size:13px;
     font-family:'Inter',sans-serif; outline:none; cursor:pointer;
 }
 .ip-per-page-select:focus { border-color:rgba(56,189,248,0.30); }
-.ip-per-page-total { color:#6e7e95; }
+.ip-per-page-total { color:var(--ss-text-muted); }
 .ip-links { display:flex; gap:4px; flex-wrap:wrap; }
 .ip-page-btn {
     padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600;
-    border:1px solid rgba(255,255,255,0.07);
-    background:#1e293b; color:#7b94b7;
+    border:1px solid var(--ss-alpha-07);
+    background:var(--ss-surface); color:var(--ss-text-muted);
     text-decoration:none; cursor:pointer;
     transition:all 0.16s; white-space:nowrap; display:inline-block;
 }
-.ip-page-btn:hover { background:rgba(255,255,255,0.05); color:#94a3b8; }
+.ip-page-btn:hover { background:var(--ss-alpha-05); color:var(--ss-text-soft); }
 .ip-page-btn-active   { background:rgba(14,165,233,0.12) !important; color:#38bdf8 !important; border-color:rgba(14,165,233,0.25) !important; }
 .ip-page-btn-disabled { opacity:0.35; pointer-events:none; }
 
 /* ── Delete Modal ── */
 .ip-modal-backdrop {
     position:fixed; inset:0; z-index:60;
-    background:rgba(0,0,0,0.60); backdrop-filter:blur(4px);
+    background:var(--ss-overlay); backdrop-filter:blur(4px);
     display:flex; align-items:center; justify-content:center;
 }
 .ip-modal {
     position:relative; z-index:61;
-    background:#1e293b; border:1px solid rgba(255,255,255,0.09);
+    background:var(--ss-surface); border:1px solid var(--ss-alpha-09);
     border-radius:18px; padding:32px 28px;
     width:500px; max-width:90vw;
     box-shadow:0 24px 60px rgba(0,0,0,0.5);
@@ -119,26 +119,26 @@ const styles = `
 .ip-modal-close {
     position:absolute; top:14px; right:14px;
     width:28px; height:28px; border-radius:7px;
-    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
-    color:#7b94b7; cursor:pointer;
+    background:var(--ss-alpha-05); border:1px solid var(--ss-alpha-08);
+    color:var(--ss-text-muted); cursor:pointer;
     display:flex; align-items:center; justify-content:center; transition:all 0.18s;
 }
-.ip-modal-close:hover { background:rgba(255,255,255,0.09); color:#94a3b8; }
+.ip-modal-close:hover { background:var(--ss-alpha-09); color:var(--ss-text-soft); }
 .ip-modal-icon {
     width:48px; height:48px; border-radius:14px;
     background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.22);
     display:flex; align-items:center; justify-content:center; margin-bottom:16px;
 }
-.ip-modal-title { font-size:17px; font-weight:700; color:#f1f5f9; margin-bottom:8px; }
-.ip-modal-desc  { font-size:14px; color:#7b94b7; line-height:1.6; margin-bottom:24px; }
+.ip-modal-title { font-size:17px; font-weight:700; color:var(--ss-text-strong); margin-bottom:8px; }
+.ip-modal-desc  { font-size:14px; color:var(--ss-text-muted); line-height:1.6; margin-bottom:24px; }
 .ip-modal-actions { display:flex; gap:10px; justify-content:flex-end; }
 .ip-modal-cancel {
     padding:9px 20px; border-radius:9px;
-    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09);
-    color:#64748b; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.18s;
+    background:var(--ss-alpha-05); border:1px solid var(--ss-alpha-09);
+    color:var(--ss-text-subtle); font-size:14px; font-weight:600; cursor:pointer; transition:all 0.18s;
     font-family:'Inter',sans-serif;
 }
-.ip-modal-cancel:hover { background:rgba(255,255,255,0.08); color:#94a3b8; }
+.ip-modal-cancel:hover { background:var(--ss-alpha-08); color:var(--ss-text-soft); }
 .ip-modal-delete {
     padding:9px 20px; border-radius:9px;
     background:linear-gradient(135deg,#dc2626,#b91c1c); border:none;
@@ -150,14 +150,14 @@ const styles = `
 
 const TOAST_OPTS = {
     style: {
-        background: "#1e293b",
-        color: "#e2e8f0",
-        border: "1px solid rgba(255,255,255,0.08)",
+        background: "var(--ss-surface)",
+        color: "var(--ss-text)",
+        border: "1px solid var(--ss-alpha-08)",
         borderRadius: "10px",
         fontSize: "13px",
     },
-    success: { iconTheme: { primary: "#22c55e", secondary: "#1e293b" } },
-    error: { iconTheme: { primary: "#f87171", secondary: "#1e293b" } },
+    success: { iconTheme: { primary: "#22c55e", secondary: "var(--ss-surface)" } },
+    error: { iconTheme: { primary: "#f87171", secondary: "var(--ss-surface)" } },
 };
 
 export default function InterviewPrepIndex() {

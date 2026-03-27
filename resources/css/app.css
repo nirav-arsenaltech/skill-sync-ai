@@ -2,6 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    color-scheme: light;
+    --ss-bg: #f3f7fb;
+    --ss-bg-alt: #e8f0f8;
+    --ss-bg-alt-2: #dde8f5;
+    --ss-surface: #ffffff;
+    --ss-surface-alt: #f5f9ff;
+    --ss-surface-muted: #edf3fa;
+    --ss-text-strong: #0f172a;
+    --ss-text: #1e293b;
+    --ss-text-soft: #334155;
+    --ss-text-muted: #64748b;
+    --ss-text-subtle: #94a3b8;
+    --ss-nav-bg: rgba(255, 255, 255, 0.82);
+    --ss-grid-line: rgba(148, 163, 184, 0.18);
+    --ss-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+    --ss-shadow-strong: 0 28px 68px rgba(15, 23, 42, 0.16);
+    --ss-overlay: rgba(15, 23, 42, 0.38);
+    --ss-alpha-01: rgba(148, 163, 184, 0.06);
+    --ss-alpha-02: rgba(148, 163, 184, 0.08);
+    --ss-alpha-03: rgba(148, 163, 184, 0.1);
+    --ss-alpha-04: rgba(148, 163, 184, 0.12);
+    --ss-alpha-05: rgba(148, 163, 184, 0.14);
+    --ss-alpha-06: rgba(148, 163, 184, 0.16);
+    --ss-alpha-07: rgba(148, 163, 184, 0.18);
+    --ss-alpha-08: rgba(148, 163, 184, 0.22);
+    --ss-alpha-09: rgba(148, 163, 184, 0.26);
+    --ss-alpha-10: rgba(148, 163, 184, 0.32);
+    --ss-alpha-12: rgba(148, 163, 184, 0.38);
+    --ss-alpha-14: rgba(148, 163, 184, 0.42);
+}
+
+.dark {
+    color-scheme: dark;
+    --ss-bg: #0f172a;
+    --ss-bg-alt: #0f2744;
+    --ss-bg-alt-2: #0c2340;
+    --ss-surface: #1e293b;
+    --ss-surface-alt: #172033;
+    --ss-surface-muted: #151f32;
+    --ss-text-strong: #f1f5f9;
+    --ss-text: #e2e8f0;
+    --ss-text-soft: #cbd5e1;
+    --ss-text-muted: #7b94b7;
+    --ss-text-subtle: #64748b;
+    --ss-nav-bg: rgba(15, 23, 42, 0.82);
+    --ss-grid-line: rgba(148, 163, 184, 0.04);
+    --ss-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    --ss-shadow-strong: 0 32px 64px rgba(0, 0, 0, 0.4);
+    --ss-overlay: rgba(0, 0, 0, 0.6);
+    --ss-alpha-01: rgba(255, 255, 255, 0.01);
+    --ss-alpha-02: rgba(255, 255, 255, 0.02);
+    --ss-alpha-03: rgba(255, 255, 255, 0.03);
+    --ss-alpha-04: rgba(255, 255, 255, 0.04);
+    --ss-alpha-05: rgba(255, 255, 255, 0.05);
+    --ss-alpha-06: rgba(255, 255, 255, 0.06);
+    --ss-alpha-07: rgba(255, 255, 255, 0.07);
+    --ss-alpha-08: rgba(255, 255, 255, 0.08);
+    --ss-alpha-09: rgba(255, 255, 255, 0.09);
+    --ss-alpha-10: rgba(255, 255, 255, 0.1);
+    --ss-alpha-12: rgba(255, 255, 255, 0.12);
+    --ss-alpha-14: rgba(255, 255, 255, 0.14);
+}
+
 /* Control (Select Box) */
 .react-select__control {
     @apply w-full px-2 py-1 border rounded-lg text-black dark:bg-gray-700 dark:border-gray-600 dark:text-white;

@@ -14,12 +14,12 @@ import toast, { Toaster } from "react-hot-toast";
 const styles = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-    .db-root { font-family: 'Inter', sans-serif; padding: 28px 28px 48px; background: #0f172a; min-height: 100%; }
+    .db-root { font-family: 'Inter', sans-serif; padding: 28px 28px 48px; background: var(--ss-bg); min-height: 100%; }
 
     /* Page header */
     .db-header { margin-bottom: 28px; }
-    .db-title { font-size: 22px; font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
-    .db-subtitle { font-size: 13px; color: #6e7e95; margin-top: 3px; }
+    .db-title { font-size: 22px; font-weight: 800; color: var(--ss-text-strong); letter-spacing: -0.5px; }
+    .db-subtitle { font-size: 13px; color: var(--ss-text-muted); margin-top: 3px; }
 
     /* Stat cards */
     .db-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
@@ -27,8 +27,8 @@ const styles = `
     @media (max-width: 600px)  { .db-cards { grid-template-columns: 1fr; } }
 
     .db-card {
-        background: #1e293b;
-        border: 1px solid rgba(255,255,255,0.07);
+        background: var(--ss-surface);
+        border: 1px solid var(--ss-alpha-07);
         border-radius: 14px;
         padding: 20px 20px 16px;
         transition: all 0.2s;
@@ -41,7 +41,7 @@ const styles = `
         display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .db-card-title { font-size: 12px; font-weight: 600; color: #637895; text-transform: uppercase; letter-spacing: 0.6px; }
-    .db-card-value { font-size: 32px; font-weight: 800; color: #f1f5f9; letter-spacing: -1px; line-height: 1; }
+    .db-card-value { font-size: 32px; font-weight: 800; color: var(--ss-text-strong); letter-spacing: -1px; line-height: 1; }
     .db-card-glow {
         position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
         border-radius: 0 0 14px 14px;
@@ -58,7 +58,7 @@ const styles = `
         width: 32px; height: 32px; border-radius: 9px;
         display: flex; align-items: center; justify-content: center;
     }
-    .db-section-title { font-size: 15px; font-weight: 700; color: #e2e8f0; }
+    .db-section-title { font-size: 15px; font-weight: 700; color: var(--ss-text); }
     .db-section-link {
         font-size: 12px; font-weight: 600; color: #38bdf8;
         text-decoration: none; padding: 5px 12px; border-radius: 7px;
@@ -69,26 +69,26 @@ const styles = `
 
     /* Table */
     .db-table-wrap {
-        background: #1e293b;
-        border: 1px solid rgba(255,255,255,0.07);
+        background: var(--ss-surface);
+        border: 1px solid var(--ss-alpha-07);
         border-radius: 14px; overflow: hidden;
     }
     .db-table { width: 100%; border-collapse: collapse; }
-    .db-table thead { background: rgba(255,255,255,0.025); }
+    .db-table thead { background: var(--ss-alpha-02); }
     .db-table th {
         padding: 12px 18px; text-align: left;
-        font-size: 11px; font-weight: 600; color: #6e7e95;
+        font-size: 11px; font-weight: 600; color: var(--ss-text-muted);
         text-transform: uppercase; letter-spacing: 0.8px;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid var(--ss-alpha-05);
     }
     .db-table td {
-        padding: 13px 18px; font-size: 13px; color: #94a3b8;
-        border-bottom: 1px solid rgba(255,255,255,0.04);
+        padding: 13px 18px; font-size: 13px; color: var(--ss-text-soft);
+        border-bottom: 1px solid var(--ss-alpha-04);
         word-break: break-word;
     }
     .db-table tbody tr:last-child td { border-bottom: none; }
-    .db-table tbody tr:hover td { background: rgba(255,255,255,0.025); color: #cbd5e1; }
-    .db-table td:first-child { color: #e2e8f0; font-weight: 500; }
+    .db-table tbody tr:hover td { background: var(--ss-alpha-02); color: var(--ss-text-soft); }
+    .db-table td:first-child { color: var(--ss-text); font-weight: 500; }
 
     .db-view-link {
         display: inline-flex; align-items: center; gap: 5px;
@@ -101,10 +101,10 @@ const styles = `
 
     /* Empty state */
     .db-empty {
-        background: #1e293b;
-        border: 1px solid rgba(255,255,255,0.07);
+        background: var(--ss-surface);
+        border: 1px solid var(--ss-alpha-07);
         border-radius: 14px; padding: 28px 20px;
-        text-align: center; color: #6e7e95;
+        text-align: center; color: var(--ss-text-muted);
         font-size: 13px; font-weight: 500;
     }
     .db-empty-icon { font-size: 28px; margin-bottom: 8px; }
@@ -321,17 +321,17 @@ export default function Dashboard({
                 position="top-right"
                 toastOptions={{
                     style: {
-                        background: "#1e293b",
-                        color: "#e2e8f0",
-                        border: "1px solid rgba(255,255,255,0.08)",
+                        background: "var(--ss-surface)",
+                        color: "var(--ss-text)",
+                        border: "1px solid var(--ss-alpha-08)",
                         borderRadius: "10px",
                         fontSize: "13px",
                     },
                     success: {
-                        iconTheme: { primary: "#22c55e", secondary: "#1e293b" },
+                        iconTheme: { primary: "#22c55e", secondary: "var(--ss-surface)" },
                     },
                     error: {
-                        iconTheme: { primary: "#f87171", secondary: "#1e293b" },
+                        iconTheme: { primary: "#f87171", secondary: "var(--ss-surface)" },
                     },
                 }}
             />

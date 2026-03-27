@@ -95,7 +95,7 @@ class CoverLetterController extends Controller
 
         // --- Get Job data ---
         $job = Job::where('id', $validated['job_id'])->where('user_id', $userId)->first();
-        if (!$job) {
+        if (! $job) {
             return back()->with('error', 'Job not found.');
         }
 
@@ -108,11 +108,12 @@ class CoverLetterController extends Controller
             ->where('user_id', $userId)
             ->first();
 
-        if (!$resume) {
+        if (! $resume) {
             Log::error('Resume not found in DB', [
                 'user_id' => $userId,
                 'resume_id' => $validated['resume_id'],
             ]);
+
             return back()->with('error', 'Resume not found.');
         }
 
@@ -122,7 +123,8 @@ class CoverLetterController extends Controller
                 return extractResumeContent($filePath);
             });
         } catch (\Exception $e) {
-            Log::error("Resume extraction failed: " . $e->getMessage());
+            Log::error('Resume extraction failed: '.$e->getMessage());
+
             return back()->with('error', 'Failed to extract resume content.');
         }
 
@@ -140,14 +142,15 @@ class CoverLetterController extends Controller
                 $companyName
             );
         } catch (\Exception $e) {
-            Log::error("AI error: " . $e->getMessage());
+            Log::error('AI error: '.$e->getMessage());
+
             return back()->with('error', 'AI generation failed.');
         }
         // --- Parse and Save ---
         try {
             $data = json_decode($aiResult, true);
 
-            if (!$data || !isset($data['cover_letter_html'])) {
+            if (! $data || ! isset($data['cover_letter_html'])) {
                 return back()->with('error', 'AI returned invalid data.');
             }
 
@@ -194,7 +197,7 @@ class CoverLetterController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error saving AI results or generating PDF: ' . $e->getMessage(), [
+            Log::error('Error saving AI results or generating PDF: '.$e->getMessage(), [
                 'ai_result' => $aiResult,
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -248,9 +251,13 @@ class CoverLetterController extends Controller
                     [$emailIconWeb, $phoneIconWeb, $linkedinIconWeb],
                     $html
                 ),
+                'file_url' => $coverLetter->file_path
+                    ? \Storage::temporaryUrl($coverLetter->file_path, now()->addMinutes(30))
+                    : null,
             ],
         ]);
     }
+
     public function edit($id)
     {
         $coverLetter = CoverLetter::findOrFail($id);
@@ -311,7 +318,6 @@ class CoverLetterController extends Controller
         ]);
     }
 
-
     public function update(Request $request, CoverLetter $coverLetter)
     {
         $aiResult = $request->ai_result;
@@ -371,11 +377,10 @@ class CoverLetterController extends Controller
         return response()->json(['html' => $html]);
     }
 
-
     public function destroy($id)
     {
         $CoverLetter = CoverLetter::find($id);
-        if (!$CoverLetter) {
+        if (! $CoverLetter) {
             return back()->with('error', 'Cover Letter not found.');
         }
 

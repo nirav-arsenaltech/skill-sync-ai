@@ -17,7 +17,7 @@ const styles = `
     .ip-root {
         font-family: 'Inter', sans-serif;
         padding: 28px 28px 60px;
-        background: #0f172a;
+        background: var(--ss-bg);
         min-height: 100%;
     }
 
@@ -27,8 +27,8 @@ const styles = `
         justify-content: space-between;
         margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
     }
-    .ip-title    { font-size: 22px; font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
-    .ip-subtitle { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+    .ip-title    { font-size: 22px; font-weight: 800; color: var(--ss-text-strong); letter-spacing: -0.5px; }
+    .ip-subtitle { font-size: 13px; color: var(--ss-text-soft); margin-top: 4px; }
     .ip-back {
         display: inline-flex; align-items: center; gap: 6px;
         font-size: 13px; font-weight: 600; color: #38bdf8;
@@ -40,8 +40,8 @@ const styles = `
 
     /* ── Section card ── */
     .ip-card {
-        background: #1e293b;
-        border: 1px solid rgba(255,255,255,0.08);
+        background: var(--ss-surface);
+        border: 1px solid var(--ss-alpha-08);
         border-radius: 16px;
         margin-bottom: 16px;
         overflow: hidden;
@@ -49,28 +49,28 @@ const styles = `
     .ip-card-head {
         display: flex; align-items: center; gap: 10px;
         padding: 15px 22px;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
+        border-bottom: 1px solid var(--ss-alpha-06);
     }
     .ip-card-icon {
         width: 32px; height: 32px; border-radius: 9px;
         display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .ip-card-title { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+    .ip-card-title { font-size: 14px; font-weight: 700; color: var(--ss-text); }
     .ip-card-body  { padding: 22px; }
 
     /* ── Job info rows ── */
     .ip-info-row {
         display: flex; gap: 8px;
         padding: 10px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.04);
+        border-bottom: 1px solid var(--ss-alpha-04);
         font-size: 13px; line-height: 1.65;
     }
     .ip-info-row:last-child { border-bottom: none; padding-bottom: 0; }
     .ip-info-key {
-        font-weight: 600; color: #94a3b8;
+        font-weight: 600; color: var(--ss-text-soft);
         flex-shrink: 0; width: 100px;
     }
-    .ip-info-val { color: #cbd5e1; flex: 1; }
+    .ip-info-val { color: var(--ss-text-soft); flex: 1; }
 
     /* Show more inline button */
     .ip-show-inline {
@@ -82,15 +82,15 @@ const styles = `
 
     /* ── Summary text ── */
     .ip-summary-text {
-        font-size: 14px; color: #94a3b8; line-height: 1.80;
+        font-size: 14px; color: var(--ss-text-soft); line-height: 1.80;
     }
 
     /* ── Q&A list ── */
     .ip-qa-list { display: flex; flex-direction: column; gap: 12px; }
 
     .ip-qa-item {
-        background: #151f32;
-        border: 1px solid rgba(255,255,255,0.06);
+        background: var(--ss-surface-muted);
+        border: 1px solid var(--ss-alpha-06);
         border-radius: 14px; padding: 18px 20px;
         transition: all 0.18s;
     }
@@ -112,14 +112,14 @@ const styles = `
         font-family: 'Inter', sans-serif; letter-spacing: 0.3px;
     }
     .ip-q-text {
-        font-size: 14px; font-weight: 700; color: #e2e8f0; line-height: 1.55; flex: 1;
+        font-size: 14px; font-weight: 700; color: var(--ss-text); line-height: 1.55; flex: 1;
     }
 
     /* Answer row */
     .ip-a-row {
         display: flex; align-items: flex-start; gap: 12px;
         padding-top: 14px;
-        border-top: 1px solid rgba(255,255,255,0.05);
+        border-top: 1px solid var(--ss-alpha-05);
     }
     .ip-a-icon-box {
         width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
@@ -128,18 +128,18 @@ const styles = `
         margin-top: 1px;
     }
     .ip-a-text {
-        font-size: 13px; color: #94a3b8; line-height: 1.75; flex: 1;
+        font-size: 13px; color: var(--ss-text-soft); line-height: 1.75; flex: 1;
     }
 
     /* Show more button */
     .ip-show-more-btn {
         display: flex; align-items: center; justify-content: center; gap: 6px;
         margin: 16px auto 0; padding: 9px 22px; border-radius: 10px;
-        background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-        color: #94a3b8; font-size: 13px; font-weight: 600; cursor: pointer;
+        background: var(--ss-alpha-04); border: 1px solid var(--ss-alpha-08);
+        color: var(--ss-text-soft); font-size: 13px; font-weight: 600; cursor: pointer;
         transition: all 0.18s; font-family: 'Inter', sans-serif;
     }
-    .ip-show-more-btn:hover { background: rgba(255,255,255,0.07); color: #cbd5e1; }
+    .ip-show-more-btn:hover { background: var(--ss-alpha-07); color: var(--ss-text-soft); }
 
     /* Empty state */
     .ip-empty {

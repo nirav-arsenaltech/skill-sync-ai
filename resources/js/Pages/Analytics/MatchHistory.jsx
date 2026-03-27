@@ -11,12 +11,12 @@ import {
 } from "@heroicons/react/24/outline";
 
 /*
-    TEXT COLOR SCALE (dark bg = #0f172a, card bg = #1e293b)
+    TEXT COLOR SCALE (dark bg = var(--ss-bg), card bg = var(--ss-surface))
     ─────────────────────────────────────────────────────────
-    #f1f5f9  — headings / primary
-    #cbd5e1  — body / main content
-    #94a3b8  — secondary labels
-    #6e7e95  — tertiary / placeholders  (user's calibration)
+    var(--ss-text-strong)  — headings / primary
+    var(--ss-text-soft)  — body / main content
+    var(--ss-text-soft)  — secondary labels
+    var(--ss-text-muted)  — tertiary / placeholders  (user's calibration)
     #4a5a6e  — dividers / disabled      (only for borders)
 */
 
@@ -26,14 +26,14 @@ const styles = `
     .mh-root {
         font-family: 'Inter', sans-serif;
         padding: 28px 28px 60px;
-        background: #0f172a;
+        background: var(--ss-bg);
         min-height: 100%;
     }
 
     /* ── Header ── */
     .mh-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-    .mh-title    { font-size: 22px; font-weight: 800; color: #f1f5f9; letter-spacing: -0.5px; }
-    .mh-subtitle { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+    .mh-title    { font-size: 22px; font-weight: 800; color: var(--ss-text-strong); letter-spacing: -0.5px; }
+    .mh-subtitle { font-size: 13px; color: var(--ss-text-soft); margin-top: 4px; }
 
     .mh-back {
         display: inline-flex; align-items: center; gap: 6px;
@@ -50,9 +50,9 @@ const styles = `
         display: inline-flex; align-items: center; gap: 7px;
         padding: 6px 14px; border-radius: 100px;
         font-size: 12px; font-weight: 600;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.09);
-        color: #94a3b8;
+        background: var(--ss-alpha-05);
+        border: 1px solid var(--ss-alpha-09);
+        color: var(--ss-text-soft);
     }
 
     /* ── Score cards ── */
@@ -64,92 +64,92 @@ const styles = `
     @media (max-width: 480px) { .mh-scores { grid-template-columns: 1fr; } }
 
     .mh-score-card {
-        background: #1e293b; border: 1px solid rgba(255,255,255,0.08);
+        background: var(--ss-surface); border: 1px solid var(--ss-alpha-08);
         border-radius: 14px; padding: 18px 18px 14px;
         position: relative; overflow: hidden;
         transition: all 0.2s;
     }
-    .mh-score-card:hover { border-color: rgba(255,255,255,0.14); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.3); }
+    .mh-score-card:hover { border-color: var(--ss-alpha-14); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.3); }
     .mh-score-label {
-        font-size: 11px; font-weight: 700; color: #94a3b8;
+        font-size: 11px; font-weight: 700; color: var(--ss-text-soft);
         text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;
     }
     .mh-score-value { font-size: 34px; font-weight: 800; letter-spacing: -1px; line-height: 1; margin-bottom: 12px; }
-    .mh-score-bar-bg { height: 4px; border-radius: 10px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    .mh-score-bar-bg { height: 4px; border-radius: 10px; background: var(--ss-alpha-08); overflow: hidden; }
     .mh-score-bar-fill { height: 100%; border-radius: 10px; transition: width 0.8s ease; }
     .mh-score-glow { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; border-radius: 0 0 14px 14px; }
 
     /* ── Section card shell ── */
     .mh-card {
-        background: #1e293b;
-        border: 1px solid rgba(255,255,255,0.08);
+        background: var(--ss-surface);
+        border: 1px solid var(--ss-alpha-08);
         border-radius: 14px; margin-bottom: 16px; overflow: hidden;
     }
     .mh-card-head {
         display: flex; align-items: center;
         padding: 15px 20px;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
+        border-bottom: 1px solid var(--ss-alpha-06);
         gap: 10px;
     }
     .mh-card-icon {
         width: 32px; height: 32px; border-radius: 9px;
         display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .mh-card-title { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+    .mh-card-title { font-size: 14px; font-weight: 700; color: var(--ss-text); }
     .mh-card-body  { padding: 20px; }
 
     /* ── Keyword gap inline card ── */
     .mh-gap-inner {
         display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
     }
-    .mh-gap-label { font-size: 13px; font-weight: 700; color: #cbd5e1; }
+    .mh-gap-label { font-size: 13px; font-weight: 700; color: var(--ss-text-soft); }
     .mh-gap-pct   { font-size: 14px; font-weight: 800; color: #f87171; }
-    .mh-gap-desc  { font-size: 12px; color: #94a3b8; margin-top: 7px; }
+    .mh-gap-desc  { font-size: 12px; color: var(--ss-text-soft); margin-top: 7px; }
 
     /* ── ATS table ── */
     .mh-ats-table { width: 100%; border-collapse: collapse; }
     .mh-ats-table td {
         padding: 10px 12px; font-size: 13px;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid var(--ss-alpha-05);
         vertical-align: top;
     }
     .mh-ats-table tr:last-child td { border-bottom: none; }
-    .mh-ats-key { color: #94a3b8; font-weight: 600; text-transform: capitalize; white-space: nowrap; width: 40%; }
-    .mh-ats-val { color: #cbd5e1; line-height: 1.6; }
+    .mh-ats-key { color: var(--ss-text-soft); font-weight: 600; text-transform: capitalize; white-space: nowrap; width: 40%; }
+    .mh-ats-val { color: var(--ss-text-soft); line-height: 1.6; }
 
     /* ── Skills table ── */
     .mh-skills-wrap { overflow-x: auto; }
     .mh-skills-table { width: 100%; border-collapse: collapse; min-width: 480px; }
     .mh-skills-table th {
         padding: 10px 14px; text-align: left;
-        font-size: 11px; font-weight: 700; color: #94a3b8;
+        font-size: 11px; font-weight: 700; color: var(--ss-text-soft);
         text-transform: uppercase; letter-spacing: 0.8px;
-        background: rgba(255,255,255,0.03);
-        border-bottom: 1px solid rgba(255,255,255,0.06);
+        background: var(--ss-alpha-03);
+        border-bottom: 1px solid var(--ss-alpha-06);
     }
     .mh-skills-table td {
-        padding: 11px 14px; font-size: 13px; color: #94a3b8;
-        border-bottom: 1px solid rgba(255,255,255,0.04);
+        padding: 11px 14px; font-size: 13px; color: var(--ss-text-soft);
+        border-bottom: 1px solid var(--ss-alpha-04);
     }
     .mh-skills-table tbody tr:last-child td { border-bottom: none; }
-    .mh-skills-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
-    .mh-skill-name { color: #cbd5e1 !important; font-weight: 500; }
+    .mh-skills-table tbody tr:hover td { background: var(--ss-alpha-02); }
+    .mh-skill-name { color: var(--ss-text-soft) !important; font-weight: 500; }
 
     .mh-matched-yes {
         display: inline-flex; align-items: center; justify-content: center;
         width: 22px; height: 22px; border-radius: 6px;
         background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.25);
     }
-    .mh-matched-no { color: #6e7e95; }
+    .mh-matched-no { color: var(--ss-text-muted); }
 
     .mh-show-more-btn {
         display: flex; align-items: center; justify-content: center; gap: 6px;
         margin: 14px auto 0; padding: 8px 20px; border-radius: 9px;
-        background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
-        color: #94a3b8; font-size: 13px; font-weight: 600; cursor: pointer;
+        background: var(--ss-alpha-04); border: 1px solid var(--ss-alpha-09);
+        color: var(--ss-text-soft); font-size: 13px; font-weight: 600; cursor: pointer;
         transition: all 0.18s; font-family: 'Inter', sans-serif;
     }
-    .mh-show-more-btn:hover { background: rgba(255,255,255,0.07); color: #cbd5e1; }
+    .mh-show-more-btn:hover { background: var(--ss-alpha-07); color: var(--ss-text-soft); }
 
     /* ── Strengths / Weaknesses ── */
     .mh-sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -160,10 +160,10 @@ const styles = `
         font-size: 13px; font-weight: 700; margin-bottom: 10px;
         display: flex; align-items: center; gap: 7px;
     }
-    .mh-sw-body { font-size: 13px; color: #94a3b8; line-height: 1.80; white-space: pre-wrap; }
+    .mh-sw-body { font-size: 13px; color: var(--ss-text-soft); line-height: 1.80; white-space: pre-wrap; }
 
     /* ── Detailed analysis ── */
-    .mh-analysis-text { font-size: 13px; color: #94a3b8; line-height: 1.85; white-space: pre-wrap; }
+    .mh-analysis-text { font-size: 13px; color: var(--ss-text-soft); line-height: 1.85; white-space: pre-wrap; }
 `;
 
 const SCORE_DEFS = [
@@ -335,7 +335,7 @@ export default function MatchHistory({ match, aiData, jobTitle, resumeName }) {
                                 style={{
                                     height: 6,
                                     borderRadius: 10,
-                                    background: "rgba(255,255,255,0.07)",
+                                    background: "var(--ss-alpha-07)",
                                     overflow: "hidden",
                                 }}
                             >
@@ -416,7 +416,7 @@ export default function MatchHistory({ match, aiData, jobTitle, resumeName }) {
                                                             ? "#f87171"
                                                             : skill.gap === 0
                                                               ? "#34d399"
-                                                              : "#94a3b8",
+                                                              : "var(--ss-text-soft)",
                                                     fontWeight: 600,
                                                 }}
                                             >

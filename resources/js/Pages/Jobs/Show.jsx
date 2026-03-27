@@ -10,12 +10,12 @@ import {
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.js-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:#0f172a; min-height:100%; }
+.js-root { font-family:'Inter',sans-serif; padding:28px 28px 48px; background:var(--ss-bg); min-height:100%; }
 
 /* ── Header ── */
 .js-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
-.js-title    { font-size:22px; font-weight:800; color:#f1f5f9; letter-spacing:-0.5px; }
-.js-subtitle { font-size:13px; color:#6e7e95; margin-top:3px; }
+.js-title    { font-size:22px; font-weight:800; color:var(--ss-text-strong); letter-spacing:-0.5px; }
+.js-subtitle { font-size:13px; color:var(--ss-text-muted); margin-top:3px; }
 .js-header-actions { display:flex; align-items:center; gap:10px; }
 
 /* ── Two-col layout ── */
@@ -24,7 +24,7 @@ const styles = `
 
 /* ── Card ── */
 .js-card {
-    background:#1e293b; border:1px solid rgba(255,255,255,0.07);
+    background:var(--ss-surface); border:1px solid var(--ss-alpha-07);
     border-radius:16px; padding:28px;
 }
 
@@ -32,28 +32,28 @@ const styles = `
 .js-field { margin-bottom:24px; }
 .js-field:last-child { margin-bottom:0; }
 .js-field-label {
-    font-size:11px; font-weight:600; color:#6e7e95;
+    font-size:11px; font-weight:600; color:var(--ss-text-muted);
     text-transform:uppercase; letter-spacing:0.7px; margin-bottom:10px;
 }
 .js-field-val {
-    font-size:14px; color:#e2e8f0; line-height:1.8;
+    font-size:14px; color:var(--ss-text); line-height:1.8;
     white-space:pre-wrap; word-break:break-word;
 }
 .js-field-title-val {
-    font-size:18px; font-weight:700; color:#f1f5f9; line-height:1.4;
+    font-size:18px; font-weight:700; color:var(--ss-text-strong); line-height:1.4;
 }
 
-.js-divider { border:none; border-top:1px solid rgba(255,255,255,0.05); margin:20px 0; }
+.js-divider { border:none; border-top:1px solid var(--ss-alpha-05); margin:20px 0; }
 
 /* ── Action buttons ── */
 .js-btn-back {
     display:inline-flex; align-items:center; gap:7px;
     padding:10px 18px; border-radius:10px;
-    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09);
-    color:#94a3b8; font-size:13px; font-weight:600;
+    background:var(--ss-alpha-05); border:1px solid var(--ss-alpha-09);
+    color:var(--ss-text-soft); font-size:13px; font-weight:600;
     text-decoration:none; transition:all 0.18s;
 }
-.js-btn-back:hover { background:rgba(255,255,255,0.09); color:#e2e8f0; }
+.js-btn-back:hover { background:var(--ss-alpha-09); color:var(--ss-text); }
 
 .js-btn-edit {
     display:inline-flex; align-items:center; gap:7px;
@@ -66,15 +66,15 @@ const styles = `
 .js-btn-edit:hover { opacity:0.9; transform:translateY(-1px); }
 
 /* ── Meta aside ── */
-.js-aside-title    { font-size:15px; font-weight:800; color:#f1f5f9; margin-bottom:4px; }
-.js-aside-subtitle { font-size:12px; color:#6e7e95; margin-bottom:18px; }
+.js-aside-title    { font-size:15px; font-weight:800; color:var(--ss-text-strong); margin-bottom:4px; }
+.js-aside-subtitle { font-size:12px; color:var(--ss-text-muted); margin-bottom:18px; }
 
 .js-meta-item {
-    background:#0f172a; border:1px solid rgba(255,255,255,0.06);
+    background:var(--ss-bg); border:1px solid var(--ss-alpha-06);
     border-radius:10px; padding:13px 15px; margin-bottom:10px;
 }
-.js-meta-label { font-size:11px; font-weight:600; color:#6e7e95; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:5px; }
-.js-meta-val   { font-size:13px; color:#e2e8f0; font-weight:500; }
+.js-meta-label { font-size:11px; font-weight:600; color:var(--ss-text-muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:5px; }
+.js-meta-val   { font-size:13px; color:var(--ss-text); font-weight:500; }
 
 .js-notice {
     background:rgba(56,189,248,0.07); border:1px solid rgba(56,189,248,0.18);

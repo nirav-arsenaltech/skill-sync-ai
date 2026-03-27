@@ -1,10 +1,11 @@
 import { Link } from '@inertiajs/react';
+import ThemeToggle from '@/Components/ThemeToggle';
 
 export default function GuestLayout({ children }) {
     return (
         <div style={{
             minHeight: '100vh',
-            background: '#0f172a',
+            background: 'var(--ss-bg)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -40,6 +41,15 @@ export default function GuestLayout({ children }) {
 
             {/* Panel */}
             <div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '440px' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        marginBottom: '16px',
+                    }}
+                >
+                    <ThemeToggle showLabel />
+                </div>
 
                 {/* Logo */}
                 <div style={{ textAlign: 'center', marginBottom: '28px' }}>
@@ -55,7 +65,7 @@ export default function GuestLayout({ children }) {
                                 <circle cx="9" cy="9" r="2.5" fill="white"/>
                             </svg>
                         </div>
-                        <span style={{ fontSize: 20, fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.5px' }}>
+                        <span style={{ fontSize: 20, fontWeight: 800, color: 'var(--ss-text-strong)', letterSpacing: '-0.5px' }}>
                             Skill<span style={{ color: '#38bdf8' }}>Sync</span>.ai
                         </span>
                     </Link>
@@ -63,17 +73,17 @@ export default function GuestLayout({ children }) {
 
                 {/* Card */}
                 <div style={{
-                    background: '#1e293b',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    background: 'var(--ss-surface)',
+                    border: '1px solid var(--ss-alpha-08)',
                     borderRadius: 20,
                     padding: '36px 32px',
-                    boxShadow: '0 24px 60px rgba(0,0,0,0.40)',
+                    boxShadow: '0 24px 60px rgba(15,23,42,0.16)',
                 }}>
                     {children}
                 </div>
 
                 {/* Footer */}
-                <p style={{ textAlign: 'center', marginTop: 20, fontSize: 12, color: '#334155' }}>
+                <p style={{ textAlign: 'center', marginTop: 20, fontSize: 12, color: 'var(--ss-text-muted)' }}>
                     © {new Date().getFullYear()} SkillSync.ai — All rights reserved
                 </p>
             </div>

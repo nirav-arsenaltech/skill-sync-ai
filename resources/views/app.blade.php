@@ -25,6 +25,25 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <script>
+            (function () {
+                const storageKey = 'skillsync-theme';
+                const defaultTheme = 'dark';
+
+                try {
+                    const storedTheme = localStorage.getItem(storageKey);
+                    const theme = storedTheme === 'light' || storedTheme === 'dark'
+                        ? storedTheme
+                        : defaultTheme;
+
+                    document.documentElement.classList.toggle('dark', theme === 'dark');
+                    document.documentElement.dataset.theme = theme;
+                } catch (error) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.dataset.theme = defaultTheme;
+                }
+            })();
+        </script>
 
         <!-- Scripts -->
         @routes
