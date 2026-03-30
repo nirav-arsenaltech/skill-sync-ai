@@ -34,9 +34,9 @@ const styles = `
 /* ── Table ── */
 .ip-table-wrap {
     background:var(--ss-surface); border:1px solid var(--ss-alpha-07);
-    border-radius:14px; overflow:hidden;
+    border-radius:14px; overflow-x:auto; overflow-y:hidden;
 }
-.ip-table { width:100%; border-collapse:collapse; }
+.ip-table { width:100%; border-collapse:collapse; min-width:720px; }
 .ip-table thead { background:var(--ss-alpha-02); }
 .ip-table th {
     padding:12px 18px; text-align:left;
@@ -146,6 +146,11 @@ const styles = `
     box-shadow:0 4px 14px rgba(220,38,38,0.30); font-family:'Inter',sans-serif;
 }
 .ip-modal-delete:hover { opacity:0.9; transform:translateY(-1px); }
+
+@media (max-width: 767px) {
+    .ip-root { padding:20px 14px 36px; }
+    .ip-btn-create { justify-content:center; width:100%; }
+}
 `;
 
 const TOAST_OPTS = {

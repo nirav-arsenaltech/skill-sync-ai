@@ -7,7 +7,8 @@ it('boots the theme script on the welcome page', function () {
 
     $response
         ->assertOk()
-        ->assertSee('skillsync-theme', false);
+        ->assertSee('skillsync-theme', false)
+        ->assertSee('&quot;component&quot;:&quot;Welcome&quot;', false);
 });
 
 it('boots the theme script for authenticated pages', function () {
@@ -19,5 +20,6 @@ it('boots the theme script for authenticated pages', function () {
 
     $response
         ->assertOk()
-        ->assertSee('skillsync-theme', false);
+        ->assertSee('skillsync-theme', false)
+        ->assertSee('&quot;component&quot;:&quot;Dashboard\/Index&quot;', false);
 });

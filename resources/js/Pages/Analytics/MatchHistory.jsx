@@ -177,6 +177,23 @@ const styles = `
 
     /* ── Detailed analysis ── */
     .mh-analysis-text { font-size: 13px; color: var(--ss-text-soft); line-height: 1.85; white-space: pre-wrap; }
+
+    @media (max-width: 767px) {
+        .mh-root { padding: 20px 14px 36px; }
+        .mh-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+        .mh-header-actions {
+            width: 100%;
+        }
+        .mh-download,
+        .mh-back {
+            justify-content: center;
+            width: 100%;
+        }
+        .mh-meta { gap: 8px; }
+    }
 `;
 
 const TOAST_OPTS = {

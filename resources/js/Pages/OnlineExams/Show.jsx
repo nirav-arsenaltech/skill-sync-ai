@@ -51,7 +51,7 @@ const styles = `
 /* ── Hero banner ── */
 .oes-hero {
     border-radius:16px; overflow:hidden; margin-bottom:20px;
-    background:linear-gradient(135deg,#0a1628 0%,var(--ss-bg) 45%,#0d2015 100%);
+    background:linear-gradient(135deg,#9ec3fb 0%,var(--ss-bg) 45%,#0d2015 100%);
     border:1px solid var(--ss-alpha-08);
     box-shadow:0 8px 32px rgba(0,0,0,0.4);
 }

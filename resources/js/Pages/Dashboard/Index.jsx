@@ -2,6 +2,7 @@ import Layout from "./Components/Layout";
 import { Link, Head, usePage } from "@inertiajs/react";
 import {
     EyeIcon,
+    ChartBarIcon,
     BriefcaseIcon,
     DocumentTextIcon,
     EnvelopeOpenIcon,
@@ -40,6 +41,7 @@ const styles = `
         width: 56px; height: 40px; border-radius: 11px;
         display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
+    .db-card-icon-svg { width: 20px; height: 20px; }
     .db-card-title { font-size: 12px; font-weight: 600; color: #637895; text-transform: uppercase; letter-spacing: 0.6px; }
     .db-card-value { font-size: 32px; font-weight: 800; color: var(--ss-text-strong); letter-spacing: -1px; line-height: 1; }
     .db-card-glow {
@@ -71,9 +73,9 @@ const styles = `
     .db-table-wrap {
         background: var(--ss-surface);
         border: 1px solid var(--ss-alpha-07);
-        border-radius: 14px; overflow: hidden;
+        border-radius: 14px; overflow-x: auto; overflow-y: hidden;
     }
-    .db-table { width: 100%; border-collapse: collapse; }
+    .db-table { width: 100%; border-collapse: collapse; min-width: 680px; }
     .db-table thead { background: var(--ss-alpha-02); }
     .db-table th {
         padding: 12px 18px; text-align: left;
@@ -108,6 +110,15 @@ const styles = `
         font-size: 13px; font-weight: 500;
     }
     .db-empty-icon { font-size: 28px; margin-bottom: 8px; }
+
+    @media (max-width: 767px) {
+        .db-root { padding: 20px 14px 36px; }
+        .db-section-head {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
 `;
 
 // Card accent configs
@@ -120,6 +131,15 @@ const CARD_ACCENTS = [
 ];
 
 const CARD_ICONS = ["📄", "💼", "✍️", "🧑‍💼", "🧑‍💻"];
+
+const CARD_ICON_MAP = {
+    "Total Resumes": DocumentTextIcon,
+    "Total Jobs": BriefcaseIcon,
+    "Total Matches": ChartBarIcon,
+    "Total Cover Letters": EnvelopeOpenIcon,
+    "Total Interview Preps": PencilSquareIcon,
+    "Total Online Exams": ComputerDesktopIcon,
+};
 
 // Section configs
 const SECTIONS = [
@@ -180,6 +200,8 @@ const SECTIONS = [
 
 function StatCard({ title, value, index }) {
     const acc = CARD_ACCENTS[index % CARD_ACCENTS.length];
+    const Icon = CARD_ICON_MAP[title] ?? ChartBarIcon;
+
     return (
         <div className="db-card">
             <div className="db-card-top">
@@ -193,9 +215,10 @@ function StatCard({ title, value, index }) {
                     className="db-card-icon"
                     style={{ background: acc.iconBg }}
                 >
-                    <span style={{ fontSize: 20 }}>
-                        {CARD_ICONS[index % CARD_ICONS.length]}
-                    </span>
+                    <Icon
+                        className="db-card-icon-svg"
+                        style={{ color: acc.iconColor }}
+                    />
                 </div>
             </div>
             <div

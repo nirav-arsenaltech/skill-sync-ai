@@ -283,6 +283,13 @@ const styles = `
 
 /* ── Section title inside history card ── */
 .ai-section-title { font-size:15px; font-weight:700; color:var(--ss-text-strong); margin-bottom:16px; }
+
+@media (max-width: 767px) {
+    .ai-root { padding:20px 14px 36px; }
+    .ai-card { padding:18px 14px; }
+    .ai-btn-scan { justify-content:center; width:100%; }
+    .ai-pagination-row { align-items:flex-start; }
+}
 `;
 
 const TOAST_OPTS = {

@@ -44,9 +44,21 @@ const styles = `
         width: 36px; height: 36px; border-radius: 10px;
         background: linear-gradient(135deg, #0ea5e9, #6366f1);
         display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
     }
     .ss-logo-text { font-size: 18px; font-weight: 800; color: var(--ss-text-strong); letter-spacing: -0.5px; }
     .ss-logo-text span { color: #38bdf8; }
+    .ss-logo-text-mobile { display: none; }
+    .ss-nav-center {
+        display: flex; align-items: center; justify-content: center; gap: 45px;
+        position: absolute; left: 50%; transform: translateX(-50%);
+    }
+    .ss-nav-center-link {
+        border: none; background: transparent; cursor: pointer;
+        color: var(--ss-text-muted); font-size: 14px; font-weight: 600;
+        transition: color 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .ss-nav-center-link:hover { color: var(--ss-text); }
 
     .ss-nav-links { display: flex; align-items: center; gap: 10px; }
     .ss-btn-ghost {
@@ -289,6 +301,68 @@ const styles = `
     .ss-footer-right { display: flex; align-items: center; gap: 18px; }
     .ss-footer-link { font-size: 12px; color: var(--ss-text-muted); text-decoration: none; }
     .ss-footer-link:hover { color: var(--ss-text-muted); }
+
+    @media (max-width: 767px) {
+        .ss-nav {
+            min-height: 56px;
+            padding: 8px 12px;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+        .ss-nav-center { display: none; }
+        .ss-logo { gap: 8px; min-width: 0; }
+        .ss-logo-icon { width: 32px; height: 32px; border-radius: 9px; }
+        .ss-logo-text { display: none; }
+        .ss-logo-text-mobile {
+            display: inline;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--ss-text-strong);
+            letter-spacing: -0.4px;
+            white-space: nowrap;
+        }
+        .ss-logo-text-mobile span { color: #38bdf8; }
+        .ss-nav-links {
+            justify-content: flex-end;
+            gap: 6px;
+            flex-wrap: nowrap;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+        .ss-btn-ghost,
+        .ss-btn-primary {
+            padding: 7px 10px;
+            font-size: 12px;
+            line-height: 1;
+            white-space: nowrap;
+            border-radius: 7px;
+        }
+        .ss-stats,
+        .ss-section,
+        .ss-tech,
+        .ss-cta-section,
+        .ss-footer {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        .ss-hiw-left,
+        .ss-hiw-right {
+            padding: 24px 18px;
+        }
+        .ss-formats-grid,
+        .ss-ai-tags {
+            grid-template-columns: 1fr;
+        }
+        .ss-footer-right {
+            width: 100%;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    }
+    @media (max-width: 1023px) {
+        .ss-nav-center { display: none; }
+    }
 `;
 
 function Counter({ target, suffix = "" }) {
@@ -407,6 +481,51 @@ const FORMATS = [
 ];
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
+    const animateScrollTo = (targetY) => {
+        const startY = window.scrollY;
+        const distance = targetY - startY;
+        const duration = 850;
+        const startTime = performance.now();
+
+        const easeInOutCubic = (progress) =>
+            progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        const step = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easedProgress = easeInOutCubic(progress);
+
+            window.scrollTo(0, startY + distance * easedProgress);
+
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+
+        window.requestAnimationFrame(step);
+    };
+
+    const scrollToSection = (sectionLabel) => {
+        if (!sectionLabel) {
+            animateScrollTo(0);
+            return;
+        }
+
+        const labels = Array.from(
+            document.querySelectorAll(".ss-section-label"),
+        );
+        const match = labels.find(
+            (label) => label.textContent?.trim() === sectionLabel,
+        );
+
+        if (match) {
+            const top = match.getBoundingClientRect().top + window.scrollY - 96;
+            animateScrollTo(top);
+        }
+    };
+
     return (
         <>
             <Head title="SkillSync.ai — AI-Powered Career Intelligence" />
@@ -438,6 +557,34 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         <span className="ss-logo-text">
                             Skill<span>Sync</span>.ai
                         </span>
+                        <span className="ss-logo-text-mobile">
+                            Skill<span>Sync</span>
+                        </span>
+                    </div>
+                    <div className="ss-nav-center">
+                        <button
+                            type="button"
+                            className="ss-nav-center-link"
+                            onClick={() =>
+                                scrollToSection("Everything You Need")
+                            }
+                        >
+                            Features
+                        </button>
+                        <button
+                            type="button"
+                            className="ss-nav-center-link"
+                            onClick={() => scrollToSection("Simple Workflow")}
+                        >
+                            How It Works
+                        </button>
+                        <button
+                            type="button"
+                            className="ss-nav-center-link"
+                            onClick={() => scrollToSection(null)}
+                        >
+                            Pricing
+                        </button>
                     </div>
                     <div className="ss-nav-links">
                         <ThemeToggle

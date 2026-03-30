@@ -219,10 +219,7 @@ const styles = `
         align-items: center; justify-content: center; gap: 20px;
     }
     .ipc-overlay-card {
-        background: var(--ss-surface); border: 1px solid var(--ss-alpha-09);
-        border-radius: 20px; padding: 36px 44px;
         display: flex; flex-direction: column; align-items: center; gap: 16px;
-        box-shadow: 0 24px 60px rgba(0,0,0,0.5);
     }
     .ipc-spinner-ring {
         width: 52px; height: 52px; border-radius: 50%;
@@ -258,6 +255,7 @@ export default function Create({ jobs, resumes }) {
         if (!selectedResume) { toast.error('Please select a resume.'); return; }
 
         setLoading(true);
+        debugger;
         router.post('/interview-preps', { job_id: selectedJob.value, resume_id: selectedResume }, {
             preserveScroll: true,
             forceFormData: true,

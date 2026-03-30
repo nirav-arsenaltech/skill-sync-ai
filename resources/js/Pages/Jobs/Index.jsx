@@ -71,9 +71,9 @@ const styles = `
     .ji-table-wrap {
         background: var(--ss-surface);
         border: 1px solid var(--ss-alpha-07);
-        border-radius: 14px; overflow: hidden;
+        border-radius: 14px; overflow-x: auto; overflow-y: hidden;
     }
-    .ji-table { width: 100%; border-collapse: collapse; }
+    .ji-table { width: 100%; border-collapse: collapse; min-width: 720px; }
     .ji-table thead { background: var(--ss-alpha-02); }
     .ji-table th {
         padding: 12px 18px; text-align: left;
@@ -185,6 +185,13 @@ const styles = `
         box-shadow: 0 4px 14px rgba(220,38,38,0.30); font-family: 'Inter', sans-serif;
     }
     .ji-modal-delete:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    @media (max-width: 767px) {
+        .ji-root { padding: 20px 14px 36px; }
+        .ji-search-row { flex-direction: column; align-items: stretch; }
+        .ji-btn-search,
+        .ji-btn-create { justify-content: center; width: 100%; }
+    }
 `;
 
 const TOAST_OPTS = {

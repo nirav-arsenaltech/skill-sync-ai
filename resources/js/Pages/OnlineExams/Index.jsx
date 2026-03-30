@@ -158,6 +158,19 @@ const styles = `
     box-shadow:0 4px 14px rgba(220,38,38,0.30); font-family:'Inter',sans-serif;
 }
 .oe-modal-delete:hover { opacity:0.9; transform:translateY(-1px); }
+
+@media (max-width: 767px) {
+    .oe-root { padding:20px 14px 36px; }
+    .oe-hero-inner { padding:24px 18px; }
+    .oe-hero-title { font-size:22px; }
+    .oe-btn-take { justify-content:center; width:100%; }
+    .oe-card-header {
+        align-items:flex-start;
+        flex-direction:column;
+        gap:8px;
+    }
+    .oe-table { min-width:720px; }
+}
 `;
 
 const TOAST_OPTS = {

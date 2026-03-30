@@ -16,6 +16,7 @@ const sidebarStyles = `
     .ss-sidebar {
         position: fixed;
         top: 0; left: 0;
+        bottom: 0;
         height: 100vh;
         width: 256px;
         background: var(--ss-bg);
@@ -26,9 +27,18 @@ const sidebarStyles = `
         transition: transform 0.3s ease;
         font-family: 'Inter', sans-serif;
     }
+    @media (max-width: 1023px) {
+        .ss-sidebar {
+            z-index: 70;
+        }
+    }
     @media (min-width: 1024px) {
         .ss-sidebar {
-            position: sticky;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            height: 100vh;
             transform: translateX(0) !important;
         }
     }
@@ -79,7 +89,9 @@ const sidebarStyles = `
         transition: all 0.2s; line-height: 0;
     }
     .ss-close-btn:hover { background: var(--ss-alpha-08); color: var(--ss-text-soft); }
-    @media (max-width: 1023px) { .ss-close-btn { display: flex; } }
+    @media (max-width: 1023px) {
+        .ss-close-btn { display: flex; }
+    }
 
     /* Nav */
     .ss-nav {
@@ -167,6 +179,11 @@ const sidebarStyles = `
         position: fixed; inset: 0; background: var(--ss-overlay);
         z-index: 30; transition: opacity 0.3s, visibility 0.3s;
     }
+    @media (max-width: 1023px) {
+        .ss-overlay {
+            z-index: 60;
+        }
+    }
     .ss-overlay-visible { opacity: 1; visibility: visible; }
     .ss-overlay-hidden  { opacity: 0; visibility: hidden; }
     @media (min-width: 1024px) { .ss-overlay { display: none !important; } }
@@ -243,7 +260,16 @@ export default function Sidebar({ isOpen, onClose }) {
                 <div className="ss-sidebar-glow" />
 
                 {/* Logo */}
-                <Link href="/" className="ss-sidebar-logo">
+                <Link
+                    href="/"
+                    className="ss-sidebar-logo"
+                    onClick={() => {
+                        if (window.innerWidth < 1024) {
+                            onClose();
+                        }
+                    }}
+                    aria-label="Go to welcome page"
+                >
                     <div className="ss-sidebar-logo-inner">
                         <div className="ss-sidebar-logo-icon">
                             <svg

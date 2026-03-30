@@ -8,7 +8,7 @@ export default function Layout({ children }) {
 
     return (
         <div
-            className="flex min-h-screen min-w-fit"
+            className="h-screen min-w-0 overflow-hidden"
             style={{
                 background: "var(--ss-bg)",
                 color: "var(--ss-text)",
@@ -21,13 +21,13 @@ export default function Layout({ children }) {
             />
 
             {/* Main content area */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex h-screen min-w-0 flex-1 flex-col lg:pl-64">
                 {/* ✅ Global Topbar */}
                 <Topbar onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
 
                 {/* Page Content */}
                 <main
-                    className="flex-1 overflow-y-auto p-6"
+                    className="flex-1 overflow-x-hidden overflow-y-auto px-3 py-4 sm:px-4 sm:py-5 lg:px-6"
                     style={{ background: "var(--ss-bg)" }}
                 >
                     {children}

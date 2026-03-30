@@ -16,6 +16,7 @@ const topbarStyles = `
         position: sticky;
         top: 0;
         z-index: 50;
+        flex-shrink: 0;
         height: 67px;
         background: var(--ss-nav-bg);
         backdrop-filter: blur(16px);
@@ -156,6 +157,39 @@ const topbarStyles = `
         box-shadow: 0 4px 14px rgba(220,38,38,0.30);
     }
     .ss-modal-btn-logout:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    @media (max-width: 767px) {
+        .ss-topbar {
+            height: auto;
+            min-height: 67px;
+            padding: 10px 12px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .ss-topbar-left,
+        .ss-topbar-right {
+            width: 100%;
+        }
+        .ss-topbar-right {
+            justify-content: space-between;
+        }
+        .ss-topbar-breadcrumb {
+            min-width: 0;
+            overflow: hidden;
+        }
+        .ss-topbar-breadcrumb > span:first-child,
+        .ss-topbar-breadcrumb-sep,
+        .ss-topbar-divider,
+        .ss-profile-name {
+            display: none;
+        }
+        .ss-topbar-page-title {
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
 `;
 
 // Map URL prefixes → readable page names

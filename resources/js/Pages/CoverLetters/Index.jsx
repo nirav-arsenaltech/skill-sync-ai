@@ -36,9 +36,9 @@ const styles = `
 /* ── Table ── */
 .cl-table-wrap {
     background:var(--ss-surface); border:1px solid var(--ss-alpha-07);
-    border-radius:14px; overflow:hidden;
+    border-radius:14px; overflow-x:auto; overflow-y:hidden;
 }
-.cl-table { width:100%; border-collapse:collapse; }
+.cl-table { width:100%; border-collapse:collapse; min-width:720px; }
 .cl-table thead { background:var(--ss-alpha-02); }
 .cl-table th {
     padding:12px 18px; text-align:left;
@@ -160,6 +160,11 @@ const styles = `
     box-shadow:0 4px 14px rgba(220,38,38,0.30); font-family:'Inter',sans-serif;
 }
 .cl-modal-delete:hover { opacity:0.9; transform:translateY(-1px); }
+
+@media (max-width: 767px) {
+    .cl-root { padding:20px 14px 36px; }
+    .cl-btn-create { justify-content:center; width:100%; }
+}
 `;
 
 const TOAST_OPTS = {
