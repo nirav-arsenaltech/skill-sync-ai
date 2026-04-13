@@ -274,7 +274,10 @@ export default function Create({ jobs, resumes, templates }) {
         }, {
             preserveScroll: false,
             onSuccess: () => router.get('/cover-letters'),
-            onError:   () => setLoading(false),
+            onError:   (pageErrors) => {
+                setLoading(false);
+                toast.error(pageErrors.job_id || pageErrors.resume_id || pageErrors.company_name || 'Please fix the errors and try again.');
+            },
         });
     };
 
@@ -323,6 +326,7 @@ export default function Create({ jobs, resumes, templates }) {
                                     isSearchable
                                 />
                             </div>
+                            {errors.job_id && <div className="clc-error">{errors.job_id}</div>}
                         </div>
 
                         {/* ── Resume Selection (Interview Prep card style) ── */}
@@ -378,6 +382,7 @@ export default function Create({ jobs, resumes, templates }) {
                                     </div>
                                 )}
                             </div>
+                            {errors.resume_id && <div className="clc-error">{errors.resume_id}</div>}
                         </div>
 
                         {/* ── Company Name ── */}

@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job;
+use App\Services\Billing\FeatureLimitService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class JobController extends Controller
 {
+    public function __construct(
+        private readonly FeatureLimitService $featureLimitService,
+    ) {}
+
     public function index(Request $request)
     {
         $user = auth()->user();
@@ -40,6 +46,14 @@ class JobController extends Controller
 
     public function store(Request $request)
     {
+        $limitMessage = $this->featureLimitService->denialMessage($request->user(), 'jobs');
+
+        if ($limitMessage !== null) {
+            throw ValidationException::withMessages([
+                $this->featureLimitService->validationKey('jobs') => $limitMessage,
+            ]);
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',

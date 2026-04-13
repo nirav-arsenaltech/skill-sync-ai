@@ -3,13 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Resume;
+use App\Services\Billing\FeatureLimitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class ResumeController extends Controller
 {
+    public function __construct(
+        private readonly FeatureLimitService $featureLimitService,
+    ) {}
+
     public function index(Request $request)
     {
         $query = Resume::where('user_id', Auth::id());
@@ -39,15 +45,25 @@ class ResumeController extends Controller
 
     public function store(Request $request)
     {
+        $limitMessage = $this->featureLimitService->denialMessage($request->user(), 'resumes');
+
+        if ($limitMessage !== null) {
+            throw ValidationException::withMessages([
+                $this->featureLimitService->validationKey('resumes') => $limitMessage,
+            ]);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'file' => 'required|file|mimes:pdf,doc,docx,txt,json,xml',
         ]);
 
+        $user = Auth::user();
+
         $filePath = $request->file('file')->storePublicly('resumes', storageDiskName());
 
         Resume::create([
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
             'name' => $request->name,
             'file_path' => $filePath,
         ]);

@@ -86,7 +86,7 @@ export default function UpdateProfileInformation({
 
     const submit = (e) => {
         e.preventDefault();
-        patch(route("profile.update"));
+        patch(route("profile.update", undefined, false));
     };
 
     return (
@@ -140,7 +140,7 @@ export default function UpdateProfileInformation({
                     <div className="upf-verify-box">
                         Your email address is unverified.
                         <Link
-                            href={route("verification.send")}
+                            href={route("verification.send", undefined, false)}
                             method="post"
                             as="button"
                             className="upf-verify-link"

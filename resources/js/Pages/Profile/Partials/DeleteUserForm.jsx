@@ -141,7 +141,7 @@ export default function DeleteUserForm({ className = "" }) {
 
     const deleteUser = (e) => {
         e.preventDefault();
-        destroy(route("profile.destroy"), {
+        destroy(route("profile.destroy", undefined, false), {
             preserveScroll: true,
             onSuccess: () => {
                 closeModal();

@@ -6,15 +6,21 @@ use App\AppNeuronMyAgent;
 use App\Models\CoverLetter;
 use App\Models\Job;
 use App\Models\Resume;
+use App\Services\Billing\FeatureLimitService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class CoverLetterController extends Controller
 {
+    public function __construct(
+        private readonly FeatureLimitService $featureLimitService,
+    ) {}
+
     public function index(Request $request)
     {
         $userId = Auth::id();
@@ -84,6 +90,14 @@ class CoverLetterController extends Controller
 
     public function store(Request $request)
     {
+        $limitMessage = $this->featureLimitService->denialMessage($request->user(), 'cover_letters');
+
+        if ($limitMessage !== null) {
+            throw ValidationException::withMessages([
+                $this->featureLimitService->validationKey('cover_letters') => $limitMessage,
+            ]);
+        }
+
         $userId = Auth::id();
 
         $validated = $request->validate([

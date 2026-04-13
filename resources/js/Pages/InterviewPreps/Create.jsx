@@ -1,5 +1,5 @@
 import Layout from '../Dashboard/Components/Layout';
-import { router, Link, Head } from '@inertiajs/react';
+import { router, Link, Head, usePage } from '@inertiajs/react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import Select from 'react-select';
@@ -243,6 +243,7 @@ const TOAST_OPTS = {
 };
 
 export default function Create({ jobs, resumes }) {
+    const page = usePage();
     const [selectedJob,    setSelectedJob]    = useState(null);
     const [selectedResume, setSelectedResume] = useState(null);
     const [loading,        setLoading]        = useState(false);
@@ -255,7 +256,6 @@ export default function Create({ jobs, resumes }) {
         if (!selectedResume) { toast.error('Please select a resume.'); return; }
 
         setLoading(true);
-        debugger;
         router.post('/interview-preps', { job_id: selectedJob.value, resume_id: selectedResume }, {
             preserveScroll: true,
             forceFormData: true,
@@ -264,9 +264,9 @@ export default function Create({ jobs, resumes }) {
                 setSelectedJob(null);
                 setSelectedResume(null);
             },
-            onError: () => {
+            onError: (pageErrors) => {
                 setLoading(false);
-                toast.error('Something went wrong. Please try again.');
+                toast.error(pageErrors.job_id || pageErrors.resume_id || 'Something went wrong. Please try again.');
             },
         });
     };
@@ -319,6 +319,7 @@ export default function Create({ jobs, resumes }) {
                                     isSearchable
                                 />
                             </div>
+                            {page.props?.errors?.job_id && <div className="ipc-error">{page.props.errors.job_id}</div>}
                         </div>
 
                         {/* Resume grid */}
@@ -376,6 +377,7 @@ export default function Create({ jobs, resumes }) {
                                     </div>
                                 )}
                             </div>
+                            {page.props?.errors?.resume_id && <div className="ipc-error">{page.props.errors.resume_id}</div>}
                         </div>
 
                         <hr className="ipc-divider" />

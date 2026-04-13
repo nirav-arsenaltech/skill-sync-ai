@@ -6,13 +6,19 @@ use App\AppNeuronMyAgent;
 use App\Models\Job;
 use App\Models\Matches;
 use App\Models\Resume;
+use App\Services\Billing\FeatureLimitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class AnalyticsController extends Controller
 {
+    public function __construct(
+        private readonly FeatureLimitService $featureLimitService,
+    ) {}
+
     // Show Analytics page
     public function index(Request $request)
     {
@@ -102,6 +108,18 @@ class AnalyticsController extends Controller
             'resume_ids' => 'required|array|min:1',
             'resume_ids.*' => "exists:resumes,id,user_id,{$userId}",
         ]);
+
+        $limitMessage = $this->featureLimitService->denialMessage(
+            $request->user(),
+            'analytics',
+            count($validated['resume_ids'])
+        );
+
+        if ($limitMessage !== null) {
+            throw ValidationException::withMessages([
+                $this->featureLimitService->validationKey('analytics') => $limitMessage,
+            ]);
+        }
 
         // Get Job data
         $job = Job::where('id', $validated['job_id'])->where('user_id', $userId)->first();

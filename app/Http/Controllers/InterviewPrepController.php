@@ -6,13 +6,19 @@ use App\AppNeuronMyAgent;
 use App\Models\InterviewPrep;
 use App\Models\Job;
 use App\Models\Resume;
+use App\Services\Billing\FeatureLimitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class InterviewPrepController extends Controller
 {
+    public function __construct(
+        private readonly FeatureLimitService $featureLimitService,
+    ) {}
+
     public function index(Request $request)
     {
         $userId = Auth::id();
@@ -51,6 +57,14 @@ class InterviewPrepController extends Controller
 
     public function store(Request $request)
     {
+        $limitMessage = $this->featureLimitService->denialMessage($request->user(), 'interview_preps');
+
+        if ($limitMessage !== null) {
+            throw ValidationException::withMessages([
+                $this->featureLimitService->validationKey('interview_preps') => $limitMessage,
+            ]);
+        }
+
         $userId = Auth::id();
 
         $validated = $request->validate([

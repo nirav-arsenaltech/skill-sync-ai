@@ -1,5 +1,6 @@
 import Layout from '../Dashboard/Components/Layout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { ArrowLeftIcon, ClipboardDocumentListIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
@@ -21,6 +22,16 @@ const featureList = [
     'Submission review with score, answers, and correctness',
     'Persistent history on the exam listing page',
 ];
+
+const TOAST_OPTS = {
+    style: {
+        background: 'var(--ss-surface)', color: 'var(--ss-text)',
+        border: '1px solid var(--ss-alpha-08)',
+        borderRadius: '10px', fontSize: '13px',
+    },
+    success: { iconTheme: { primary: '#22c55e', secondary: 'var(--ss-surface)' } },
+    error:   { iconTheme: { primary: '#f87171', secondary: 'var(--ss-surface)' } },
+};
 
 /* ─────────────────────────────────────────────
    Styles  (oec- prefix = online exam create)
@@ -190,7 +201,10 @@ export default function Create({ jobs, resumes }) {
         post('/online-exams', {
             preserveScroll: true,
             onSuccess: () => setLoading(false),
-            onError:   () => setLoading(false),
+            onError:   (pageErrors) => {
+                setLoading(false);
+                toast.error(pageErrors.job_id || pageErrors.resume_id || 'Please fix the errors and try again.');
+            },
         });
     };
 
@@ -198,6 +212,7 @@ export default function Create({ jobs, resumes }) {
         <Layout>
             <style>{styles}</style>
             <Head title="Take Exam" />
+            <Toaster position="top-right" toastOptions={TOAST_OPTS} />
 
             {/* ── Loading overlay ── */}
             {loading && (

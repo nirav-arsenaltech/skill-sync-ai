@@ -2,11 +2,13 @@ import { Link, usePage } from "@inertiajs/react";
 import {
     HomeIcon,
     BriefcaseIcon,
+    CreditCardIcon,
     DocumentTextIcon,
     ChartBarIcon,
     EnvelopeOpenIcon,
     PencilSquareIcon,
     ClipboardDocumentCheckIcon,
+    UsersIcon,
 } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 
@@ -194,6 +196,7 @@ const menuGroups = [
         label: "Main",
         items: [
             { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+            { name: "Billing", href: "/pricing", icon: CreditCardIcon },
             { name: "Jobs", href: "/jobs", icon: BriefcaseIcon },
             { name: "Resumes", href: "/resumes", icon: DocumentTextIcon },
         ],
@@ -241,6 +244,16 @@ export default function Sidebar({ isOpen, onClose }) {
               .slice(0, 2)
               .toUpperCase()
         : "U";
+
+    const groups = user?.is_admin
+        ? [
+            ...menuGroups,
+            {
+                label: "Admin",
+                items: [{ name: "Users", href: "/admin/users", icon: UsersIcon }],
+            },
+        ]
+        : menuGroups;
 
     return (
         <>
@@ -309,7 +322,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
                 {/* Nav groups */}
                 <nav className="ss-nav">
-                    {menuGroups.map((group) => (
+                    {groups.map((group) => (
                         <div key={group.label} className="ss-nav-group">
                             <div className="ss-nav-section-label">
                                 {group.label}

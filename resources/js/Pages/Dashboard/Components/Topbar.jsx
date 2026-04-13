@@ -56,6 +56,56 @@ const topbarStyles = `
     /* Right side */
     .ss-topbar-right { display: flex; align-items: center; gap: 6px; }
 
+    .ss-upgrade-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 34px;
+        padding: 0 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(56,189,248,0.28);
+        background: rgba(56,189,248,0.12);
+        color: #7dd3fc;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.18s;
+    }
+    .ss-upgrade-btn:hover {
+        background: rgba(56,189,248,0.18);
+        border-color: rgba(56,189,248,0.38);
+    }
+
+    .ss-plan-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 60px;
+        height: 34px;
+        padding: 0 12px;
+        border-radius: 999px;
+        border: 1px solid var(--ss-alpha-10);
+        background: var(--ss-alpha-03);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ss-text-soft);
+        cursor: pointer;
+        transition: all 0.18s;
+    }
+    .ss-plan-badge:hover {
+        border-color: var(--ss-alpha-14);
+        background: var(--ss-alpha-06);
+    }
+    .ss-plan-badge-pro {
+        color: #fbbf24;
+        border-color: rgba(251,191,36,0.35);
+        background: rgba(251,191,36,0.12);
+    }
+
     /* Icon button base */
     .ss-icon-btn {
         width: 34px; height: 34px; border-radius: 9px;
@@ -221,6 +271,8 @@ export default function Topbar({ onMenuToggle }) {
     const pageTitle = getPageTitle(url);
     const isProfileActive = url.startsWith("/profile");
     const appName = import.meta.env.VITE_APP_NAME || "skillSync.ai";
+    const planLabel = user?.plan_label ?? "FREE";
+    const isProPlan = user?.plan_key === "pro";
 
     const initials = user?.name
         ? user.name
@@ -293,6 +345,26 @@ export default function Topbar({ onMenuToggle }) {
 
                 {/* Right */}
                 <div className="ss-topbar-right">
+                    <button
+                        className={`ss-plan-badge${isProPlan ? " ss-plan-badge-pro" : ""}`}
+                        onClick={() => router.visit("/pricing")}
+                        title="Manage plan"
+                    >
+                        {planLabel}
+                    </button>
+
+                    {! isProPlan && (
+                        <button
+                            className="ss-upgrade-btn"
+                            onClick={() => {
+                                window.location.href = route("billing.checkout", "pro", false);
+                            }}
+                            title="Upgrade to PRO"
+                        >
+                            Upgrade
+                        </button>
+                    )}
+
                     <ThemeToggle className="h-[34px] w-[34px] px-0" />
 
                     {/* Notifications */}

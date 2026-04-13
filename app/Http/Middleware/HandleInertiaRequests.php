@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Billing\PlanManager;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -29,9 +30,18 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $planManager = app(PlanManager::class);
+
         return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'is_admin' => $request->user()->is_admin,
+                    'plan_key' => $planManager->planKey($request->user()),
+                    'plan_label' => $planManager->planLabel($request->user()),
+                ] : null,
             ],
             'flash' => [
                 'message' => fn () => $request->session()->get('flash.message') ?? $request->old('flash.message'),

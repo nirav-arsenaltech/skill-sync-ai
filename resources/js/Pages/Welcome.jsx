@@ -578,13 +578,12 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         >
                             How It Works
                         </button>
-                        <button
-                            type="button"
+                        <Link
+                            href={route("pricing")}
                             className="ss-nav-center-link"
-                            onClick={() => scrollToSection(null)}
                         >
                             Pricing
-                        </button>
+                        </Link>
                     </div>
                     <div className="ss-nav-links">
                         <ThemeToggle

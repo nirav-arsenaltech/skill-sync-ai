@@ -363,7 +363,7 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
     const confirmDelete = (matchId) => { setMatchToDelete(matchId); setIsModalOpen(true); };
     const handleDelete  = () => {
         if (!matchToDelete) return;
-        router.delete(route('analytics.destroy', matchToDelete), {
+        router.delete(route('analytics.destroy', matchToDelete, false), {
             preserveState: true,
             onSuccess: (page) => {
                 toast.success(page.props.flash?.success || 'Record successfully deleted');
@@ -395,7 +395,10 @@ export default function Analytics({ jobs, resumes, matchedHistory: initialHistor
                 setSelectedResumes([]);
                 setSelectedJob([]);
             },
-            onError: () => setLoading(false),
+            onError: (errors) => {
+                setLoading(false);
+                toast.error(errors.resume_ids || errors.job_id || 'Please fix the errors and try again.');
+            },
         });
     };
 
